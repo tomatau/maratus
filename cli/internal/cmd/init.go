@@ -22,6 +22,10 @@ func newInitCmd(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			componentsLayout, err := initflow.AskComponentsLayout(cmd)
+			if err != nil {
+				return err
+			}
 
 			path := configFilePath()
 			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
@@ -29,11 +33,13 @@ func newInitCmd(configFilePath func() string) *cobra.Command {
 			}
 
 			payload, err := json.MarshalIndent(struct {
-				SrcDir        string `json:"srcDir"`
-				ComponentsDir string `json:"componentsDir"`
+				SrcDir           string `json:"srcDir"`
+				ComponentsDir    string `json:"componentsDir"`
+				ComponentsLayout string `json:"componentsLayout"`
 			}{
-				SrcDir:        srcDir,
-				ComponentsDir: componentsDir,
+				SrcDir:           srcDir,
+				ComponentsDir:    componentsDir,
+				ComponentsLayout: componentsLayout,
 			}, "", "  ")
 			if err != nil {
 				return err

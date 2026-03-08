@@ -75,8 +75,9 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 
 	var cfg struct {
-		SrcDir        string `json:"srcDir"`
-		ComponentsDir string `json:"componentsDir"`
+		SrcDir           string `json:"srcDir"`
+		ComponentsDir    string `json:"componentsDir"`
+		ComponentsLayout string `json:"componentsLayout"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		t.Fatalf("unmarshal config: %v", err)
@@ -86,6 +87,9 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 	if cfg.ComponentsDir != "components" {
 		t.Fatalf("expected componentsDir to default to components, got %q", cfg.ComponentsDir)
+	}
+	if cfg.ComponentsLayout != "nested" {
+		t.Fatalf("expected componentsLayout to default to nested, got %q", cfg.ComponentsLayout)
 	}
 }
 
