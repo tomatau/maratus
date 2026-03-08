@@ -1,29 +1,25 @@
 package cmd
 
 import (
+	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 )
 
 const (
-	rootShort        = "Arachne CLI tool for installing accessible React components"
-	rootHelpTemplate = `{{violet "Arachne"}} CLI tool for installing accessible React components
-
-Usage: {{violet "arachne"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[...args]"}}
-
-{{section "Commands:"}}
-{{- range .Commands }}
-{{- if .IsAvailableCommand }}
-  {{aquaBold (rpad .Name 12)}} {{.Short}}
-{{- end }}
-{{- end }}
-`
+	configFileFlagName = "config-file"
+	configFileAlias    = "-cf"
+	configFileEnvVar   = "ARACHNE_CONFIG_FILE"
 )
 
 func NewRootCmd() *cobra.Command {
 	registerTemplateFuncs()
 	root := newRootCommand()
+	configFilePath := setupConfigFileFlag(root)
 	configureRootHelp(root)
 	root.AddCommand(newHelloCmd())
+	root.AddCommand(newInitCmd(configFilePath))
 	return root
 }
 
@@ -45,18 +41,39 @@ func configureRootHelp(root *cobra.Command) {
 	root.SetHelpTemplate(rootHelpTemplate)
 }
 
-func registerTemplateFuncs() {
-	blue := func(s string) string { return "\x1b[34m" + s + "\x1b[0m" }
-	violet := func(s string) string { return "\x1b[38;5;183m" + s + "\x1b[0m" }
-	aqua := func(s string) string { return "\x1b[36m" + s + "\x1b[0m" }
-	gray := func(s string) string { return "\x1b[90m" + s + "\x1b[0m" }
-	aquaBold := func(s string) string { return "\x1b[1;36m" + s + "\x1b[0m" }
-	section := func(s string) string { return "\x1b[1m" + s + "\x1b[0m" }
+func setupConfigFileFlag(root *cobra.Command) func() string {
+	defaultConfigFile := "arachne.json"
+	if envValue := os.Getenv(configFileEnvVar); envValue != "" {
+		defaultConfigFile = envValue
+	}
 
-	cobra.AddTemplateFunc("blue", blue)
-	cobra.AddTemplateFunc("violet", violet)
-	cobra.AddTemplateFunc("aqua", aqua)
-	cobra.AddTemplateFunc("gray", gray)
-	cobra.AddTemplateFunc("aquaBold", aquaBold)
-	cobra.AddTemplateFunc("section", section)
+	var configFile string
+	root.PersistentFlags().StringVar(
+		&configFile,
+		configFileFlagName,
+		defaultConfigFile,
+		"Config file path (alias: -cf)",
+	)
+	return func() string {
+		return configFile
+	}
+}
+
+func RewriteAliasArgs(args []string) []string {
+	rewritten := make([]string, len(args))
+	copy(rewritten, args)
+
+	longFlag := "--" + configFileFlagName
+	for i, arg := range rewritten {
+		if arg == configFileAlias {
+			rewritten[i] = longFlag
+			continue
+		}
+
+		if strings.HasPrefix(arg, configFileAlias+"=") {
+			rewritten[i] = longFlag + "=" + strings.TrimPrefix(arg, configFileAlias+"=")
+		}
+	}
+
+	return rewritten
 }
