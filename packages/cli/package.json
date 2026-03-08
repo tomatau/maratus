@@ -1,9 +1,0 @@
-{
-  "name": "@arachne/cli",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "bun build src/index.ts --compile --outfile dist/arachne",
-    "test": "bun test"
-  }
-}

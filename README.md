@@ -2,11 +2,11 @@
 
 ## Commands
 
-- Install deps:
-  - `bun install`
-- Run tests (workspace):
-  - `bun test`
+- List available tasks:
+  - `just`
+- Test CLI:
+  - `just cli-test`
 - Build CLI binary:
-  - `bun --cwd packages/cli run build`
-- Run compiled CLI:
-  - `./packages/cli/dist/arachne`
+  - `just cli-build`
+- Run CLI:
+  - `./bin/arachne`
