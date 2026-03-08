@@ -31,12 +31,12 @@ Usage: {{violet "arachne"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[
 )
 
 func registerTemplateFuncs() {
-	cobra.AddTemplateFunc("blue", ansi("\x1b[34m"))
-	cobra.AddTemplateFunc("violet", ansi("\x1b[38;5;183m"))
-	cobra.AddTemplateFunc("aqua", ansi("\x1b[36m"))
-	cobra.AddTemplateFunc("gray", ansi("\x1b[90m"))
-	cobra.AddTemplateFunc("aquaBold", ansi("\x1b[1;36m"))
-	cobra.AddTemplateFunc("section", ansi("\x1b[1m"))
+	cobra.AddTemplateFunc("blue", styleBlue)
+	cobra.AddTemplateFunc("violet", styleViolet)
+	cobra.AddTemplateFunc("aqua", styleAqua)
+	cobra.AddTemplateFunc("gray", styleMuted)
+	cobra.AddTemplateFunc("aquaBold", styleAquaBold)
+	cobra.AddTemplateFunc("section", styleBold)
 	cobra.AddTemplateFunc("flagsFor", localFlagsFor)
 	cobra.AddTemplateFunc("persistentFlagsFor", persistentFlagsFor)
 }
@@ -49,12 +49,6 @@ func formatUsage(flag *pflag.Flag) string {
 	return usage
 }
 
-func ansi(open string) func(string) string {
-	return func(s string) string {
-		return open + s + "\x1b[0m"
-	}
-}
-
 func localFlagsFor(cmd *cobra.Command) string {
 	var b strings.Builder
 	cmd.LocalFlags().VisitAll(func(flag *pflag.Flag) {
@@ -65,16 +59,14 @@ func localFlagsFor(cmd *cobra.Command) string {
 
 func persistentFlagsFor(cmd *cobra.Command) string {
 	var b strings.Builder
-	softFlag := ansi("\x1b[38;5;110m")
-	muted := ansi("\x1b[90m")
 
 	cmd.PersistentFlags().VisitAll(func(flag *pflag.Flag) {
 		fmt.Fprintf(
 			&b,
 			"  %s %s %s\n",
-			softFlag(fmt.Sprintf("--%-14s", flag.Name)),
-			muted(fmt.Sprintf("%-8s", flag.Value.Type())),
-			muted(formatUsage(flag)),
+			styleSoftFlag(fmt.Sprintf("--%-14s", flag.Name)),
+			styleMuted(fmt.Sprintf("%-8s", flag.Value.Type())),
+			styleMuted(formatUsage(flag)),
 		)
 	})
 
