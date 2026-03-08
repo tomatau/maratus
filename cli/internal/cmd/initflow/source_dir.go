@@ -11,9 +11,6 @@ import (
 
 func AskSourceDir(cmd *cobra.Command) (string, error) {
 	const defaultSrcDir = "src"
-	const currentDirOption = "Current directory (.)"
-	const customPathOption = "Enter custom path..."
-	const srcDefaultOption = "src (default)"
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -36,57 +33,68 @@ func AskSourceDir(cmd *cobra.Command) (string, error) {
 		styleMuted("Parent directory for config paths like components and lib."),
 	)
 
-	items := []string{srcDefaultOption, customPathOption, currentDirOption}
+	items := []optionItem{
+		{
+			Kind:        "default",
+			Value:       defaultSrcDir,
+			Label:       "src",
+			Description: "Use src as the source root.",
+		},
+		{
+			Kind:        "custom",
+			Label:       "custom",
+			Description: "Create a new directory path.",
+		},
+		{
+			Kind:        "direct",
+			Value:       ".",
+			Label:       ".",
+			Description: "Current directory.",
+		},
+	}
 	for _, suggestion := range suggestions {
 		if suggestion != defaultSrcDir {
-			items = append(items, suggestion)
+			items = append(items, optionItem{
+				Kind:        "direct",
+				Value:       suggestion,
+				Label:       suggestion,
+				Description: "Existing directory.",
+			})
 		}
 	}
 
-	searcher := func(input string, index int) bool {
-		query := strings.ToLower(strings.TrimSpace(input))
-		item := strings.ToLower(items[index])
-		return strings.Contains(item, query)
-	}
-
-	selectPrompt := promptui.Select{
-		Label:             styleAqua("Select your source directory..."),
-		Items:             items,
-		Size:              8,
-		Searcher:          searcher,
-		StartInSearchMode: true,
-		HideHelp:          true,
-		CursorPos:         0,
-	}
-
-	selectedIndex, selected, err := selectPrompt.Run()
+	selectedIndex, selected, err := selectOption("Select your source directory...", items, 8)
 	if err != nil {
 		return "", err
 	}
-
-	if selected == srcDefaultOption {
+	if selectedIndex < 0 {
 		return defaultSrcDir, nil
 	}
 
-	if selectedIndex == 1 {
+	if selected.Kind == "default" {
+		return defaultSrcDir, nil
+	}
+
+	if selected.Kind == "custom" {
 		textPrompt := promptui.Prompt{
 			Label:     styleAqua("source directory"),
 			AllowEdit: true,
 		}
 
-		selected, err = textPrompt.Run()
+		customValue, err := textPrompt.Run()
 		if err != nil {
 			return "", err
 		}
+		customValue = strings.TrimSpace(customValue)
+		if customValue == "" {
+			return defaultSrcDir, nil
+		}
+		return customValue, nil
 	}
 
-	if selectedIndex == 2 {
-		return ".", nil
-	}
-
-	selected = strings.TrimSpace(selected)
-	if selected == "" {
+	value := strings.TrimSpace(selected.Value)
+	if value == "" {
 		return defaultSrcDir, nil
 	}
-	return selected, nil
+	return value, nil
 }
