@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+
+	"arachne/cli/internal/cmd/initflow"
 )
 
 func TestInitCreatesArachneConfig(t *testing.T) {
@@ -73,13 +75,17 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 
 	var cfg struct {
-		SrcDir string `json:"srcDir"`
+		SrcDir        string `json:"srcDir"`
+		ComponentsDir string `json:"componentsDir"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		t.Fatalf("unmarshal config: %v", err)
 	}
 	if cfg.SrcDir != "src" {
 		t.Fatalf("expected srcDir to default to src, got %q", cfg.SrcDir)
+	}
+	if cfg.ComponentsDir != "components" {
+		t.Fatalf("expected componentsDir to default to components, got %q", cfg.ComponentsDir)
 	}
 }
 
@@ -97,7 +103,7 @@ func TestTopLevelDirsExcludesHiddenAndGitignored(t *testing.T) {
 		t.Fatalf("git init: %v", err)
 	}
 
-	got, err := topLevelDirs(wd)
+	got, err := initflow.TopLevelDirs(wd)
 	if err != nil {
 		t.Fatalf("topLevelDirs: %v", err)
 	}
