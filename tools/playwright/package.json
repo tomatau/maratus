@@ -1,0 +1,13 @@
+{
+  "name": "@arachne/playwright",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./playwright-ct": "./src/playwright-ct.ts"
+  },
+  "devDependencies": {
+    "@playwright/experimental-ct-react": "^1.55.0",
+    "@vitejs/plugin-react": "^5.0.2"
+  }
+}

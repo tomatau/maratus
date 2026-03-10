@@ -1,3 +1,6 @@
 node_modules
 bin
 tmp
+dist
+.cache
+test-results

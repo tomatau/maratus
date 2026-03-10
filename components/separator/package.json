@@ -1,0 +1,26 @@
+{
+  "name": "@arachne/base-separator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test -c playwright-ct.config.ts"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@arachne/build": "workspace:*",
+    "@arachne/dotfiles": "workspace:*",
+    "@arachne/playwright": "workspace:*",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/experimental-ct-react": "^1.55.0",
+    "@playwright/test": "^1.55.0",
+    "@types/react": "^19.2.14",
+    "@vitejs/plugin-react": "^5.0.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2"
+  }
+}

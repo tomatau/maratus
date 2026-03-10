@@ -2,11 +2,10 @@
   "name": "arachne",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "components/*",
+    "registry/*",
+    "tools/*"
   ],
-  "scripts": {
-    "test": "bun test"
-  },
   "devDependencies": {
     "@types/bun": "^1.3.10",
     "@types/node": "^25.3.5",
