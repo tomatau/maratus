@@ -1,3 +1,7 @@
+set export := true
+
+TMP_CONFIG_FILE := env("ARACHNE_CONFIG_FILE", "./tmp/arachne.json")
+
 default:
   @just --list
 
@@ -5,13 +9,13 @@ cli-test:
   go -C cli test ./...
 
 cli-build:
-  go -C cli build -o ../bin/arachne .
+  go -C cli build -o ../tmp/bin/arachne .
+
+build-artifacts:
+  bun run --cwd tools/build build:artifacts
+
+clear-tmp-src:
+  rm -rf ./tmp/src/
 
 cli-run command='' *args:
-  @case "{{command}}" in \
-    ''|hello|init) ;; \
-    *) echo "Unknown command: {{command}}"; \
-       echo "Available commands: hello, init"; \
-       exit 1 ;; \
-  esac
-  ARACHNE_CONFIG_FILE="${ARACHNE_CONFIG_FILE:-./tmp/arachne.json}" ./bin/arachne {{command}} {{args}}
+  ./tmp/bin/arachne -cf={{TMP_CONFIG_FILE}} {{command}} {{args}}

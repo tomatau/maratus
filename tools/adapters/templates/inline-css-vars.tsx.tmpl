@@ -1,0 +1,10 @@
+{{SOURCE_COMPONENT}}
+
+const {{INLINE_VAR_NAME}} = {{INLINE_STYLE_JSON}}
+
+function Styled{{COMPONENT_NAME}}(props: {{COMPONENT_NAME}}Props) {
+  const { style, ...rest } = props
+  return <{{COMPONENT_NAME}} {...rest} style={{ ...{{INLINE_VAR_NAME}}, ...style }} />
+}
+
+export { Styled{{COMPONENT_NAME}} as {{COMPONENT_NAME}} }

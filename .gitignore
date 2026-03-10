@@ -4,3 +4,7 @@ tmp
 dist
 .cache
 test-results
+registry/*
+!registry/*/
+registry/*/*
+!registry/*/package.json
