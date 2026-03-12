@@ -43,35 +43,27 @@ func InstallComponent(proj project.Project, componentName string, style string) 
 		return InstallResult{}, err
 	}
 
-	componentDir := proj.ComponentsDir
-	componentFile := filepath.Join(componentDir, componentFileName)
-	cssFile := filepath.Join(componentDir, componentName+".css")
+	installPaths := ResolveInstallPaths(proj, componentName)
 
-	if proj.Config.ComponentsLayout == config.ComponentsLayoutNested {
-		componentDir = filepath.Join(componentDir, componentName)
-		componentFile = filepath.Join(componentDir, componentFileName)
-		cssFile = filepath.Join(componentDir, componentName+".css")
-	}
-
-	if err := os.MkdirAll(componentDir, 0o755); err != nil {
+	if err := os.MkdirAll(installPaths.ComponentDir, 0o755); err != nil {
 		return InstallResult{}, err
 	}
 
 	switch style {
 	case config.StyleCSSFiles:
 		cssSourcePath := filepath.Join(sourceBaseDir, componentName+".css")
-		if err := fsutil.CopyFile(sourceComponentFile, componentFile); err != nil {
+		if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
 			return InstallResult{}, err
 		}
-		if err := fsutil.CopyFile(cssSourcePath, cssFile); err != nil {
+		if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
 			return InstallResult{}, err
 		}
-		result.Files = append(result.Files, componentFile, cssFile)
+		result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
 	case config.StyleInlineCSSVars:
-		if err := fsutil.CopyFile(sourceComponentFile, componentFile); err != nil {
+		if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
 			return InstallResult{}, err
 		}
-		result.Files = append(result.Files, componentFile)
+		result.Files = append(result.Files, installPaths.ComponentFile)
 	default:
 		return InstallResult{}, fmt.Errorf("unsupported style: %s", style)
 	}

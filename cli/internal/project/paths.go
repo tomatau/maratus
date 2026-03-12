@@ -25,3 +25,12 @@ func ResolveComponentsDir(cfg config.Config) string {
 
 	return filepath.Join(srcDir, componentsDir)
 }
+
+func ResolveComponentDir(proj Project, componentName string) string {
+	componentDir := proj.ComponentsDir
+	if proj.Config.ComponentsLayout == config.ComponentsLayoutNested {
+		return filepath.Join(componentDir, componentName)
+	}
+
+	return componentDir
+}
