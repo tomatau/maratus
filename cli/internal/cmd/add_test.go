@@ -204,6 +204,49 @@ func TestAddSeparatorInlineCSSVars(t *testing.T) {
 	}
 }
 
+func TestAddSeparatorInlineCSSVarsNestedLayout(t *testing.T) {
+	wd := t.TempDir()
+	writeSeparatorArtifacts(t, wd)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "componentsLayout": "nested"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", "separator", "--style", "inline-css-vars"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add separator: %v", err)
+	}
+
+	componentPath := filepath.Join(wd, "tmp", "src", "components", "separator", "Separator.tsx")
+	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator", "separator.css")
+
+	componentContent, err := os.ReadFile(componentPath)
+	if err != nil {
+		t.Fatalf("read nested component file: %v", err)
+	}
+	if !strings.Contains(string(componentContent), "StyledSeparator") {
+		t.Fatalf("expected styled wrapper in nested inline output, got:\n%s", componentContent)
+	}
+	if _, err := os.Stat(cssPath); !os.IsNotExist(err) {
+		t.Fatalf("expected no nested css file, got err=%v", err)
+	}
+}
+
 func writeConfig(t *testing.T, wd string, config string) {
 	t.Helper()
 	path := filepath.Join(wd, "arachne.json")
