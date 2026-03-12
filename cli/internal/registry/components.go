@@ -1,3 +1,8 @@
+// Package registry owns how the CLI discovers installable components.
+//
+// Today that is just a local "registry" directory in the repo. Later this
+// package will be the right place to swap that for a manifest-driven or
+// package-manager-backed registry without pushing that knowledge into commands.
 package registry
 
 import (
@@ -6,6 +11,7 @@ import (
 	"sort"
 )
 
+// DefaultRootDir is the current local registry location within the project.
 const DefaultRootDir = "registry"
 
 func ResolveRoot(projectRoot string) string {
