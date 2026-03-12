@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	addcmd "arachne/cli/internal/cmd/add"
 	helpcmd "arachne/cli/internal/cmd/help"
 	initcmd "arachne/cli/internal/cmd/init"
 	"os"
@@ -20,6 +21,7 @@ func NewRootCmd() *cobra.Command {
 	configFilePath := setupConfigFileFlag(root)
 	helpcmd.ConfigureRoot(root)
 	root.AddCommand(initcmd.New(configFilePath))
+	root.AddCommand(addcmd.New(configFilePath))
 	return root
 }
 

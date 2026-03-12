@@ -24,6 +24,7 @@ func TestHelpPrintsHelp(t *testing.T) {
 	expectedParts := []string{
 		"Arachne CLI tool for installing accessible React components",
 		"Usage: arachne [command] [...flags] [...args]",
+		"add                   Add a component",
 		"init                  Initialize Arachne config",
 		"--config-file",
 		"Global Flags:",
