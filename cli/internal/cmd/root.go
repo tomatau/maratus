@@ -18,7 +18,6 @@ func NewRootCmd() *cobra.Command {
 	root := newRootCommand()
 	configFilePath := setupConfigFileFlag(root)
 	configureRootHelp(root)
-	root.AddCommand(newHelloCmd())
 	root.AddCommand(newInitCmd(configFilePath))
 	return root
 }
