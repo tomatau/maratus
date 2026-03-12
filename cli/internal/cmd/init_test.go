@@ -1,14 +1,13 @@
 package cmd
 
 import (
+	initcmd "arachne/cli/internal/cmd/init"
 	"bytes"
 	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
-
-	"arachne/cli/internal/cmd/initflow"
 )
 
 func TestInitCreatesArachneConfig(t *testing.T) {
@@ -78,6 +77,7 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 		SrcDir           string `json:"srcDir"`
 		ComponentsDir    string `json:"componentsDir"`
 		ComponentsLayout string `json:"componentsLayout"`
+		Style            string `json:"style"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		t.Fatalf("unmarshal config: %v", err)
@@ -90,6 +90,9 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 	if cfg.ComponentsLayout != "nested" {
 		t.Fatalf("expected componentsLayout to default to nested, got %q", cfg.ComponentsLayout)
+	}
+	if cfg.Style != "inline-css-vars" {
+		t.Fatalf("expected style to default to inline-css-vars, got %q", cfg.Style)
 	}
 }
 
@@ -107,7 +110,7 @@ func TestTopLevelDirsExcludesHiddenAndGitignored(t *testing.T) {
 		t.Fatalf("git init: %v", err)
 	}
 
-	got, err := initflow.TopLevelDirs(wd)
+	got, err := initcmd.TopLevelDirs(wd)
 	if err != nil {
 		t.Fatalf("topLevelDirs: %v", err)
 	}

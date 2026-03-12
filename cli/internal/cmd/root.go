@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	helpcmd "arachne/cli/internal/cmd/help"
+	initcmd "arachne/cli/internal/cmd/init"
 	"os"
 	"strings"
 
@@ -14,30 +16,21 @@ const (
 )
 
 func NewRootCmd() *cobra.Command {
-	registerTemplateFuncs()
 	root := newRootCommand()
 	configFilePath := setupConfigFileFlag(root)
-	configureRootHelp(root)
-	root.AddCommand(newInitCmd(configFilePath))
+	helpcmd.ConfigureRoot(root)
+	root.AddCommand(initcmd.New(configFilePath))
 	return root
 }
 
 func newRootCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "arachne",
-		Short: rootShort,
+		Short: helpcmd.RootShort,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
 		},
 	}
-}
-
-func configureRootHelp(root *cobra.Command) {
-	root.CompletionOptions.DisableDefaultCmd = true
-	root.SetHelpCommand(&cobra.Command{Hidden: true})
-	root.SilenceUsage = true
-	root.SilenceErrors = true
-	root.SetHelpTemplate(rootHelpTemplate)
 }
 
 func setupConfigFileFlag(root *cobra.Command) func() string {

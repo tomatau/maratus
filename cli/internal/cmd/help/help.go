@@ -1,6 +1,7 @@
-package cmd
+package helpcmd
 
 import (
+	"arachne/cli/internal/style"
 	"fmt"
 	"strings"
 
@@ -8,9 +9,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const (
-	rootShort        = "Arachne CLI tool for installing accessible React components"
-	rootHelpTemplate = `{{violet "Arachne"}} CLI tool for installing accessible React components
+const RootShort = "Arachne CLI tool for installing accessible React components"
+
+const rootHelpTemplate = `{{violet "Arachne"}} CLI tool for installing accessible React components
 
 Usage: {{violet "arachne"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[...args]"}}
 
@@ -28,15 +29,23 @@ Usage: {{violet "arachne"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[
 {{section "Global Flags:"}}
 {{ persistentFlagsFor . }}
 `
-)
+
+func ConfigureRoot(root *cobra.Command) {
+	registerTemplateFuncs()
+	root.CompletionOptions.DisableDefaultCmd = true
+	root.SetHelpCommand(&cobra.Command{Hidden: true})
+	root.SilenceUsage = true
+	root.SilenceErrors = true
+	root.SetHelpTemplate(rootHelpTemplate)
+}
 
 func registerTemplateFuncs() {
-	cobra.AddTemplateFunc("blue", styleBlue)
-	cobra.AddTemplateFunc("violet", styleViolet)
-	cobra.AddTemplateFunc("aqua", styleAqua)
-	cobra.AddTemplateFunc("gray", styleMuted)
-	cobra.AddTemplateFunc("aquaBold", styleAquaBold)
-	cobra.AddTemplateFunc("section", styleBold)
+	cobra.AddTemplateFunc("blue", style.Blue)
+	cobra.AddTemplateFunc("violet", style.Violet)
+	cobra.AddTemplateFunc("aqua", style.Aqua)
+	cobra.AddTemplateFunc("gray", style.Muted)
+	cobra.AddTemplateFunc("aquaBold", style.AquaBold)
+	cobra.AddTemplateFunc("section", style.Bold)
 	cobra.AddTemplateFunc("flagsFor", localFlagsFor)
 	cobra.AddTemplateFunc("persistentFlagsFor", persistentFlagsFor)
 }
@@ -64,9 +73,9 @@ func persistentFlagsFor(cmd *cobra.Command) string {
 		fmt.Fprintf(
 			&b,
 			"  %s %s %s\n",
-			styleSoftFlag(fmt.Sprintf("--%-14s", flag.Name)),
-			styleMuted(fmt.Sprintf("%-8s", flag.Value.Type())),
-			styleMuted(formatUsage(flag)),
+			style.SoftFlag(fmt.Sprintf("--%-14s", flag.Name)),
+			style.Muted(fmt.Sprintf("%-8s", flag.Value.Type())),
+			style.Muted(formatUsage(flag)),
 		)
 	})
 

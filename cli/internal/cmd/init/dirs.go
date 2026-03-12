@@ -1,4 +1,4 @@
-package initflow
+package initcmd
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"arachne/cli/internal/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -99,35 +100,5 @@ func childDirs(root string) ([]string, error) {
 }
 
 func isInteractiveSession(cmd *cobra.Command) bool {
-	inFile, ok := cmd.InOrStdin().(*os.File)
-	if !ok {
-		return false
-	}
-	outFile, ok := cmd.OutOrStdout().(*os.File)
-	if !ok {
-		return false
-	}
-
-	inStat, err := inFile.Stat()
-	if err != nil {
-		return false
-	}
-	outStat, err := outFile.Stat()
-	if err != nil {
-		return false
-	}
-
-	return (inStat.Mode()&os.ModeCharDevice) != 0 && (outStat.Mode()&os.ModeCharDevice) != 0
-}
-
-func styleAqua(s string) string {
-	return "\x1b[36m" + s + "\x1b[0m"
-}
-
-func styleViolet(s string) string {
-	return "\x1b[38;5;183m" + s + "\x1b[0m"
-}
-
-func styleMuted(s string) string {
-	return "\x1b[90m" + s + "\x1b[0m"
+	return tui.IsInteractiveSession(cmd)
 }

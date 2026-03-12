@@ -1,13 +1,15 @@
-package initflow
+package initcmd
 
 import (
 	"fmt"
 
+	"arachne/cli/internal/config"
+	"arachne/cli/internal/style"
 	"github.com/spf13/cobra"
 )
 
 func AskComponentsLayout(cmd *cobra.Command) (string, error) {
-	const defaultLayout = "nested"
+	defaultLayout := config.DefaultComponentsLayout()
 
 	if !isInteractiveSession(cmd) {
 		return defaultLayout, nil
@@ -16,19 +18,19 @@ func AskComponentsLayout(cmd *cobra.Command) (string, error) {
 	_, _ = fmt.Fprintf(
 		cmd.OutOrStdout(),
 		"%s %s\n",
-		styleViolet("Components layout"),
-		styleMuted("Choose nested directories per component, or a flat list of files."),
+		style.Violet("Components layout"),
+		style.Muted("Choose nested directories per component, or a flat list of files."),
 	)
 
 	items := []optionItem{
 		{
-			Value:       "nested",
-			Label:       "nested",
+			Value:       config.ComponentsLayoutNested,
+			Label:       config.ComponentsLayoutNested,
 			Description: "One directory per component.",
 		},
 		{
-			Value:       "flat",
-			Label:       "flat",
+			Value:       config.ComponentsLayoutFlat,
+			Label:       config.ComponentsLayoutFlat,
 			Description: "Files directly in components directory.",
 		},
 	}
@@ -37,7 +39,9 @@ func AskComponentsLayout(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 	if index < 0 {
+		printSelectedValue(cmd, defaultLayout)
 		return defaultLayout, nil
 	}
+	printSelectedOption(cmd, selected.Label, selected.Description)
 	return selected.Value, nil
 }
