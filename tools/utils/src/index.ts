@@ -1,7 +1,7 @@
 export function formatDeclarations(declarations: Record<string, string>) {
   return Object.entries(declarations)
     .map(([name, value]) => `  ${name}: ${value};`)
-    .join("\n")
+    .join('\n')
 }
 
 export function toCamelCase(name: string) {

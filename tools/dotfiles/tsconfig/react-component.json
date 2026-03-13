@@ -6,8 +6,6 @@
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
-    "types": [
-      "@playwright/experimental-ct-react"
-    ]
+    "types": ["@playwright/experimental-ct-react"]
   }
 }

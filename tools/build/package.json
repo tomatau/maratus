@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build:artifacts": "bun run scripts/build-artifacts.ts"
-  },
   "exports": {
     ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build:artifacts": "bun run scripts/build-artifacts.ts"
   },
   "dependencies": {
     "@arachne/adapters": "workspace:*",

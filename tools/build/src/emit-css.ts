@@ -1,5 +1,5 @@
-import { formatDeclarations } from "@arachne/utils"
-import { StyleSpec } from "./style-spec"
+import { formatDeclarations } from '@arachne/utils'
+import { StyleSpec } from './style-spec'
 
 export function emitCss(spec: StyleSpec) {
   return `

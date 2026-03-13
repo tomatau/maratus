@@ -6,10 +6,6 @@
   "scripts": {
     "test": "playwright test -c playwright-ct.config.ts"
   },
-  "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
   "devDependencies": {
     "@arachne/build": "workspace:*",
     "@arachne/dotfiles": "workspace:*",
@@ -22,5 +18,9 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

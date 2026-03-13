@@ -1,5 +1,5 @@
-import { toCamelCase } from "@arachne/utils"
-import { StyleSpec } from "./style-spec"
+import { toCamelCase } from '@arachne/utils'
+import { StyleSpec } from './style-spec'
 
 export function emitInlineStyle(spec: StyleSpec) {
   const style: Record<string, string> = {}

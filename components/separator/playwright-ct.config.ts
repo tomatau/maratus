@@ -1,3 +1,3 @@
-import { createPlaywrightCTConfig } from "@arachne/playwright/playwright-ct"
+import { createPlaywrightCTConfig } from '@arachne/playwright/playwright-ct'
 
-export default createPlaywrightCTConfig("./src")
+export default createPlaywrightCTConfig('./src')
