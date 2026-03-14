@@ -1,18 +1,15 @@
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import {
-  writeCssFilesArtifacts,
-  writeInlineCssVarsArtifacts,
-} from './artifact-writer'
-import { SRC_DIR, STYLES_FILENAME } from './config'
-import { emitCss, emitInlineStyle } from './emit-style'
+import { writeCssFilesArtifacts } from './artifact-writer'
+import { compileCssModule } from './compile-css-module'
 import { formatGeneratedFiles } from './formatter'
 import {
   getComponentNamesWithStyles,
   componentSourceFileName,
+  componentCssModuleFileName,
+  ensureComponentCssModulePath,
   ensureComponentSourcePath,
 } from './monorepo'
-import { loadStyleSpec } from './style-loader'
+import { transformCssModuleSource } from './transform-css-module-source'
 
 export type BuildArtifactsOptions = {
   componentsDir: string
@@ -28,38 +25,31 @@ export async function buildArtifacts(
   const generatedFiles: string[] = []
 
   for (const componentName of componentNames) {
-    const stylesPath = join(
-      componentsDir,
-      componentName,
-      SRC_DIR,
-      STYLES_FILENAME,
-    )
-    const styleSpec = await loadStyleSpec(stylesPath)
     const componentSourcePath = ensureComponentSourcePath(
       componentsDir,
       componentName,
       componentSourceFileName(componentName),
     )
+    const cssModulePath = ensureComponentCssModulePath(
+      componentsDir,
+      componentName,
+    )
     const componentSource = await readFile(componentSourcePath, 'utf8')
+    const cssModule = await compileCssModule(cssModulePath)
 
-    const css = emitCss(styleSpec)
-    const inlineStyleLiteral = JSON.stringify(emitInlineStyle(styleSpec))
+    const componentSourceForCssFiles = transformCssModuleSource(
+      componentSource,
+      `./${componentCssModuleFileName(componentName)}`,
+      cssModule.exports,
+    )
 
     generatedFiles.push(
       ...(await writeCssFilesArtifacts(
         componentName,
-        componentSource,
-        css,
+        componentSourceForCssFiles,
+        cssModule.css,
         registryDir,
       )),
-    )
-    generatedFiles.push(
-      await writeInlineCssVarsArtifacts(
-        componentName,
-        componentSource,
-        inlineStyleLiteral,
-        registryDir,
-      ),
     )
   }
 

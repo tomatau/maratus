@@ -1,6 +1,7 @@
 export const SRC_DIR = 'src'
 export const TSX_EXT = '.tsx'
 export const CSS_EXT = '.css'
+export const CSS_MODULE_EXT = '.module.css'
 
 export enum ConfigStyle {
   InlineCssVars = 'inline-css-vars',
