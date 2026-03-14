@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./css-modules": "./css-modules.d.ts",
     "./tsconfig": "./tsconfig.json"
   }
 }

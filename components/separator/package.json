@@ -15,11 +15,13 @@
     "@playwright/test": "^1.55.0",
     "@types/react": "^19.2.14",
     "@vitejs/plugin-react": "^5.0.2",
+    "clsx": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
+    "clsx": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }
