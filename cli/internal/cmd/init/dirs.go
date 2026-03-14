@@ -71,13 +71,11 @@ func filterIgnoredDirs(root string, dirs []string) ([]string, error) {
 	return filtered, nil
 }
 
-func sourceAbsPath(srcDir string) string {
+func sourceAbsPath(configRoot string, srcDir string) string {
 	if srcDir == "." || srcDir == "" {
-		cwd, _ := os.Getwd()
-		return cwd
+		return configRoot
 	}
-	cwd, _ := os.Getwd()
-	return filepath.Join(cwd, srcDir)
+	return filepath.Join(configRoot, srcDir)
 }
 
 func childDirs(root string) ([]string, error) {

@@ -11,10 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func AskComponentsDir(cmd *cobra.Command, srcDir string) (string, error) {
+func AskComponentsDir(cmd *cobra.Command, configRoot string, srcDir string) (string, error) {
 	const defaultComponentsDir = "components"
 
-	srcRoot := sourceAbsPath(srcDir)
+	srcRoot := sourceAbsPath(configRoot, srcDir)
 	suggestions, err := childDirs(srcRoot)
 	if err != nil {
 		return "", err

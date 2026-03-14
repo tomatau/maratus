@@ -2,6 +2,9 @@ package initcmd
 
 import (
 	"arachne/cli/internal/config"
+	"arachne/cli/internal/project"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -11,11 +14,17 @@ func New(configFilePath func() string) *cobra.Command {
 		Use:   "init",
 		Short: "Initialize Arachne config",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			srcDir, err := AskSourceDir(cmd)
+			cwd, err := os.Getwd()
 			if err != nil {
 				return err
 			}
-			componentsDir, err := AskComponentsDir(cmd, srcDir)
+			configRoot := filepath.Dir(project.ResolveConfigPath(cwd, configFilePath()))
+
+			srcDir, err := AskSourceDir(cmd, configRoot)
+			if err != nil {
+				return err
+			}
+			componentsDir, err := AskComponentsDir(cmd, configRoot, srcDir)
 			if err != nil {
 				return err
 			}
@@ -28,12 +37,17 @@ func New(configFilePath func() string) *cobra.Command {
 				return err
 			}
 
-			return SaveConfigWithFeedback(cmd, configFilePath(), config.Config{
+			cfg, err := project.NormalizeConfigForPath(cwd, configFilePath(), config.Config{
 				SrcDir:           srcDir,
 				ComponentsDir:    componentsDir,
 				ComponentsLayout: componentsLayout,
 				Style:            style,
 			})
+			if err != nil {
+				return err
+			}
+
+			return SaveConfigWithFeedback(cmd, configFilePath(), cfg)
 		},
 	}
 }

@@ -12,15 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func AskSourceDir(cmd *cobra.Command) (string, error) {
+func AskSourceDir(cmd *cobra.Command, configRoot string) (string, error) {
 	const defaultSrcDir = "src"
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	suggestions, err := TopLevelDirs(cwd)
+	suggestions, err := TopLevelDirs(configRoot)
 	if err != nil {
 		return "", err
 	}
@@ -36,7 +31,7 @@ func AskSourceDir(cmd *cobra.Command) (string, error) {
 		style.Muted("Parent directory for config paths like components and lib."),
 	)
 
-	existingDirs, err := existingTopLevelDirs(cwd)
+	existingDirs, err := existingTopLevelDirs(configRoot)
 	if err != nil {
 		return "", err
 	}
