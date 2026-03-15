@@ -5,10 +5,11 @@ import (
 
 	"arachne/cli/internal/config"
 	"arachne/cli/internal/style"
+
 	"github.com/spf13/cobra"
 )
 
-func AskStyle(cmd *cobra.Command) (string, error) {
+func AskStyle(cmd *cobra.Command) (config.Style, error) {
 	defaultStyle := config.DefaultStyle()
 
 	if !isInteractiveSession(cmd) {
@@ -24,25 +25,35 @@ func AskStyle(cmd *cobra.Command) (string, error) {
 
 	items := []optionItem{
 		{
-			Value:       config.StyleInlineCSSVars,
-			Label:       config.StyleInlineCSSVars,
+			Value:       string(config.StyleInlineCSSVars),
+			Label:       string(config.StyleInlineCSSVars),
 			Description: "Inline style object with CSS variable hooks. (default)",
 		},
 		{
-			Value:       config.StyleCSSFiles,
-			Label:       config.StyleCSSFiles,
+			Value:       string(config.StyleCSSFiles),
+			Label:       string(config.StyleCSSFiles),
 			Description: "Separate .css file imported by the component.",
 		},
+		{
+			Value:       string(config.StyleTailwindCSS),
+			Label:       string(config.StyleTailwindCSS),
+			Description: "Tailwind-layered CSS file imported by the component.",
+		},
 	}
-	index, selected, err := selectOption("How should component styles be added?", items, 2)
+	index, selected, err := selectOption("How should component styles be added?", items, 3)
 	if err != nil {
 		return "", err
 	}
 	if index < 0 {
-		printSelectedValue(cmd, defaultStyle)
+		printSelectedValue(cmd, string(defaultStyle))
 		return defaultStyle, nil
 	}
 	printSelectedOption(cmd, selected.Label, selected.Description)
 
-	return selected.Value, nil
+	parsedStyle, ok := config.ParseStyle(selected.Value)
+	if !ok {
+		return "", fmt.Errorf("unsupported style: %s", selected.Value)
+	}
+
+	return parsedStyle, nil
 }

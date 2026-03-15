@@ -10,7 +10,7 @@ import (
 )
 
 func New(configFilePath func() string) *cobra.Command {
-	style := ""
+	styleFlag := ""
 
 	cmd := &cobra.Command{
 		Use:   "add [components...]",
@@ -26,12 +26,16 @@ func New(configFilePath func() string) *cobra.Command {
 				return err
 			}
 
-			selectedStyle := style
-			if selectedStyle == "" {
-				selectedStyle = proj.Config.Style
+			selectedStyle := proj.Config.Style
+			if styleFlag != "" {
+				parsedStyle, ok := config.ParseStyle(styleFlag)
+				if !ok {
+					return fmt.Errorf("unsupported style: %s", styleFlag)
+				}
+				selectedStyle = parsedStyle
 			}
 
-			if !config.IsValidStyle(selectedStyle) {
+			if !selectedStyle.IsValid() {
 				return fmt.Errorf("unsupported style: %s", selectedStyle)
 			}
 
@@ -54,10 +58,15 @@ func New(configFilePath func() string) *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(
-		&style,
+		&styleFlag,
 		"style",
 		"",
-		"Style mode: "+config.StyleCSSFiles+" or "+config.StyleInlineCSSVars,
+		"Style mode: "+
+			string(config.StyleCSSFiles)+
+			", "+
+			string(config.StyleInlineCSSVars)+
+			", or "+
+			string(config.StyleTailwindCSS),
 	)
 
 	return cmd

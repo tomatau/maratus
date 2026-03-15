@@ -16,7 +16,7 @@ type InstallResult struct {
 	Files     []string
 }
 
-func InstallComponent(proj project.Project, componentName string, style string) (InstallResult, error) {
+func InstallComponent(proj project.Project, componentName string, style config.Style) (InstallResult, error) {
 	result := InstallResult{Component: componentName}
 
 	componentFileName := ComponentSourceFileName(componentName)
@@ -51,22 +51,42 @@ func InstallComponent(proj project.Project, componentName string, style string) 
 
 	switch style {
 	case config.StyleCSSFiles:
-		cssSourcePath := filepath.Join(sourceBaseDir, componentName+".css")
-		if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
-			return InstallResult{}, err
-		}
-		if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
-			return InstallResult{}, err
-		}
-		result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
+		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
+	case config.StyleTailwindCSS:
+		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
 	case config.StyleInlineCSSVars:
-		if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
-			return InstallResult{}, err
-		}
-		result.Files = append(result.Files, installPaths.ComponentFile)
+		return installInlineComponent(result, sourceComponentFile, installPaths)
 	default:
 		return InstallResult{}, fmt.Errorf("unsupported style: %s", style)
 	}
+}
 
+func installCSSBackedComponent(
+	result InstallResult,
+	sourceBaseDir string,
+	sourceComponentFile string,
+	installPaths InstallPaths,
+	componentName string,
+) (InstallResult, error) {
+	cssSourcePath := filepath.Join(sourceBaseDir, componentName+".css")
+	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
+		return InstallResult{}, err
+	}
+	if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
+		return InstallResult{}, err
+	}
+	result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
+	return result, nil
+}
+
+func installInlineComponent(
+	result InstallResult,
+	sourceComponentFile string,
+	installPaths InstallPaths,
+) (InstallResult, error) {
+	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
+		return InstallResult{}, err
+	}
+	result.Files = append(result.Files, installPaths.ComponentFile)
 	return result, nil
 }

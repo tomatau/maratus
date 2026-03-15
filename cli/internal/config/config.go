@@ -11,7 +11,7 @@ type Config struct {
 	SrcDir           string `json:"srcDir"`
 	ComponentsDir    string `json:"componentsDir"`
 	ComponentsLayout string `json:"componentsLayout"`
-	Style            string `json:"style"`
+	Style            Style  `json:"style"`
 }
 
 func Load(path string) (Config, error) {

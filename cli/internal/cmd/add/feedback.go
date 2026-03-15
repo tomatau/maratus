@@ -1,6 +1,7 @@
 package addcmd
 
 import (
+	"arachne/cli/internal/config"
 	"arachne/cli/internal/project"
 	"arachne/cli/internal/style"
 	"arachne/cli/internal/tui"
@@ -12,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func installWithFeedback(cmd *cobra.Command, proj project.Project, components []string, selectedStyle string) ([]InstallResult, error) {
+func installWithFeedback(cmd *cobra.Command, proj project.Project, components []string, selectedStyle config.Style) ([]InstallResult, error) {
 	if !tui.IsInteractiveSession(cmd) {
 		results := make([]InstallResult, 0, len(components))
 		for _, component := range components {
@@ -77,14 +78,14 @@ type installDoneMsg struct {
 type installSpinnerModel struct {
 	proj       project.Project
 	components []string
-	style      string
+	style      config.Style
 	spinner    spinner.Model
 	results    []InstallResult
 	done       bool
 	err        error
 }
 
-func newInstallSpinnerModel(proj project.Project, components []string, selectedStyle string) *installSpinnerModel {
+func newInstallSpinnerModel(proj project.Project, components []string, selectedStyle config.Style) *installSpinnerModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	return &installSpinnerModel{

@@ -96,6 +96,56 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 }
 
+func TestInitUsesConfigFileRelativePaths(t *testing.T) {
+	wd := t.TempDir()
+	if err := os.Mkdir(filepath.Join(wd, "tmp"), 0o755); err != nil {
+		t.Fatalf("mkdir tmp: %v", err)
+	}
+	configPath := filepath.Join(wd, "tmp", "arachne.json")
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"--config-file", "./tmp/arachne.json", "init"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = os.Chdir(previous)
+	})
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute init: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	var cfg struct {
+		SrcDir           string `json:"srcDir"`
+		ComponentsDir    string `json:"componentsDir"`
+		ComponentsLayout string `json:"componentsLayout"`
+		Style            string `json:"style"`
+	}
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		t.Fatalf("unmarshal config: %v", err)
+	}
+	if cfg.SrcDir != "src" {
+		t.Fatalf("expected srcDir to stay config-relative as src, got %q", cfg.SrcDir)
+	}
+	if cfg.ComponentsDir != "components" {
+		t.Fatalf("expected componentsDir to stay config-relative as components, got %q", cfg.ComponentsDir)
+	}
+}
+
 func TestTopLevelDirsExcludesHiddenAndGitignored(t *testing.T) {
 	wd := t.TempDir()
 	for _, dir := range []string{"components", "packages", "tmp", ".cache"} {

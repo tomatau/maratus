@@ -2,15 +2,13 @@ import type { Declaration, Location2, Rule, StyleRule } from 'lightningcss'
 import { transform } from 'lightningcss'
 
 export function emitTailwindCssWithLightning(css: string): string {
-  const safeThemeBlocks = extractSafeThemeBlocks(css)
+  const safeRootBlocks = extractSafeRootBlocks(css)
   const strippedCss = stripSafeRootBlocks(css).trim()
   const sections = [`@reference "tailwindcss";`]
 
-  if (safeThemeBlocks.length > 0) {
+  if (safeRootBlocks.length > 0) {
     sections.push(
-      safeThemeBlocks
-        .map((block) => `@theme {\n${block.trim()}\n}`)
-        .join('\n\n'),
+      safeRootBlocks.map((block) => `:root {\n${block.trim()}\n}`).join('\n\n'),
     )
   }
 
@@ -21,10 +19,10 @@ export function emitTailwindCssWithLightning(css: string): string {
   return sections.join('\n\n').trim()
 }
 
-function extractSafeThemeBlocks(css: string): string[] {
+function extractSafeRootBlocks(css: string): string[] {
   const blocks: string[] = []
   transform({
-    filename: 'tmp/tailwind-theme.css',
+    filename: 'tmp/tailwind-root.css',
     code: Buffer.from(css),
     minify: false,
     visitor: {
