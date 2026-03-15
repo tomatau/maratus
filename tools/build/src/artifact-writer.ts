@@ -35,6 +35,31 @@ export async function writeCssFilesArtifacts(
   return [wrappedPath, cssPath]
 }
 
+export async function writeTailwindCssArtifacts(
+  componentName: string,
+  componentSource: string,
+  css: string,
+  registryDir: string,
+): Promise<string[]> {
+  const fileName = componentSourceFileName(componentName)
+  const dir = join(
+    registryDir,
+    componentName,
+    styleDirFor(ConfigStyle.TailwindCss),
+  )
+  await mkdir(dir, { recursive: true })
+
+  const wrappedPath = join(dir, fileName)
+  await writeFile(
+    wrappedPath,
+    `import "./${componentName}${CSS_EXT}"\n\n${componentSource}`,
+    'utf8',
+  )
+  const cssPath = join(dir, `${componentName}${CSS_EXT}`)
+  await writeFile(cssPath, css, 'utf8')
+  return [wrappedPath, cssPath]
+}
+
 export async function writeInlineCssVarsArtifacts(
   componentName: string,
   componentSource: string,

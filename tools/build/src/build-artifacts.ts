@@ -1,6 +1,10 @@
 import { readFile } from 'node:fs/promises'
-import { writeCssFilesArtifacts } from './artifact-writer'
+import {
+  writeCssFilesArtifacts,
+  writeTailwindCssArtifacts,
+} from './artifact-writer'
 import { compileCssModule } from './compile-css-module'
+import { emitTailwindCssWithLightning } from './emit-tailwind-css'
 import { formatGeneratedFiles } from './formatter'
 import {
   getComponentNamesWithStyles,
@@ -48,6 +52,14 @@ export async function buildArtifacts(
         componentName,
         componentSourceForCssFiles,
         cssModule.css,
+        registryDir,
+      )),
+    )
+    generatedFiles.push(
+      ...(await writeTailwindCssArtifacts(
+        componentName,
+        componentSourceForCssFiles,
+        emitTailwindCssWithLightning(cssModule.css),
         registryDir,
       )),
     )

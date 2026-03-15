@@ -4,8 +4,9 @@ export const CSS_EXT = '.css'
 export const CSS_MODULE_EXT = '.module.css'
 
 export enum ConfigStyle {
-  InlineCssVars = 'inline-css-vars',
-  CssFiles = 'css-files',
+	InlineCssVars = 'inline-css-vars',
+	CssFiles = 'css-files',
+	TailwindCss = 'tailwind-css',
 }
 
 export const STYLES_FILENAME = 'styles.ts'
