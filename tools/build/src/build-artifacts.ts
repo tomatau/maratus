@@ -1,9 +1,12 @@
 import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import {
   writeCssFilesArtifacts,
+  writeRegistryComponentFiles,
   writeTailwindCssArtifacts,
 } from './artifact-writer'
 import { compileCssModule } from './compile-css-module'
+import { extractComponentMeta } from './component-meta'
 import { emitTailwindCssWithLightning } from './emit-tailwind-css'
 import { formatGeneratedFiles } from './formatter'
 import {
@@ -13,6 +16,7 @@ import {
   ensureComponentCssModulePath,
   ensureComponentSourcePath,
 } from './monorepo'
+import { buildRegistryPackageManifest } from './registry-package'
 import { transformCssModuleSource } from './transform-css-module-source'
 
 export type BuildArtifactsOptions = {
@@ -38,8 +42,18 @@ export async function buildArtifacts(
       componentsDir,
       componentName,
     )
+    const componentPackagePath = join(
+      componentsDir,
+      componentName,
+      'package.json',
+    )
     const componentSource = await readFile(componentSourcePath, 'utf8')
     const cssModule = await compileCssModule(cssModulePath)
+    const componentMeta = await extractComponentMeta(cssModulePath)
+    const packageManifest = await buildRegistryPackageManifest(
+      componentName,
+      componentPackagePath,
+    )
 
     const componentSourceForCssFiles = transformCssModuleSource(
       componentSource,
@@ -60,6 +74,14 @@ export async function buildArtifacts(
         componentName,
         componentSourceForCssFiles,
         emitTailwindCssWithLightning(cssModule.css),
+        registryDir,
+      )),
+    )
+    generatedFiles.push(
+      ...(await writeRegistryComponentFiles(
+        componentName,
+        componentMeta,
+        packageManifest,
         registryDir,
       )),
     )
