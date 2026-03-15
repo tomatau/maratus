@@ -3,6 +3,7 @@ package addcmd
 import (
 	"arachne/cli/internal/config"
 	"arachne/cli/internal/project"
+	"arachne/cli/internal/registry"
 	"fmt"
 	"os"
 
@@ -51,6 +52,9 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if err := updateComponentsManifest(proj, results, selectedStyle); err != nil {
+				return err
+			}
 			printInstallSummary(cmd, results)
 
 			return nil
@@ -70,4 +74,36 @@ func New(configFilePath func() string) *cobra.Command {
 	)
 
 	return cmd
+}
+
+func updateComponentsManifest(
+	proj project.Project,
+	results []InstallResult,
+	selectedStyle config.Style,
+) error {
+	manifest, err := project.LoadComponentsManifest(proj.ConfigPath)
+	if err != nil {
+		return err
+	}
+
+	for _, result := range results {
+		meta, err := registry.LoadComponentMeta(proj.RegistryRoot, result.Component)
+		if err != nil {
+			return err
+		}
+		pkg, err := registry.LoadPackageManifest(proj.RegistryRoot, result.Component)
+		if err != nil {
+			return err
+		}
+
+		manifest.Components[result.Component] = project.InstalledComponent{
+			Package:         pkg.Name,
+			Version:         pkg.Version,
+			Style:           selectedStyle,
+			ThemeTokens:     meta.ThemeTokens,
+			ComponentTokens: meta.ComponentTokens,
+		}
+	}
+
+	return project.SaveComponentsManifest(proj.ConfigPath, manifest)
 }
