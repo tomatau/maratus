@@ -11,7 +11,7 @@ export async function compileCssModule(
 ): Promise<CompiledCssModule> {
   const source = await readFile(cssModulePath)
   const result = transform({
-    filename: cssModulePath,
+    filename: cssModulePath.replace('.module', ''),
     code: source,
     cssModules: {
       pattern: 'arachne__[name]__[local]',
