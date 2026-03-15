@@ -47,7 +47,7 @@ func installWithFeedback(cmd *cobra.Command, proj project.Project, components []
 	return resultModel.results, nil
 }
 
-func printInstallSummary(cmd *cobra.Command, results []InstallResult) {
+func printInstallSummary(cmd *cobra.Command, results []InstallResult, themeFilePath string, themeFileStatus string) {
 	if len(results) == 0 {
 		return
 	}
@@ -65,6 +65,26 @@ func printInstallSummary(cmd *cobra.Command, results []InstallResult) {
 				"  %s%s\n",
 				style.PromptHint("• "),
 				style.PromptHint(file),
+			)
+		}
+	}
+
+	if themeFilePath != "" {
+		title := "Theme file updated"
+		if themeFileStatus == "created" {
+			title = "Theme file created"
+		}
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\n%s\n", style.PromptTitle(title))
+		_, _ = fmt.Fprintf(
+			cmd.OutOrStdout(),
+			"%s%s\n",
+			style.PromptCursor(),
+			style.PromptHint(themeFilePath),
+		)
+		if themeFileStatus == "created" {
+			_, _ = fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"\nAdd an @import for the `arachne-theme.css` file in your stylesheet entrypoint.\n",
 			)
 		}
 	}
