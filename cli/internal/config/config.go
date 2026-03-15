@@ -10,6 +10,7 @@ import (
 type Config struct {
 	SrcDir           string `json:"srcDir"`
 	ComponentsDir    string `json:"componentsDir"`
+	ThemeDir         string `json:"themeDir"`
 	ComponentsLayout string `json:"componentsLayout"`
 	Style            Style  `json:"style"`
 }
@@ -27,6 +28,9 @@ func Load(path string) (Config, error) {
 
 	if cfg.ComponentsDir == "" {
 		return Config{}, errors.New("componentsDir is required in arachne.json")
+	}
+	if cfg.ThemeDir == "" {
+		cfg.ThemeDir = "styles"
 	}
 	if cfg.ComponentsLayout == "" {
 		cfg.ComponentsLayout = DefaultComponentsLayout()

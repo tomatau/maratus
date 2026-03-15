@@ -28,6 +28,10 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			themeDir, err := AskThemeDir(cmd, configRoot, srcDir)
+			if err != nil {
+				return err
+			}
 			componentsLayout, err := AskComponentsLayout(cmd)
 			if err != nil {
 				return err
@@ -40,6 +44,7 @@ func New(configFilePath func() string) *cobra.Command {
 			cfg, err := project.NormalizeConfigForPath(cwd, configFilePath(), config.Config{
 				SrcDir:           srcDir,
 				ComponentsDir:    componentsDir,
+				ThemeDir:         themeDir,
 				ComponentsLayout: componentsLayout,
 				Style:            style,
 			})
