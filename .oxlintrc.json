@@ -1,0 +1,14 @@
+{
+  "plugins": ["import"],
+  "rules": {
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "fixStyle": "separate-type-imports",
+        "prefer": "type-imports"
+      }
+    ],
+    "typescript/no-import-type-side-effects": "error",
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"]
+  }
+}
