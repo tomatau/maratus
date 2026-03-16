@@ -1,11 +1,11 @@
 :root {
-  --arachne-separator-color: var(--arachne-border-color-subtle);
-  --arachne-separator-thickness: var(--arachne-border-width-x1);
-  --arachne-separator-margin: var(--arachne-space-x1) 0;
+  --ara-separator-color: var(--ara-color-border-subtle);
+  --ara-separator-thickness: var(--ara-border-width-x1);
+  --ara-separator-margin-block: var(--ara-spacing-x1);
 }
 
-.base {
-  border-top-color: var(--arachne-separator-color);
-  border-top-width: var(--arachne-separator-thickness);
-  margin: var(--arachne-separator-margin);
+.separator {
+  border-top-color: var(--ara-separator-color);
+  border-top-width: var(--ara-separator-thickness);
+  margin-block: var(--ara-separator-margin-block);
 }

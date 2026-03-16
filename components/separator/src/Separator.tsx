@@ -14,7 +14,7 @@ export function Separator(props: SeparatorProps) {
     <hr
       {...rest}
       aria-hidden={ariaHidden}
-      className={clsx(styles.base, className)}
+      className={clsx(styles.separator, className)}
     />
   )
 }
