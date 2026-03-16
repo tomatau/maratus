@@ -90,6 +90,89 @@ func TestAddSeparatorCSSFilesNestedLayout(t *testing.T) {
 	}
 }
 
+func TestAddSeparatorCSSModules(t *testing.T) {
+	wd := t.TempDir()
+	writeSeparatorArtifacts(t, wd)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "componentsLayout": "flat"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", "separator", "--style", "css-modules"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add separator: %v", err)
+	}
+
+	componentPath := filepath.Join(wd, "tmp", "src", "components", "Separator.tsx")
+	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator.module.css")
+
+	componentContent, err := os.ReadFile(componentPath)
+	if err != nil {
+		t.Fatalf("read component file: %v", err)
+	}
+	if !strings.Contains(string(componentContent), `import styles from "./separator.module.css"`) &&
+		!strings.Contains(string(componentContent), `import styles from './separator.module.css'`) {
+		t.Fatalf("expected component to import separator.module.css, got:\n%s", componentContent)
+	}
+	if _, err := os.Stat(cssPath); err != nil {
+		t.Fatalf("expected css module file: %v", err)
+	}
+}
+
+func TestAddSeparatorCSSModulesNestedLayout(t *testing.T) {
+	wd := t.TempDir()
+	writeSeparatorArtifacts(t, wd)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "componentsLayout": "nested"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", "separator", "--style", "css-modules"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add separator: %v", err)
+	}
+
+	componentPath := filepath.Join(wd, "tmp", "src", "components", "separator", "Separator.tsx")
+	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator", "separator.module.css")
+
+	if _, err := os.Stat(componentPath); err != nil {
+		t.Fatalf("expected nested component file: %v", err)
+	}
+	if _, err := os.Stat(cssPath); err != nil {
+		t.Fatalf("expected nested css module file: %v", err)
+	}
+}
+
 func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	wd := t.TempDir()
 	writeSeparatorArtifacts(t, wd)
@@ -176,20 +259,44 @@ func writeSeparatorArtifacts(t *testing.T, wd string) {
 
 func writeComponentArtifacts(t *testing.T, wd string, name string) {
 	t.Helper()
+	componentRootDir := filepath.Join(wd, "registry", "separator")
 	cssFileDir := filepath.Join(wd, "registry", "separator", "css-files")
+	cssModulesDir := filepath.Join(wd, "registry", "separator", "css-modules")
 	tailwindDir := filepath.Join(wd, "registry", "separator", "tailwind-css")
 	if name != "separator" {
+		componentRootDir = filepath.Join(wd, "registry", name)
 		cssFileDir = filepath.Join(wd, "registry", name, "css-files")
+		cssModulesDir = filepath.Join(wd, "registry", name, "css-modules")
 		tailwindDir = filepath.Join(wd, "registry", name, "tailwind-css")
 	}
 
+	if err := os.MkdirAll(componentRootDir, 0o755); err != nil {
+		t.Fatalf("mkdir component root dir: %v", err)
+	}
 	if err := os.MkdirAll(cssFileDir, 0o755); err != nil {
 		t.Fatalf("mkdir css-files dir: %v", err)
+	}
+	if err := os.MkdirAll(cssModulesDir, 0o755); err != nil {
+		t.Fatalf("mkdir css-modules dir: %v", err)
 	}
 	if err := os.MkdirAll(tailwindDir, 0o755); err != nil {
 		t.Fatalf("mkdir tailwind-css dir: %v", err)
 	}
 
+	if err := os.WriteFile(
+		filepath.Join(componentRootDir, "meta.json"),
+		[]byte("{\n  \"themeTokens\": [\n    \"--ara-color-border-subtle\",\n    \"--ara-border-width-x1\",\n    \"--ara-spacing-x1\"\n  ],\n  \"componentTokens\": [\n    {\n      \"component\": \"--ara-separator-color\",\n      \"theme\": \"--ara-color-border-subtle\"\n    },\n    {\n      \"component\": \"--ara-separator-thickness\",\n      \"theme\": \"--ara-border-width-x1\"\n    },\n    {\n      \"component\": \"--ara-separator-margin-block\",\n      \"theme\": \"--ara-spacing-x1\"\n    }\n  ]\n}\n"),
+		0o644,
+	); err != nil {
+		t.Fatalf("write component meta: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(componentRootDir, "package.json"),
+		[]byte("{\n  \"name\": \"@arachne/"+name+"\",\n  \"version\": \"0.0.0\"\n}\n"),
+		0o644,
+	); err != nil {
+		t.Fatalf("write component package: %v", err)
+	}
 	if err := os.WriteFile(
 		filepath.Join(cssFileDir, componentTypeName(name)+".tsx"),
 		[]byte("import \"./"+name+".css\"\nexport function "+componentTypeName(name)+"() { return <hr /> }\n"),
@@ -203,6 +310,20 @@ func writeComponentArtifacts(t *testing.T, wd string, name string) {
 		0o644,
 	); err != nil {
 		t.Fatalf("write css-file css: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(cssModulesDir, componentTypeName(name)+".tsx"),
+		[]byte("import styles from \"./"+name+".module.css\"\nexport function "+componentTypeName(name)+"() { return <hr className={styles.separator} /> }\n"),
+		0o644,
+	); err != nil {
+		t.Fatalf("write css-modules component: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(cssModulesDir, name+".module.css"),
+		[]byte(".separator { margin: 0; }\n"),
+		0o644,
+	); err != nil {
+		t.Fatalf("write css-modules css: %v", err)
 	}
 	if err := os.WriteFile(
 		filepath.Join(tailwindDir, componentTypeName(name)+".tsx"),

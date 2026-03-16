@@ -207,3 +207,58 @@ func TestUpdateThemeFileCreatesCSSFilesThemeFile(t *testing.T) {
 		t.Fatalf("expected css-files constraint guidance, got:\n%s", content)
 	}
 }
+
+func TestUpdateThemeFileCreatesCSSModulesThemeFile(t *testing.T) {
+	t.Parallel()
+
+	tempDir := t.TempDir()
+	configPath := filepath.Join(tempDir, "arachne.json")
+	cfg := config.Config{
+		SrcDir:        "src",
+		ThemeDir:      "styles",
+		ComponentsDir: "components",
+		Style:         config.StyleCSSModules,
+	}
+	manifest := ComponentsManifest{
+		Version: 1,
+		Components: map[string]InstalledComponent{
+			"separator": {
+				ThemeTokens: []string{
+					"--ara-border-width-x1",
+					"--ara-color-border-subtle",
+					"--ara-spacing-x1",
+				},
+			},
+		},
+	}
+
+	path, created, err := UpdateThemeFile(configPath, cfg, manifest)
+	if err != nil {
+		t.Fatalf("UpdateThemeFile returned error: %v", err)
+	}
+	if !created {
+		t.Fatalf("expected created=true")
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("ReadFile returned error: %v", err)
+	}
+	content := string(data)
+
+	if !strings.Contains(content, "@layer theme {\n  :root {\n") {
+		t.Fatalf("expected css-modules wrapper, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-border-width-x1: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-color-border-subtle: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-spacing-x1: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "- Keep this file to a single @layer theme { :root { ... } } block.") {
+		t.Fatalf("expected css-modules constraint guidance, got:\n%s", content)
+	}
+}
