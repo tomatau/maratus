@@ -14,7 +14,8 @@ import (
 const ThemeFileName = "arachne-theme.css"
 
 var (
-	themeBlockPattern       = regexp.MustCompile(`(?s)^\s*(?:/\*.*?\*/\s*)?@theme\s+inline\s*\{\s*(.*?)\s*\}\s*$`)
+	tailwindThemeBlockPattern = regexp.MustCompile(`(?s)^\s*(?:/\*.*?\*/\s*)?@theme\s+inline\s*\{\s*(.*?)\s*\}\s*$`)
+	cssThemeBlockPattern      = regexp.MustCompile(`(?s)^\s*(?:/\*.*?\*/\s*)?@layer\s+theme\s*\{\s*:root\s*\{\s*(.*?)\s*\}\s*\}\s*$`)
 	themeDeclarationPattern = regexp.MustCompile(`(?m)^\s*(--[A-Za-z0-9_-]+)\s*:\s*([^;]+);\s*$`)
 )
 
@@ -36,12 +37,12 @@ func ThemeFilePath(configPath string, cfg config.Config) string {
 	return filepath.Join(baseDir, themeDir, ThemeFileName)
 }
 
-func UpdateTailwindThemeFile(configPath string, cfg config.Config, manifest ComponentsManifest) (string, bool, error) {
+func UpdateThemeFile(configPath string, cfg config.Config, manifest ComponentsManifest) (string, bool, error) {
 	values := collectThemeTokenValues(manifest)
 	path := ThemeFilePath(configPath, cfg)
 	created := false
 
-	if existingValues, err := readExistingThemeValues(path); err != nil {
+	if existingValues, err := readExistingThemeValues(path, cfg.Style); err != nil {
 		return "", false, err
 	} else {
 		for token, value := range existingValues {
@@ -63,7 +64,7 @@ func UpdateTailwindThemeFile(configPath string, cfg config.Config, manifest Comp
 		return "", false, err
 	}
 
-	if err := os.WriteFile(path, []byte(renderThemeFile(values)), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(renderThemeFile(cfg.Style, values)), 0o644); err != nil {
 		return "", false, err
 	}
 
@@ -82,7 +83,7 @@ func collectThemeTokenValues(manifest ComponentsManifest) map[string]string {
 	return values
 }
 
-func readExistingThemeValues(path string) (map[string]string, error) {
+func readExistingThemeValues(path string, themeStyle config.Style) (map[string]string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -92,9 +93,9 @@ func readExistingThemeValues(path string) (map[string]string, error) {
 	}
 
 	source := string(data)
-	matches := themeBlockPattern.FindStringSubmatch(source)
+	matches := themeBlockPattern(themeStyle).FindStringSubmatch(source)
 	if matches == nil {
-		return nil, fmt.Errorf("%s must contain exactly one @theme block", path)
+		return nil, fmt.Errorf("%s must contain exactly one supported theme block", path)
 	}
 
 	values := map[string]string{}
@@ -104,7 +105,7 @@ func readExistingThemeValues(path string) (map[string]string, error) {
 	return values, nil
 }
 
-func renderThemeFile(values map[string]string) string {
+func renderThemeFile(themeStyle config.Style, values map[string]string) string {
 	tokens := make([]string, 0, len(values))
 	for token := range values {
 		tokens = append(tokens, token)
@@ -118,19 +119,53 @@ func renderThemeFile(values map[string]string) string {
 	builder.WriteString("Import this file into your stylesheet entrypoint so the tokens are included in your build.\n")
 	builder.WriteString("\n")
 	builder.WriteString("Constraints:\n")
-	builder.WriteString("- Keep this file to a single @theme inline block.\n")
+	builder.WriteString("- Keep this file to a single ")
+	builder.WriteString(themeBlockDescription(themeStyle))
+	builder.WriteString(".\n")
 	builder.WriteString("- Replace initial values with theme values for your project.\n")
 	builder.WriteString("- Tokens left as initial are excluded from the final CSS output.\n")
 	builder.WriteString("*/\n")
-	builder.WriteString("@theme inline {\n")
+	builder.WriteString(themeBlockOpen(themeStyle))
+	declarationIndent := "  "
+	if themeStyle == config.StyleCSSFiles {
+		declarationIndent = "    "
+	}
 	for _, token := range tokens {
-		builder.WriteString("  ")
+		builder.WriteString(declarationIndent)
 		builder.WriteString(token)
 		builder.WriteString(": ")
 		builder.WriteString(values[token])
 		builder.WriteString(";\n")
 	}
-	builder.WriteString("}\n")
+	builder.WriteString(themeBlockClose(themeStyle))
 
 	return builder.String()
+}
+
+func themeBlockPattern(themeStyle config.Style) *regexp.Regexp {
+	if themeStyle == config.StyleCSSFiles {
+		return cssThemeBlockPattern
+	}
+	return tailwindThemeBlockPattern
+}
+
+func themeBlockDescription(themeStyle config.Style) string {
+	if themeStyle == config.StyleCSSFiles {
+		return "@layer theme { :root { ... } } block"
+	}
+	return "@theme inline block"
+}
+
+func themeBlockOpen(themeStyle config.Style) string {
+	if themeStyle == config.StyleCSSFiles {
+		return "@layer theme {\n  :root {\n"
+	}
+	return "@theme inline {\n"
+}
+
+func themeBlockClose(themeStyle config.Style) string {
+	if themeStyle == config.StyleCSSFiles {
+		return "  }\n}\n"
+	}
+	return "}\n"
 }

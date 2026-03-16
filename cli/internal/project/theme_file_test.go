@@ -10,7 +10,7 @@ import (
 	"arachne/cli/internal/registry"
 )
 
-func TestUpdateTailwindThemeFileCreatesThemeFile(t *testing.T) {
+func TestUpdateThemeFileCreatesTailwindThemeFile(t *testing.T) {
 	t.Parallel()
 
 	tempDir := t.TempDir()
@@ -19,6 +19,7 @@ func TestUpdateTailwindThemeFileCreatesThemeFile(t *testing.T) {
 		SrcDir:        "app",
 		ThemeDir:      "styles",
 		ComponentsDir: "components",
+		Style:         config.StyleTailwindCSS,
 	}
 	manifest := ComponentsManifest{
 		Version: 1,
@@ -32,9 +33,9 @@ func TestUpdateTailwindThemeFileCreatesThemeFile(t *testing.T) {
 		},
 	}
 
-	path, created, err := UpdateTailwindThemeFile(configPath, cfg, manifest)
+	path, created, err := UpdateThemeFile(configPath, cfg, manifest)
 	if err != nil {
-		t.Fatalf("UpdateTailwindThemeFile returned error: %v", err)
+		t.Fatalf("UpdateThemeFile returned error: %v", err)
 	}
 	if !created {
 		t.Fatalf("expected created=true")
@@ -57,6 +58,15 @@ func TestUpdateTailwindThemeFileCreatesThemeFile(t *testing.T) {
 	if !strings.Contains(content, "Arachne theme tokens for installed components.") {
 		t.Fatalf("expected explanatory comment block, got:\n%s", content)
 	}
+	if !strings.Contains(content, "Import this file into your stylesheet entrypoint so the tokens are included in your build.") {
+		t.Fatalf("expected import guidance, got:\n%s", content)
+	}
+	if !strings.Contains(content, "- Keep this file to a single @theme inline block.") {
+		t.Fatalf("expected wrapper guidance, got:\n%s", content)
+	}
+	if !strings.Contains(content, "- Replace initial values with theme values for your project.") {
+		t.Fatalf("expected value guidance, got:\n%s", content)
+	}
 	if !strings.Contains(content, "--color-border-subtle: initial;") {
 		t.Fatalf("expected token declaration, got:\n%s", content)
 	}
@@ -65,7 +75,7 @@ func TestUpdateTailwindThemeFileCreatesThemeFile(t *testing.T) {
 	}
 }
 
-func TestUpdateTailwindThemeFilePreservesExistingValuesAndAddsMissingTokens(t *testing.T) {
+func TestUpdateThemeFilePreservesExistingValuesAndAddsMissingTokens(t *testing.T) {
 	t.Parallel()
 
 	tempDir := t.TempDir()
@@ -74,6 +84,7 @@ func TestUpdateTailwindThemeFilePreservesExistingValuesAndAddsMissingTokens(t *t
 		SrcDir:        "app",
 		ThemeDir:      "styles",
 		ComponentsDir: "components",
+		Style:         config.StyleTailwindCSS,
 	}
 	manifest := ComponentsManifest{
 		Version: 1,
@@ -98,10 +109,11 @@ func TestUpdateTailwindThemeFilePreservesExistingValuesAndAddsMissingTokens(t *t
 	initial := `/*
 Arachne theme tokens for installed components.
 
-Import this file from your stylesheet entrypoint so the tokens are included in your build.
+Import this file into your stylesheet entrypoint so the tokens are included in your build.
 
 Constraints:
 - Keep this file to a single @theme inline block.
+- Replace initial values with theme values for your project.
 - Tokens left as initial are excluded from the final CSS output.
 */
 @theme inline {
@@ -113,9 +125,9 @@ Constraints:
 		t.Fatalf("WriteFile returned error: %v", err)
 	}
 
-	returnedPath, created, err := UpdateTailwindThemeFile(configPath, cfg, manifest)
+	returnedPath, created, err := UpdateThemeFile(configPath, cfg, manifest)
 	if err != nil {
-		t.Fatalf("UpdateTailwindThemeFile returned error: %v", err)
+		t.Fatalf("UpdateThemeFile returned error: %v", err)
 	}
 	if created {
 		t.Fatalf("expected created=false")
@@ -138,5 +150,60 @@ Constraints:
 	}
 	if !strings.Contains(content, "--shadow-focus-ring: initial;") {
 		t.Fatalf("expected missing token to be added, got:\n%s", content)
+	}
+}
+
+func TestUpdateThemeFileCreatesCSSFilesThemeFile(t *testing.T) {
+	t.Parallel()
+
+	tempDir := t.TempDir()
+	configPath := filepath.Join(tempDir, "arachne.json")
+	cfg := config.Config{
+		SrcDir:        "src",
+		ThemeDir:      "styles",
+		ComponentsDir: "components",
+		Style:         config.StyleCSSFiles,
+	}
+	manifest := ComponentsManifest{
+		Version: 1,
+		Components: map[string]InstalledComponent{
+			"separator": {
+				ThemeTokens: []string{
+					"--ara-border-width-x1",
+					"--ara-color-border-subtle",
+					"--ara-spacing-x1",
+				},
+			},
+		},
+	}
+
+	path, created, err := UpdateThemeFile(configPath, cfg, manifest)
+	if err != nil {
+		t.Fatalf("UpdateThemeFile returned error: %v", err)
+	}
+	if !created {
+		t.Fatalf("expected created=true")
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("ReadFile returned error: %v", err)
+	}
+	content := string(data)
+
+	if !strings.Contains(content, "@layer theme {\n  :root {\n") {
+		t.Fatalf("expected css-files wrapper, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-border-width-x1: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-color-border-subtle: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "    --ara-spacing-x1: initial;") {
+		t.Fatalf("expected nested declaration indentation, got:\n%s", content)
+	}
+	if !strings.Contains(content, "- Keep this file to a single @layer theme { :root { ... } } block.") {
+		t.Fatalf("expected css-files constraint guidance, got:\n%s", content)
 	}
 }

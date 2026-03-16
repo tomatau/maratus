@@ -57,7 +57,7 @@ func New(configFilePath func() string) *cobra.Command {
 			}
 			themeFilePath := ""
 			themeFileStatus := ""
-			if selectedStyle == config.StyleTailwindCSS {
+			if selectedStyle == config.StyleTailwindCSS || selectedStyle == config.StyleCSSFiles {
 				path, created, err := updateThemeFile(proj)
 				if err != nil {
 					return err
@@ -128,5 +128,5 @@ func updateThemeFile(proj project.Project) (string, bool, error) {
 		return "", false, err
 	}
 
-	return project.UpdateTailwindThemeFile(proj.ConfigPath, proj.Config, manifest)
+	return project.UpdateThemeFile(proj.ConfigPath, proj.Config, manifest)
 }
