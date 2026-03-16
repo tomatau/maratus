@@ -1,0 +1,7 @@
+{
+  "srcDir": "src",
+  "componentsDir": "components",
+  "themeDir": "styles",
+  "componentsLayout": "nested",
+  "style": "css-modules"
+}

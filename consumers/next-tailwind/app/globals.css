@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import './styles/arachne-theme';
 
 :root {
   color-scheme: light;

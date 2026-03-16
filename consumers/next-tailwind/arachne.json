@@ -1,0 +1,7 @@
+{
+  "srcDir": "app",
+  "componentsDir": "components",
+  "themeDir": "styles",
+  "componentsLayout": "nested",
+  "style": "tailwind-css"
+}
