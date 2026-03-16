@@ -7,6 +7,7 @@ export const REGISTRY_PACKAGE_FILENAME = 'package.json'
 
 export enum ConfigStyle {
 	CssFiles = 'css-files',
+	CssModules = 'css-modules',
 	TailwindCss = 'tailwind-css',
 }
 

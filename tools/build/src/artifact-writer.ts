@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import {
   ConfigStyle,
   CSS_EXT,
+  CSS_MODULE_EXT,
   REGISTRY_META_FILENAME,
   REGISTRY_PACKAGE_FILENAME,
   styleDirFor,
@@ -58,6 +59,27 @@ export async function writeTailwindCssArtifacts(
   const cssPath = join(dir, `${componentName}${CSS_EXT}`)
   await writeFile(cssPath, css, 'utf8')
   return [wrappedPath, cssPath]
+}
+
+export async function writeCssModulesArtifacts(
+  componentName: string,
+  componentSource: string,
+  cssModuleSource: string,
+  registryDir: string,
+): Promise<string[]> {
+  const fileName = componentSourceFileName(componentName)
+  const dir = join(
+    registryDir,
+    componentName,
+    styleDirFor(ConfigStyle.CssModules),
+  )
+  await mkdir(dir, { recursive: true })
+
+  const componentPath = join(dir, fileName)
+  const cssModulePath = join(dir, `${componentName}${CSS_MODULE_EXT}`)
+  await writeFile(componentPath, componentSource, 'utf8')
+  await writeFile(cssModulePath, cssModuleSource, 'utf8')
+  return [componentPath, cssModulePath]
 }
 
 export async function writeRegistryComponentFiles(

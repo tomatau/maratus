@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import {
   writeCssFilesArtifacts,
+  writeCssModulesArtifacts,
   writeRegistryComponentFiles,
   writeTailwindCssArtifacts,
 } from './artifact-writer'
@@ -48,6 +49,7 @@ export async function buildArtifacts(
       'package.json',
     )
     const componentSource = await readFile(componentSourcePath, 'utf8')
+    const cssModuleSource = await readFile(cssModulePath, 'utf8')
     const cssModule = await compileCssModule(cssModulePath)
     const componentMeta = await extractComponentMeta(cssModulePath)
     const packageManifest = await buildRegistryPackageManifest(
@@ -61,6 +63,14 @@ export async function buildArtifacts(
       cssModule.exports,
     )
 
+    generatedFiles.push(
+      ...(await writeCssModulesArtifacts(
+        componentName,
+        componentSource,
+        cssModuleSource,
+        registryDir,
+      )),
+    )
     generatedFiles.push(
       ...(await writeCssFilesArtifacts(
         componentName,
