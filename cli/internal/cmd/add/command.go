@@ -81,8 +81,6 @@ func New(configFilePath func() string) *cobra.Command {
 		"",
 		"Style mode: "+
 			string(config.StyleCSSFiles)+
-			", "+
-			string(config.StyleInlineCSSVars)+
 			", or "+
 			string(config.StyleTailwindCSS),
 	)

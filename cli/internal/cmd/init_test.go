@@ -95,8 +95,8 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	if cfg.ComponentsLayout != "nested" {
 		t.Fatalf("expected componentsLayout to default to nested, got %q", cfg.ComponentsLayout)
 	}
-	if cfg.Style != "inline-css-vars" {
-		t.Fatalf("expected style to default to inline-css-vars, got %q", cfg.Style)
+	if cfg.Style != "css-files" {
+		t.Fatalf("expected style to default to css-files, got %q", cfg.Style)
 	}
 }
 

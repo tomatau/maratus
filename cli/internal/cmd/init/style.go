@@ -25,14 +25,9 @@ func AskStyle(cmd *cobra.Command) (config.Style, error) {
 
 	items := []optionItem{
 		{
-			Value:       string(config.StyleInlineCSSVars),
-			Label:       string(config.StyleInlineCSSVars),
-			Description: "Inline style object with CSS variable hooks. (default)",
-		},
-		{
 			Value:       string(config.StyleCSSFiles),
 			Label:       string(config.StyleCSSFiles),
-			Description: "Separate .css file imported by the component.",
+			Description: "Separate .css file imported by the component. (default)",
 		},
 		{
 			Value:       string(config.StyleTailwindCSS),
@@ -40,7 +35,7 @@ func AskStyle(cmd *cobra.Command) (config.Style, error) {
 			Description: "Tailwind-layered CSS file imported by the component.",
 		},
 	}
-	index, selected, err := selectOption("How should component styles be added?", items, 3)
+	index, selected, err := selectOption("How should component styles be added?", items, 0)
 	if err != nil {
 		return "", err
 	}

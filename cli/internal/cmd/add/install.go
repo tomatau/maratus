@@ -54,8 +54,6 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
 	case config.StyleTailwindCSS:
 		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
-	case config.StyleInlineCSSVars:
-		return installInlineComponent(result, sourceComponentFile, installPaths)
 	default:
 		return InstallResult{}, fmt.Errorf("unsupported style: %s", style)
 	}
@@ -76,17 +74,5 @@ func installCSSBackedComponent(
 		return InstallResult{}, err
 	}
 	result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
-	return result, nil
-}
-
-func installInlineComponent(
-	result InstallResult,
-	sourceComponentFile string,
-	installPaths InstallPaths,
-) (InstallResult, error) {
-	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
-		return InstallResult{}, err
-	}
-	result.Files = append(result.Files, installPaths.ComponentFile)
 	return result, nil
 }

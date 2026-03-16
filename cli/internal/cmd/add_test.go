@@ -161,92 +161,6 @@ func TestAddNoArgsInNonInteractiveModeReturnsError(t *testing.T) {
 	}
 }
 
-func TestAddSeparatorInlineCSSVars(t *testing.T) {
-	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
-	writeConfig(t, wd, `{
-  "srcDir": "./tmp/src",
-  "componentsDir": "components",
-  "componentsLayout": "flat"
-}`)
-
-	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "inline-css-vars"})
-	root.SetOut(&bytes.Buffer{})
-	root.SetErr(&bytes.Buffer{})
-
-	previous, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
-	t.Cleanup(func() { _ = os.Chdir(previous) })
-
-	if err := os.Chdir(wd); err != nil {
-		t.Fatalf("chdir temp dir: %v", err)
-	}
-
-	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
-	}
-
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator.css")
-
-	componentContent, err := os.ReadFile(componentPath)
-	if err != nil {
-		t.Fatalf("read component file: %v", err)
-	}
-	if !strings.Contains(string(componentContent), "StyledSeparator") {
-		t.Fatalf("expected styled wrapper in inline output, got:\n%s", componentContent)
-	}
-	if _, err := os.Stat(cssPath); !os.IsNotExist(err) {
-		t.Fatalf("expected no css file, got err=%v", err)
-	}
-}
-
-func TestAddSeparatorInlineCSSVarsNestedLayout(t *testing.T) {
-	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
-	writeConfig(t, wd, `{
-  "srcDir": "./tmp/src",
-  "componentsDir": "components",
-  "componentsLayout": "nested"
-}`)
-
-	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "inline-css-vars"})
-	root.SetOut(&bytes.Buffer{})
-	root.SetErr(&bytes.Buffer{})
-
-	previous, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
-	t.Cleanup(func() { _ = os.Chdir(previous) })
-
-	if err := os.Chdir(wd); err != nil {
-		t.Fatalf("chdir temp dir: %v", err)
-	}
-
-	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
-	}
-
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "separator", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator", "separator.css")
-
-	componentContent, err := os.ReadFile(componentPath)
-	if err != nil {
-		t.Fatalf("read nested component file: %v", err)
-	}
-	if !strings.Contains(string(componentContent), "StyledSeparator") {
-		t.Fatalf("expected styled wrapper in nested inline output, got:\n%s", componentContent)
-	}
-	if _, err := os.Stat(cssPath); !os.IsNotExist(err) {
-		t.Fatalf("expected no nested css file, got err=%v", err)
-	}
-}
-
 func writeConfig(t *testing.T, wd string, config string) {
 	t.Helper()
 	path := filepath.Join(wd, "arachne.json")
@@ -263,17 +177,17 @@ func writeSeparatorArtifacts(t *testing.T, wd string) {
 func writeComponentArtifacts(t *testing.T, wd string, name string) {
 	t.Helper()
 	cssFileDir := filepath.Join(wd, "registry", "separator", "css-files")
-	cssVarsDir := filepath.Join(wd, "registry", "separator", "inline-css-vars")
+	tailwindDir := filepath.Join(wd, "registry", "separator", "tailwind-css")
 	if name != "separator" {
 		cssFileDir = filepath.Join(wd, "registry", name, "css-files")
-		cssVarsDir = filepath.Join(wd, "registry", name, "inline-css-vars")
+		tailwindDir = filepath.Join(wd, "registry", name, "tailwind-css")
 	}
 
 	if err := os.MkdirAll(cssFileDir, 0o755); err != nil {
 		t.Fatalf("mkdir css-files dir: %v", err)
 	}
-	if err := os.MkdirAll(cssVarsDir, 0o755); err != nil {
-		t.Fatalf("mkdir inline-css-vars dir: %v", err)
+	if err := os.MkdirAll(tailwindDir, 0o755); err != nil {
+		t.Fatalf("mkdir tailwind-css dir: %v", err)
 	}
 
 	if err := os.WriteFile(
@@ -291,11 +205,18 @@ func writeComponentArtifacts(t *testing.T, wd string, name string) {
 		t.Fatalf("write css-file css: %v", err)
 	}
 	if err := os.WriteFile(
-		filepath.Join(cssVarsDir, componentTypeName(name)+".tsx"),
-		[]byte("function Styled"+componentTypeName(name)+"() { return <hr /> }\nexport { Styled"+componentTypeName(name)+" as "+componentTypeName(name)+" }\n"),
+		filepath.Join(tailwindDir, componentTypeName(name)+".tsx"),
+		[]byte("import \"./"+name+".css\"\nexport function "+componentTypeName(name)+"() { return <hr /> }\n"),
 		0o644,
 	); err != nil {
-		t.Fatalf("write css-vars component: %v", err)
+		t.Fatalf("write tailwind component: %v", err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(tailwindDir, name+".css"),
+		[]byte("@reference \"tailwindcss\";\n@layer components { .x { margin: 0; } }\n"),
+		0o644,
+	); err != nil {
+		t.Fatalf("write tailwind css: %v", err)
 	}
 }
 

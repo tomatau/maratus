@@ -1,15 +1,12 @@
 import type { ComponentMeta } from './component-meta'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { renderInlineCssVarsAdapter } from '@arachne/adapters'
 import {
   ConfigStyle,
   CSS_EXT,
-  INLINE_STYLE_VAR_NAME,
   REGISTRY_META_FILENAME,
   REGISTRY_PACKAGE_FILENAME,
   styleDirFor,
-  TSX_EXT,
 } from './config'
 import { componentSourceFileName } from './monorepo'
 
@@ -61,31 +58,6 @@ export async function writeTailwindCssArtifacts(
   const cssPath = join(dir, `${componentName}${CSS_EXT}`)
   await writeFile(cssPath, css, 'utf8')
   return [wrappedPath, cssPath]
-}
-
-export async function writeInlineCssVarsArtifacts(
-  componentName: string,
-  componentSource: string,
-  inlineStyleLiteral: string,
-  registryDir: string,
-): Promise<string> {
-  const fileName = componentSourceFileName(componentName)
-  const dir = join(
-    registryDir,
-    componentName,
-    styleDirFor(ConfigStyle.InlineCssVars),
-  )
-  await mkdir(dir, { recursive: true })
-
-  const adapter = await renderInlineCssVarsAdapter({
-    componentName: fileName.replace(TSX_EXT, ''),
-    sourceComponent: componentSource,
-    inlineStyleVarName: INLINE_STYLE_VAR_NAME,
-    inlineStyleLiteral,
-  })
-  const path = join(dir, fileName)
-  await writeFile(path, adapter, 'utf8')
-  return path
 }
 
 export async function writeRegistryComponentFiles(

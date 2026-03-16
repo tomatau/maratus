@@ -6,9 +6,8 @@ const (
 	ComponentsLayoutNested = "nested"
 	ComponentsLayoutFlat   = "flat"
 
-	StyleCSSFiles      Style = "css-files"
-	StyleInlineCSSVars Style = "inline-css-vars"
-	StyleTailwindCSS   Style = "tailwind-css"
+	StyleCSSFiles    Style = "css-files"
+	StyleTailwindCSS Style = "tailwind-css"
 )
 
 func DefaultComponentsLayout() string {
@@ -16,7 +15,7 @@ func DefaultComponentsLayout() string {
 }
 
 func DefaultStyle() Style {
-	return StyleInlineCSSVars
+	return StyleCSSFiles
 }
 
 func IsValidComponentsLayout(layout string) bool {
@@ -39,7 +38,7 @@ func ParseStyle(style string) (Style, bool) {
 
 func (style Style) IsValid() bool {
 	switch style {
-	case StyleCSSFiles, StyleInlineCSSVars, StyleTailwindCSS:
+	case StyleCSSFiles, StyleTailwindCSS:
 		return true
 	default:
 		return false

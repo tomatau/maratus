@@ -6,18 +6,8 @@ export const REGISTRY_META_FILENAME = 'meta.json'
 export const REGISTRY_PACKAGE_FILENAME = 'package.json'
 
 export enum ConfigStyle {
-	InlineCssVars = 'inline-css-vars',
 	CssFiles = 'css-files',
 	TailwindCss = 'tailwind-css',
-}
-
-export const STYLES_FILENAME = 'styles.ts'
-export const INLINE_STYLE_VAR_NAME = 'componentInlineStyle'
-
-export type StyleSpec = {
-  className: string
-  vars: Record<string, string>
-  declarations: Record<string, string>
 }
 
 export function styleDirFor(style: ConfigStyle): string {
