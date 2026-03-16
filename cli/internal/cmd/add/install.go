@@ -43,7 +43,7 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 		return InstallResult{}, err
 	}
 
-	installPaths := ResolveInstallPaths(proj, componentName)
+	installPaths := ResolveInstallPaths(proj, componentName, style)
 
 	if err := os.MkdirAll(installPaths.ComponentDir, 0o755); err != nil {
 		return InstallResult{}, err
@@ -52,6 +52,8 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 	switch style {
 	case config.StyleCSSFiles:
 		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
+	case config.StyleCSSModules:
+		return installCSSModuleComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
 	case config.StyleTailwindCSS:
 		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
 	default:
@@ -67,6 +69,24 @@ func installCSSBackedComponent(
 	componentName string,
 ) (InstallResult, error) {
 	cssSourcePath := filepath.Join(sourceBaseDir, componentName+".css")
+	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
+		return InstallResult{}, err
+	}
+	if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
+		return InstallResult{}, err
+	}
+	result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
+	return result, nil
+}
+
+func installCSSModuleComponent(
+	result InstallResult,
+	sourceBaseDir string,
+	sourceComponentFile string,
+	installPaths InstallPaths,
+	componentName string,
+) (InstallResult, error) {
+	cssSourcePath := filepath.Join(sourceBaseDir, ComponentStyleFileName(componentName, config.StyleCSSModules))
 	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
 		return InstallResult{}, err
 	}

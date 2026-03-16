@@ -7,6 +7,7 @@ const (
 	ComponentsLayoutFlat   = "flat"
 
 	StyleCSSFiles    Style = "css-files"
+	StyleCSSModules  Style = "css-modules"
 	StyleTailwindCSS Style = "tailwind-css"
 )
 
@@ -38,7 +39,7 @@ func ParseStyle(style string) (Style, bool) {
 
 func (style Style) IsValid() bool {
 	switch style {
-	case StyleCSSFiles, StyleTailwindCSS:
+	case StyleCSSFiles, StyleCSSModules, StyleTailwindCSS:
 		return true
 	default:
 		return false

@@ -30,6 +30,11 @@ func AskStyle(cmd *cobra.Command) (config.Style, error) {
 			Description: "Separate .css file imported by the component. (default)",
 		},
 		{
+			Value:       string(config.StyleCSSModules),
+			Label:       string(config.StyleCSSModules),
+			Description: "Separate .module.css file imported by the component.",
+		},
+		{
 			Value:       string(config.StyleTailwindCSS),
 			Label:       string(config.StyleTailwindCSS),
 			Description: "Tailwind-layered CSS file imported by the component.",

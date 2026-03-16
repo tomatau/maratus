@@ -127,7 +127,7 @@ func renderThemeFile(themeStyle config.Style, values map[string]string) string {
 	builder.WriteString("*/\n")
 	builder.WriteString(themeBlockOpen(themeStyle))
 	declarationIndent := "  "
-	if themeStyle == config.StyleCSSFiles {
+	if themeStyle == config.StyleCSSFiles || themeStyle == config.StyleCSSModules {
 		declarationIndent = "    "
 	}
 	for _, token := range tokens {
@@ -143,28 +143,28 @@ func renderThemeFile(themeStyle config.Style, values map[string]string) string {
 }
 
 func themeBlockPattern(themeStyle config.Style) *regexp.Regexp {
-	if themeStyle == config.StyleCSSFiles {
+	if themeStyle == config.StyleCSSFiles || themeStyle == config.StyleCSSModules {
 		return cssThemeBlockPattern
 	}
 	return tailwindThemeBlockPattern
 }
 
 func themeBlockDescription(themeStyle config.Style) string {
-	if themeStyle == config.StyleCSSFiles {
+	if themeStyle == config.StyleCSSFiles || themeStyle == config.StyleCSSModules {
 		return "@layer theme { :root { ... } } block"
 	}
 	return "@theme inline block"
 }
 
 func themeBlockOpen(themeStyle config.Style) string {
-	if themeStyle == config.StyleCSSFiles {
+	if themeStyle == config.StyleCSSFiles || themeStyle == config.StyleCSSModules {
 		return "@layer theme {\n  :root {\n"
 	}
 	return "@theme inline {\n"
 }
 
 func themeBlockClose(themeStyle config.Style) string {
-	if themeStyle == config.StyleCSSFiles {
+	if themeStyle == config.StyleCSSFiles || themeStyle == config.StyleCSSModules {
 		return "  }\n}\n"
 	}
 	return "}\n"
