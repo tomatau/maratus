@@ -6,6 +6,12 @@
 - Use Bun as the primary dev tool.
 - Use Playwright component testing for all component validation.
 
+## Docs
+
+- Architecture decisions: [`docs/ARCHITECTURE.md`](/Users/tomatao/Code/tomatao/arachne/docs/ARCHITECTURE.md)
+- Runtime/store decisions: [`docs/RUNTIME.md`](/Users/tomatao/Code/tomatao/arachne/docs/RUNTIME.md)
+- Component conventions: [`docs/COMPONENTS.md`](/Users/tomatao/Code/tomatao/arachne/docs/COMPONENTS.md)
+
 ## Accessibility Baseline
 
 - WCAG 2.2 AA
