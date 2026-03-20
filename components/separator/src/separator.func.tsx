@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/experimental-ct-react'
-import { Separator } from '../src'
+import { Separator } from '.'
 
 test('separator renders and has no automatic axe violations', async ({
   mount,
