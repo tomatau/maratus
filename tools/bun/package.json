@@ -1,0 +1,12 @@
+{
+  "name": "@arachne/bun",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./unit-test": "./src/unit-test.ts"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}

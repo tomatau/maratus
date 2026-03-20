@@ -1,25 +1,25 @@
 :root {
-  --ara-button-padding-inline: var(--ara-spacing-x1);
-  --ara-button-padding-block: var(--ara-spacing-x1);
+  --ara-button-bg-color: var(--ara-color-surface-action);
+  --ara-button-bg-color--disabled: var(--ara-color-surface--disabled);
+  --ara-button-bg-color--focus: var(--ara-color-surface-action--focus);
+  --ara-button-bg-color--hover: var(--ara-color-surface-action--hover);
+  --ara-button-bg-color--loading: var(--ara-color-surface-action--loading);
+  --ara-button-bg-color--pressed: var(--ara-color-surface-action--pressed);
+  --ara-button-border-color: var(--ara-color-border-subtle);
   --ara-button-border-radius: var(--ara-radius-x1);
   --ara-button-border-width: var(--ara-border-width-x1);
-  --ara-button-border-color: var(--ara-color-border-subtle);
-  --ara-button-background-color: var(--ara-color-surface-interactive);
-  --ara-button-text-color: var(--ara-color-text-interactive);
-  --ara-button-background-color-hover: var(--ara-color-surface-interactive-hover);
-  --ara-button-background-color-focus: var(--ara-color-surface-interactive-focus);
-  --ara-button-background-color-pressed: var(--ara-color-surface-interactive-pressed);
-  --ara-button-background-color-disabled: var(--ara-color-surface-disabled);
-  --ara-button-text-color-disabled: var(--ara-color-text-disabled);
-  --ara-button-background-color-loading: var(--ara-color-surface-interactive-loading);
-  --ara-button-text-color-loading: var(--ara-color-text-interactive-loading);
   --ara-button-focus-ring-color: var(--ara-color-focus-ring);
-  --ara-button-focus-ring-width: var(--ara-border-width-x1);
   --ara-button-focus-ring-offset: var(--ara-spacing-x1);
+  --ara-button-focus-ring-width: var(--ara-border-width-x1);
+  --ara-button-padding-block: var(--ara-spacing-x1);
+  --ara-button-padding-inline: var(--ara-spacing-x1);
+  --ara-button-text-color: var(--ara-color-text-action);
+  --ara-button-text-color--disabled: var(--ara-color-text--disabled);
+  --ara-button-text-color--loading: var(--ara-color-text-action--loading);
 }
 
 .button {
-  background-color: var(--ara-button-background-color);
+  background-color: var(--ara-button-bg-color);
   border-color: var(--ara-button-border-color);
   border-radius: var(--ara-button-border-radius);
   border-width: var(--ara-button-border-width);
@@ -29,26 +29,27 @@
 }
 
 .button:hover {
-  background-color: var(--ara-button-background-color-hover);
+  background-color: var(--ara-button-bg-color--hover);
 }
 
 .button:focus {
-  background-color: var(--ara-button-background-color-focus);
+  background-color: var(--ara-button-bg-color--focus);
   outline-color: var(--ara-button-focus-ring-color);
   outline-offset: var(--ara-button-focus-ring-offset);
   outline-width: var(--ara-button-focus-ring-width);
 }
 
 .button[data-pressed] {
-  background-color: var(--ara-button-background-color-pressed);
+  background-color: var(--ara-button-bg-color--pressed);
 }
 
-.button:disabled {
-  background-color: var(--ara-button-background-color-disabled);
-  color: var(--ara-button-text-color-disabled);
+.button:disabled,
+.button[aria-disabled='true'] {
+  background-color: var(--ara-button-bg-color--disabled);
+  color: var(--ara-button-text-color--disabled);
 }
 
 .button[data-loading] {
-  background-color: var(--ara-button-background-color-loading);
-  color: var(--ara-button-text-color-loading);
+  background-color: var(--ara-button-bg-color--loading);
+  color: var(--ara-button-text-color--loading);
 }

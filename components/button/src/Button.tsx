@@ -1,33 +1,33 @@
-import type { ButtonHTMLAttributes } from 'react'
-import clsx from 'clsx'
-import styles from './button.module.css'
-
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  isLoading?: boolean
-  isPressed?: boolean
-}
+import type { ButtonProps } from './useButton'
+import { useButton } from './useButton'
 
 export function Button(props: ButtonProps) {
+  const { buttonProps, whenEnabled } = useButton(props)
+  const { children, ...rootProps } = buttonProps
   const {
-    'aria-busy': ariaBusy,
-    className,
+    canFocus = false,
     disabled,
     isLoading = false,
-    isPressed,
+    onClick,
+    onMouseDown,
+    onPointerDown,
+    onTouchStart,
     type = 'button',
-    ...rest
   } = props
 
   return (
     <button
-      {...rest}
-      aria-busy={isLoading || ariaBusy ? true : undefined}
-      aria-pressed={isPressed}
-      className={clsx(styles.button, className)}
-      data-loading={isLoading ? '' : undefined}
-      data-pressed={isPressed ? '' : undefined}
-      disabled={disabled || isLoading}
+      {...rootProps}
+      disabled={(disabled || isLoading) && !canFocus}
+      {...whenEnabled({
+        onClick,
+        onMouseDown,
+        onPointerDown,
+        onTouchStart,
+      })}
       type={type}
-    />
+    >
+      {children}
+    </button>
   )
 }

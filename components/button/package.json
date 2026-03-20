@@ -4,15 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:unit": "bun test --preload @arachne/bun/unit-test",
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "devDependencies": {
     "@arachne/build": "workspace:*",
+    "@arachne/bun": "workspace:*",
     "@arachne/dotfiles": "workspace:*",
     "@arachne/playwright": "workspace:*",
     "@axe-core/playwright": "^4.10.2",
     "@playwright/experimental-ct-react": "^1.55.0",
     "@playwright/test": "^1.55.0",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19.2.14",
     "@vitejs/plugin-react": "^5.0.2",
     "clsx": "^2.1.1",
