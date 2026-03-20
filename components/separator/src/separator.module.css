@@ -1,5 +1,5 @@
 :root {
-  --ara-separator-color: var(--ara-color-border-subtle);
+  --ara-separator-color: var(--ara-color-content-border);
   --ara-separator-thickness: var(--ara-border-width-x1);
   --ara-separator-margin-block: var(--ara-spacing-x1);
 }
