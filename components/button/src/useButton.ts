@@ -5,22 +5,18 @@ import styles from './button.module.css'
 
 type HTMLButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
 
-type PublicNativeButtonProps = Pick<
-  HTMLButtonProps,
-  | 'aria-busy'
-  | 'aria-describedby'
-  | 'aria-disabled'
-  | 'aria-label'
-  | 'aria-labelledby'
+type PublicNativeButtonProps = Omit<HTMLButtonProps, 'aria-pressed' | 'role'>
+
+type ManagedRootProps =
   | 'children'
   | 'className'
+  | 'data-loading'
   | 'disabled'
   | 'onClick'
   | 'onMouseDown'
   | 'onPointerDown'
   | 'onTouchStart'
   | 'type'
->
 
 export type DisabledBehavior = 'native' | 'focusable'
 
@@ -42,15 +38,10 @@ type ToggleButtonProps = {
 export type ButtonProps = CommonButtonProps &
   (CommandButtonProps | ToggleButtonProps)
 
-export type ButtonRootProps = {
-  'aria-busy'?: HTMLButtonProps['aria-busy']
-  'aria-describedby'?: HTMLButtonProps['aria-describedby']
-  'aria-disabled'?: HTMLButtonProps['aria-disabled']
-  'aria-label'?: HTMLButtonProps['aria-label']
-  'aria-labelledby'?: HTMLButtonProps['aria-labelledby']
+export type ButtonRootProps = Omit<HTMLButtonProps, ManagedRootProps> & {
   'aria-pressed'?: HTMLButtonProps['aria-pressed']
-  children?: HTMLButtonProps['children']
   className?: string
+  children?: HTMLButtonProps['children']
   'data-loading'?: ''
 }
 
@@ -68,17 +59,18 @@ export type UseButtonResult = {
 export function useButton(props: ButtonProps): UseButtonResult {
   const {
     'aria-busy': ariaBusy,
-    'aria-describedby': ariaDescribedBy,
     'aria-disabled': ariaDisabled,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledBy,
     className,
     disabled,
+    disabledBehavior: _disabledBehavior,
     isLoading = false,
+    kind = 'command',
+    pressed,
     children,
+    ...nativeProps
   } = props
   const isInteractionDisabled = disabled || isLoading
-  const ariaPressed = props.kind === 'toggle' ? props.pressed : undefined
+  const ariaPressed = kind === 'toggle' ? pressed : undefined
 
   const whenEnabled = useCallback<WhenEnabled>(
     <T extends object>(enabledProps: T) =>
@@ -88,12 +80,10 @@ export function useButton(props: ButtonProps): UseButtonResult {
 
   return {
     buttonProps: {
+      ...nativeProps,
       'aria-busy': ariaBusy ?? (isLoading ? true : undefined),
-      'aria-describedby': ariaDescribedBy,
       'aria-disabled':
         ariaDisabled ?? (isInteractionDisabled ? true : undefined),
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledBy,
       'aria-pressed': ariaPressed,
       children,
       className: clsx(styles.button, className),

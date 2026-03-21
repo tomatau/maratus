@@ -12,7 +12,7 @@ export function Button(props: ButtonProps) {
     onMouseDown,
     onPointerDown,
     onTouchStart,
-    type = 'button',
+    type,
   } = props
 
   return (

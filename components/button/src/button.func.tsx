@@ -13,11 +13,11 @@ test('REQ-001 REQ-002 PRD-003 button renders native button semantics and has no 
   expect(results.violations).toEqual([])
 })
 
-test('REQ-001 PRD-003 button defaults type to button', async ({
+test('REQ-013 button forwards an explicit type value', async ({
   mount,
   page,
 }) => {
-  await mount(<Button>Press me</Button>)
+  await mount(<Button type="button">Press me</Button>)
   await expect(page.locator('#root button')).toHaveAttribute('type', 'button')
 })
 
@@ -144,4 +144,158 @@ test('REQ-010 native button does not set a redundant explicit button role', asyn
     'role',
     'button',
   )
+})
+
+test('REQ-011 submit buttons allow normal HTML form submission behaviour', async ({
+  mount,
+  page,
+}) => {
+  let submitted = false
+
+  await mount(
+    <form
+      onSubmit={() => {
+        submitted = true
+      }}
+    >
+      <Button type="submit">Submit</Button>
+    </form>,
+  )
+
+  await page.locator('#root button').click()
+  expect(submitted).toBe(true)
+})
+
+test('REQ-012 reset buttons allow normal HTML form reset behaviour', async ({
+  mount,
+  page,
+}) => {
+  let reset = false
+
+  await mount(
+    <form
+      onReset={() => {
+        reset = true
+      }}
+    >
+      <input
+        defaultValue="before"
+        id="field"
+      />
+      <Button type="reset">Reset</Button>
+    </form>,
+  )
+
+  await page.locator('#field').fill('after')
+  await page.locator('#root button').click()
+
+  await expect(page.locator('#field')).toHaveValue('before')
+  expect(reset).toBe(true)
+})
+
+test('REQ-013 buttons without a type use the HTML missing-value default', async ({
+  mount,
+  page,
+}) => {
+  let submitted = false
+
+  await mount(
+    <form
+      onSubmit={() => {
+        submitted = true
+      }}
+    >
+      <Button>Submit</Button>
+    </form>,
+  )
+
+  await page.locator('#root button').click()
+  expect(submitted).toBe(true)
+})
+
+test('REQ-014 submit buttons support HTML form submission attributes', async ({
+  mount,
+  page,
+}) => {
+  await mount(
+    <Button
+      form="settings-form"
+      formAction="/save"
+      formEncType="multipart/form-data"
+      formMethod="post"
+      formNoValidate
+      formTarget="_blank"
+      type="submit"
+    >
+      Submit
+    </Button>,
+  )
+
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'form',
+    'settings-form',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'formaction',
+    '/save',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'formenctype',
+    'multipart/form-data',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'formmethod',
+    'post',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'formnovalidate',
+    '',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'formtarget',
+    '_blank',
+  )
+})
+
+test('REQ-015 buttons support HTML form association attributes', async ({
+  mount,
+  page,
+}) => {
+  await mount(
+    <>
+      <form id="linked-form" />
+      <Button
+        form="linked-form"
+        name="intent"
+        type="submit"
+        value="save"
+      >
+        Save
+      </Button>
+    </>,
+  )
+
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'form',
+    'linked-form',
+  )
+  await expect(page.locator('#root button')).toHaveAttribute('name', 'intent')
+  await expect(page.locator('#root button')).toHaveAttribute('value', 'save')
+
+  const submittedValue = await page.locator('#root').evaluate((root) => {
+    const form = root.querySelector('form')
+    const button = root.querySelector('button')
+
+    if (!(form instanceof HTMLFormElement)) {
+      throw new Error('Expected form element')
+    }
+
+    if (!(button instanceof HTMLButtonElement)) {
+      throw new Error('Expected button element')
+    }
+
+    return String(new FormData(form, button).get('intent') ?? '')
+  })
+
+  expect(submittedValue).toBe('save')
 })
