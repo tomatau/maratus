@@ -52,6 +52,8 @@ For each component:
   - `Potential`
   - `N/A`
 - When a requirement applies only in a specific mode, variant, or state, include that condition explicitly in the requirement.
+- Keep spec-derived requirements in a normative matrix.
+- Capture UX, DX, and library-policy decisions in a separate product requirements section.
 
 ## Enforcement Strategy
 
