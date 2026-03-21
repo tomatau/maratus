@@ -1,5 +1,6 @@
 import type { Declaration, Location2, Rule, StyleRule } from 'lightningcss'
 import { transform } from 'lightningcss'
+import { wrapInLayer } from './css-format'
 
 export function emitTailwindCssWithLightning(css: string): string {
   const safeRootBlocks = extractSafeRootBlocks(css)
@@ -13,7 +14,7 @@ export function emitTailwindCssWithLightning(css: string): string {
   }
 
   if (strippedCss) {
-    sections.push(`@layer components {\n${indentBlock(strippedCss)}\n}`)
+    sections.push(wrapInLayer('components', strippedCss).trim())
   }
 
   return sections.join('\n\n').trim()
@@ -140,11 +141,4 @@ function findMatchingBrace(source: string, openBraceOffset: number): number {
   }
 
   throw new Error('Expected closing brace for safe :root rule')
-}
-
-function indentBlock(text: string): string {
-  return text
-    .split('\n')
-    .map((line) => (line ? `  ${line}` : line))
-    .join('\n')
 }

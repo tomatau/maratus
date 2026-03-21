@@ -10,6 +10,7 @@ import {
   REGISTRY_PACKAGE_FILENAME,
   styleDirFor,
 } from './config'
+import { wrapInLayer } from './css-format'
 
 export async function writeCssFilesArtifacts(
   componentName: string,
@@ -34,7 +35,7 @@ export async function writeCssFilesArtifacts(
   }
 
   const cssPath = join(dir, `${componentName}${CSS_EXT}`)
-  await writeFile(cssPath, css, 'utf8')
+  await writeFile(cssPath, wrapInLayer('components', css), 'utf8')
   return [...writtenPaths, cssPath]
 }
 
