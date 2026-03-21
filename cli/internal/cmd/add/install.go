@@ -19,15 +19,13 @@ type InstallResult struct {
 func InstallComponent(proj project.Project, componentName string, style config.Style) (InstallResult, error) {
 	result := InstallResult{Component: componentName}
 
-	componentFileName := ComponentSourceFileName(componentName)
 	sourceStyleDir, err := config.SourceStyleDirFor(style)
 	if err != nil {
 		return InstallResult{}, err
 	}
 
 	sourceBaseDir := filepath.Join(proj.RegistryRoot, componentName, sourceStyleDir)
-	sourceComponentFile := filepath.Join(sourceBaseDir, componentFileName)
-	if _, err := os.Stat(sourceComponentFile); err != nil {
+	if _, err := os.Stat(sourceBaseDir); err != nil {
 		available, listErr := registry.AvailableComponents(proj.RegistryRoot)
 		if listErr != nil {
 			return InstallResult{}, fmt.Errorf("component %q not found (failed to list available components: %w)", componentName, listErr)
@@ -36,7 +34,7 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 			return InstallResult{}, fmt.Errorf(
 				"component %q not found. expected %s. available: %s",
 				componentName,
-				filepath.Join(registry.DefaultRootDir, componentName, sourceStyleDir, componentFileName),
+				filepath.Join(registry.DefaultRootDir, componentName, sourceStyleDir),
 				strings.Join(available, ", "),
 			)
 		}
@@ -49,50 +47,39 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 		return InstallResult{}, err
 	}
 
-	switch style {
-	case config.StyleCSSFiles:
-		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
-	case config.StyleCSSModules:
-		return installCSSModuleComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
-	case config.StyleTailwindCSS:
-		return installCSSBackedComponent(result, sourceBaseDir, sourceComponentFile, installPaths, componentName)
-	default:
-		return InstallResult{}, fmt.Errorf("unsupported style: %s", style)
-	}
+	return installBuiltSourceGraph(result, sourceBaseDir, installPaths)
 }
 
-func installCSSBackedComponent(
+func installBuiltSourceGraph(
 	result InstallResult,
 	sourceBaseDir string,
-	sourceComponentFile string,
 	installPaths InstallPaths,
-	componentName string,
 ) (InstallResult, error) {
-	cssSourcePath := filepath.Join(sourceBaseDir, componentName+".css")
-	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
-		return InstallResult{}, err
-	}
-	if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
-		return InstallResult{}, err
-	}
-	result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
-	return result, nil
-}
+	err := filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() {
+			return nil
+		}
 
-func installCSSModuleComponent(
-	result InstallResult,
-	sourceBaseDir string,
-	sourceComponentFile string,
-	installPaths InstallPaths,
-	componentName string,
-) (InstallResult, error) {
-	cssSourcePath := filepath.Join(sourceBaseDir, ComponentStyleFileName(componentName, config.StyleCSSModules))
-	if err := fsutil.CopyFile(sourceComponentFile, installPaths.ComponentFile); err != nil {
+		relativePath, err := filepath.Rel(sourceBaseDir, sourcePath)
+		if err != nil {
+			return err
+		}
+		destinationPath := filepath.Join(installPaths.ComponentDir, relativePath)
+		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
+			return err
+		}
+		if err := fsutil.CopyFile(sourcePath, destinationPath); err != nil {
+			return err
+		}
+		result.Files = append(result.Files, destinationPath)
+		return nil
+	})
+	if err != nil {
 		return InstallResult{}, err
 	}
-	if err := fsutil.CopyFile(cssSourcePath, installPaths.CSSFile); err != nil {
-		return InstallResult{}, err
-	}
-	result.Files = append(result.Files, installPaths.ComponentFile, installPaths.CSSFile)
+
 	return result, nil
 }

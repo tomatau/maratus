@@ -8,9 +8,24 @@ import (
 	"testing"
 )
 
-func TestAddSeparatorCSSFiles(t *testing.T) {
+type registryFixture struct {
+	name            string
+	themeTokens     []string
+	componentTokens [][2]string
+	cssFiles        map[string]string
+	cssModules      map[string]string
+	tailwindCSS     map[string]string
+}
+
+const (
+	componentOnlyName     = "componentonly"
+	componentWithHookName = "componentwithhook"
+)
+
+func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
 	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
+	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -18,7 +33,7 @@ func TestAddSeparatorCSSFiles(t *testing.T) {
 }`)
 
 	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "css-files"})
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
 	root.SetOut(&bytes.Buffer{})
 	root.SetErr(&bytes.Buffer{})
 
@@ -33,66 +48,22 @@ func TestAddSeparatorCSSFiles(t *testing.T) {
 	}
 
 	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
+		t.Fatalf("execute add component-with-hook css-files: %v", err)
 	}
 
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator.css")
-
-	componentContent, err := os.ReadFile(componentPath)
-	if err != nil {
-		t.Fatalf("read component file: %v", err)
-	}
-	if !strings.Contains(string(componentContent), `import "./separator.css"`) {
-		t.Fatalf("expected component to import separator.css, got:\n%s", componentContent)
-	}
-	if _, err := os.Stat(cssPath); err != nil {
-		t.Fatalf("expected css file: %v", err)
-	}
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		`import './`+componentWithHookName+`.css'`,
+	)
 }
 
-func TestAddSeparatorCSSFilesNestedLayout(t *testing.T) {
+func TestAddCSSModulesCopiesBuiltSourceGraph(t *testing.T) {
 	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
-	writeConfig(t, wd, `{
-  "srcDir": "./tmp/src",
-  "componentsDir": "components",
-  "componentsLayout": "nested"
-}`)
-
-	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "css-files"})
-	root.SetOut(&bytes.Buffer{})
-	root.SetErr(&bytes.Buffer{})
-
-	previous, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getwd: %v", err)
-	}
-	t.Cleanup(func() { _ = os.Chdir(previous) })
-
-	if err := os.Chdir(wd); err != nil {
-		t.Fatalf("chdir temp dir: %v", err)
-	}
-
-	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
-	}
-
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "separator", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator", "separator.css")
-
-	if _, err := os.Stat(componentPath); err != nil {
-		t.Fatalf("expected nested component file: %v", err)
-	}
-	if _, err := os.Stat(cssPath); err != nil {
-		t.Fatalf("expected nested css file: %v", err)
-	}
-}
-
-func TestAddSeparatorCSSModules(t *testing.T) {
-	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -100,7 +71,7 @@ func TestAddSeparatorCSSModules(t *testing.T) {
 }`)
 
 	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "css-modules"})
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-modules"})
 	root.SetOut(&bytes.Buffer{})
 	root.SetErr(&bytes.Buffer{})
 
@@ -115,28 +86,60 @@ func TestAddSeparatorCSSModules(t *testing.T) {
 	}
 
 	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
+		t.Fatalf("execute add component-with-hook css-modules: %v", err)
 	}
 
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator.module.css")
-
-	componentContent, err := os.ReadFile(componentPath)
-	if err != nil {
-		t.Fatalf("read component file: %v", err)
-	}
-	if !strings.Contains(string(componentContent), `import styles from "./separator.module.css"`) &&
-		!strings.Contains(string(componentContent), `import styles from './separator.module.css'`) {
-		t.Fatalf("expected component to import separator.module.css, got:\n%s", componentContent)
-	}
-	if _, err := os.Stat(cssPath); err != nil {
-		t.Fatalf("expected css module file: %v", err)
-	}
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".module.css"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		`import styles from './`+componentWithHookName+`.module.css'`,
+	)
 }
 
-func TestAddSeparatorCSSModulesNestedLayout(t *testing.T) {
+func TestAddTailwindCSSCopiesBuiltSourceGraph(t *testing.T) {
 	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "componentsLayout": "flat"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "tailwind-css"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add component-with-hook tailwind-css: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		`import './`+componentWithHookName+`.css'`,
+	)
+}
+
+func TestAddNestedLayoutPreservesRelativeFiles(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -144,7 +147,7 @@ func TestAddSeparatorCSSModulesNestedLayout(t *testing.T) {
 }`)
 
 	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "--style", "css-modules"})
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
 	root.SetOut(&bytes.Buffer{})
 	root.SetErr(&bytes.Buffer{})
 
@@ -159,24 +162,18 @@ func TestAddSeparatorCSSModulesNestedLayout(t *testing.T) {
 	}
 
 	if err := root.Execute(); err != nil {
-		t.Fatalf("execute add separator: %v", err)
+		t.Fatalf("execute add component-with-hook nested css-files: %v", err)
 	}
 
-	componentPath := filepath.Join(wd, "tmp", "src", "components", "separator", "Separator.tsx")
-	cssPath := filepath.Join(wd, "tmp", "src", "components", "separator", "separator.module.css")
-
-	if _, err := os.Stat(componentPath); err != nil {
-		t.Fatalf("expected nested component file: %v", err)
-	}
-	if _, err := os.Stat(cssPath); err != nil {
-		t.Fatalf("expected nested css module file: %v", err)
-	}
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentWithHookName+".css"))
 }
 
 func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
-	writeComponentArtifacts(t, wd, "button")
+	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -184,7 +181,7 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 }`)
 
 	root := NewRootCmd()
-	root.SetArgs([]string{"add", "separator", "button", "--style", "css-files"})
+	root.SetArgs([]string{"add", componentOnlyName, componentWithHookName, "--style", "css-files"})
 	root.SetOut(&bytes.Buffer{})
 	root.SetErr(&bytes.Buffer{})
 
@@ -202,17 +199,16 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 		t.Fatalf("execute add multiple: %v", err)
 	}
 
-	if _, err := os.Stat(filepath.Join(wd, "tmp", "src", "components", "Separator.tsx")); err != nil {
-		t.Fatalf("expected separator component file: %v", err)
-	}
-	if _, err := os.Stat(filepath.Join(wd, "tmp", "src", "components", "Button.tsx")); err != nil {
-		t.Fatalf("expected button component file: %v", err)
-	}
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 }
 
 func TestAddNoArgsInNonInteractiveModeReturnsError(t *testing.T) {
 	wd := t.TempDir()
-	writeSeparatorArtifacts(t, wd)
+	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -244,6 +240,53 @@ func TestAddNoArgsInNonInteractiveModeReturnsError(t *testing.T) {
 	}
 }
 
+func componentOnlyFixture(name string) registryFixture {
+	return registryFixture{
+		name:        name,
+		themeTokens: []string{"--ara-color-content-detail"},
+		componentTokens: [][2]string{
+			{"--ara-component-detail", "--ara-color-content-detail"},
+		},
+		cssFiles: map[string]string{
+			componentTypeName(name) + ".tsx": "import './" + name + ".css'\nexport function " + componentTypeName(name) + "() { return null }\n",
+			name + ".css":                    ".component { margin: 0; }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(name) + ".tsx": "import styles from './" + name + ".module.css'\nexport function " + componentTypeName(name) + "() { return <div className={styles.component} /> }\n",
+			name + ".module.css":             ".component { margin: 0; }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(name) + ".tsx": "import './" + name + ".css'\nexport function " + componentTypeName(name) + "() { return null }\n",
+			name + ".css":                    "@reference 'tailwindcss';\n@layer components { .component { margin: 0; } }\n",
+		},
+	}
+}
+
+func componentWithHookFixture(name string) registryFixture {
+	return registryFixture{
+		name:        name,
+		themeTokens: []string{"--ara-color-control-bg"},
+		componentTokens: [][2]string{
+			{"--ara-component-bg", "--ara-color-control-bg"},
+		},
+		cssFiles: map[string]string{
+			componentTypeName(name) + ".tsx": "import { useComponent } from './useComponent'\nexport function " + componentTypeName(name) + "() { useComponent(); return null }\n",
+			"useComponent.ts":                "import './" + name + ".css'\nexport function useComponent() { return null }\n",
+			name + ".css":                    ".component { margin: 0; }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(name) + ".tsx": "import { useComponent } from './useComponent'\nexport function " + componentTypeName(name) + "() { useComponent(); return null }\n",
+			"useComponent.ts":                "import styles from './" + name + ".module.css'\nexport function useComponent() { return styles.component }\n",
+			name + ".module.css":             ".component { margin: 0; }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(name) + ".tsx": "import { useComponent } from './useComponent'\nexport function " + componentTypeName(name) + "() { useComponent(); return null }\n",
+			"useComponent.ts":                "import './" + name + ".css'\nexport function useComponent() { return null }\n",
+			name + ".css":                    "@reference 'tailwindcss';\n@layer components { .component { margin: 0; } }\n",
+		},
+	}
+}
+
 func writeConfig(t *testing.T, wd string, config string) {
 	t.Helper()
 	path := filepath.Join(wd, "arachne.json")
@@ -252,92 +295,93 @@ func writeConfig(t *testing.T, wd string, config string) {
 	}
 }
 
-func writeSeparatorArtifacts(t *testing.T, wd string) {
+func writeRegistryFixture(t *testing.T, wd string, fixture registryFixture) {
 	t.Helper()
-	writeComponentArtifacts(t, wd, "separator")
+
+	componentRootDir := filepath.Join(wd, "registry", fixture.name)
+	cssFileDir := filepath.Join(componentRootDir, "css-files")
+	cssModulesDir := filepath.Join(componentRootDir, "css-modules")
+	tailwindDir := filepath.Join(componentRootDir, "tailwind-css")
+
+	for _, dir := range []string{componentRootDir, cssFileDir, cssModulesDir, tailwindDir} {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatalf("mkdir %s: %v", dir, err)
+		}
+	}
+
+	writeFile(t, filepath.Join(componentRootDir, "meta.json"), buildMetaJSON(fixture))
+	writeFile(
+		t,
+		filepath.Join(componentRootDir, "package.json"),
+		"{\n  \"name\": \"@arachne/"+fixture.name+"\",\n  \"version\": \"0.0.0\"\n}\n",
+	)
+	writeStyleFiles(t, cssFileDir, fixture.cssFiles)
+	writeStyleFiles(t, cssModulesDir, fixture.cssModules)
+	writeStyleFiles(t, tailwindDir, fixture.tailwindCSS)
 }
 
-func writeComponentArtifacts(t *testing.T, wd string, name string) {
+func buildMetaJSON(fixture registryFixture) string {
+	lines := []string{
+		"{",
+		"  \"themeTokens\": [",
+	}
+	for index, token := range fixture.themeTokens {
+		suffix := ","
+		if index == len(fixture.themeTokens)-1 {
+			suffix = ""
+		}
+		lines = append(lines, "    \""+token+"\""+suffix)
+	}
+	lines = append(lines, "  ],", "  \"componentTokens\": [")
+	for index, mapping := range fixture.componentTokens {
+		suffix := ","
+		if index == len(fixture.componentTokens)-1 {
+			suffix = ""
+		}
+		lines = append(
+			lines,
+			"    {",
+			"      \"component\": \""+mapping[0]+"\",",
+			"      \"theme\": \""+mapping[1]+"\"",
+			"    }"+suffix,
+		)
+	}
+	lines = append(lines, "  ]", "}")
+	return strings.Join(lines, "\n") + "\n"
+}
+
+func writeStyleFiles(t *testing.T, dir string, files map[string]string) {
 	t.Helper()
-	componentRootDir := filepath.Join(wd, "registry", "separator")
-	cssFileDir := filepath.Join(wd, "registry", "separator", "css-files")
-	cssModulesDir := filepath.Join(wd, "registry", "separator", "css-modules")
-	tailwindDir := filepath.Join(wd, "registry", "separator", "tailwind-css")
-	if name != "separator" {
-		componentRootDir = filepath.Join(wd, "registry", name)
-		cssFileDir = filepath.Join(wd, "registry", name, "css-files")
-		cssModulesDir = filepath.Join(wd, "registry", name, "css-modules")
-		tailwindDir = filepath.Join(wd, "registry", name, "tailwind-css")
+	for relativePath, content := range files {
+		writeFile(t, filepath.Join(dir, relativePath), content)
 	}
+}
 
-	if err := os.MkdirAll(componentRootDir, 0o755); err != nil {
-		t.Fatalf("mkdir component root dir: %v", err)
+func writeFile(t *testing.T, path string, content string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatalf("mkdir parent: %v", err)
 	}
-	if err := os.MkdirAll(cssFileDir, 0o755); err != nil {
-		t.Fatalf("mkdir css-files dir: %v", err)
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		t.Fatalf("write file %s: %v", path, err)
 	}
-	if err := os.MkdirAll(cssModulesDir, 0o755); err != nil {
-		t.Fatalf("mkdir css-modules dir: %v", err)
-	}
-	if err := os.MkdirAll(tailwindDir, 0o755); err != nil {
-		t.Fatalf("mkdir tailwind-css dir: %v", err)
-	}
+}
 
-	if err := os.WriteFile(
-		filepath.Join(componentRootDir, "meta.json"),
-		[]byte("{\n  \"themeTokens\": [\n    \"--ara-color-border-subtle\",\n    \"--ara-border-width-x1\",\n    \"--ara-spacing-x1\"\n  ],\n  \"componentTokens\": [\n    {\n      \"component\": \"--ara-separator-color\",\n      \"theme\": \"--ara-color-border-subtle\"\n    },\n    {\n      \"component\": \"--ara-separator-thickness\",\n      \"theme\": \"--ara-border-width-x1\"\n    },\n    {\n      \"component\": \"--ara-separator-margin-block\",\n      \"theme\": \"--ara-spacing-x1\"\n    }\n  ]\n}\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write component meta: %v", err)
+func assertFileExists(t *testing.T, path string) {
+	t.Helper()
+	if _, err := os.Stat(path); err != nil {
+		t.Fatalf("expected file %s: %v", path, err)
 	}
-	if err := os.WriteFile(
-		filepath.Join(componentRootDir, "package.json"),
-		[]byte("{\n  \"name\": \"@arachne/"+name+"\",\n  \"version\": \"0.0.0\"\n}\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write component package: %v", err)
+}
+
+func assertFileContains(t *testing.T, path string, expected string) {
+	t.Helper()
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read file %s: %v", path, err)
 	}
-	if err := os.WriteFile(
-		filepath.Join(cssFileDir, componentTypeName(name)+".tsx"),
-		[]byte("import \"./"+name+".css\"\nexport function "+componentTypeName(name)+"() { return <hr /> }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write css-file component: %v", err)
-	}
-	if err := os.WriteFile(
-		filepath.Join(cssFileDir, name+".css"),
-		[]byte(".arachne-separator { margin: 0; }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write css-file css: %v", err)
-	}
-	if err := os.WriteFile(
-		filepath.Join(cssModulesDir, componentTypeName(name)+".tsx"),
-		[]byte("import styles from \"./"+name+".module.css\"\nexport function "+componentTypeName(name)+"() { return <hr className={styles.separator} /> }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write css-modules component: %v", err)
-	}
-	if err := os.WriteFile(
-		filepath.Join(cssModulesDir, name+".module.css"),
-		[]byte(".separator { margin: 0; }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write css-modules css: %v", err)
-	}
-	if err := os.WriteFile(
-		filepath.Join(tailwindDir, componentTypeName(name)+".tsx"),
-		[]byte("import \"./"+name+".css\"\nexport function "+componentTypeName(name)+"() { return <hr /> }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write tailwind component: %v", err)
-	}
-	if err := os.WriteFile(
-		filepath.Join(tailwindDir, name+".css"),
-		[]byte("@reference \"tailwindcss\";\n@layer components { .x { margin: 0; } }\n"),
-		0o644,
-	); err != nil {
-		t.Fatalf("write tailwind css: %v", err)
+	if !strings.Contains(string(content), expected) {
+		t.Fatalf("expected %s to contain %q, got:\n%s", path, expected, content)
 	}
 }
 
