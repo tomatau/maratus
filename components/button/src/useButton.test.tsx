@@ -11,8 +11,9 @@ describe('useButton', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
+        kind: 'toggle',
         isLoading: true,
-        isPressed: true,
+        pressed: true,
       }),
     )
 
@@ -20,10 +21,31 @@ describe('useButton', () => {
     expect(result.current.buttonProps['aria-disabled']).toBe(true)
     expect(result.current.buttonProps['aria-pressed']).toBe(true)
     expect(result.current.buttonProps['data-loading']).toBe('')
-    expect(result.current.buttonProps['data-pressed']).toBe('')
   })
 
-  test('preserves user-supplied aria props when state does not override them', () => {
+  test('does not set aria-pressed for command buttons', () => {
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+      }),
+    )
+
+    expect(result.current.buttonProps['aria-pressed']).toBeUndefined()
+  })
+
+  test('supports mixed pressed state for toggle buttons', () => {
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        kind: 'toggle',
+        pressed: 'mixed',
+      }),
+    )
+
+    expect(result.current.buttonProps['aria-pressed']).toBe('mixed')
+  })
+
+  test('preserves user-supplied busy and disabled aria props when state does not override them', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -31,11 +53,11 @@ describe('useButton', () => {
         disabled: true,
         'aria-busy': 'false',
         'aria-disabled': 'false',
-        'aria-pressed': 'mixed',
       }),
     )
 
-    expect(result.current.buttonProps['aria-pressed']).toBe('mixed')
+    expect(result.current.buttonProps['aria-busy']).toBe('false')
+    expect(result.current.buttonProps['aria-disabled']).toBe('false')
   })
 
   test('whenEnabled omits props when interaction is disabled', () => {

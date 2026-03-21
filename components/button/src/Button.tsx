@@ -5,8 +5,8 @@ export function Button(props: ButtonProps) {
   const { buttonProps, whenEnabled } = useButton(props)
   const { children, ...rootProps } = buttonProps
   const {
-    canFocus = false,
     disabled,
+    disabledBehavior = 'native',
     isLoading = false,
     onClick,
     onMouseDown,
@@ -18,7 +18,7 @@ export function Button(props: ButtonProps) {
   return (
     <button
       {...rootProps}
-      disabled={(disabled || isLoading) && !canFocus}
+      disabled={(disabled || isLoading) && disabledBehavior === 'native'}
       {...whenEnabled({
         onClick,
         onMouseDown,

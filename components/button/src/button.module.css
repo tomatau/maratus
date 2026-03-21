@@ -60,7 +60,8 @@
   outline-width: var(--ara-button-focus-width);
 }
 
-.button[data-pressed] {
+.button[aria-pressed='true'],
+.button[aria-pressed='mixed'] {
   background-color: var(--ara-button-bg--pressed);
   border-color: var(--ara-button-detail--pressed);
   box-shadow: var(--ara-button-shadow--pressed);
