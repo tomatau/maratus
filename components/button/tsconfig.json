@@ -1,10 +1,8 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig",
-  "include": ["src"],
-  "exclude": [
-    "src/**/*.func.ts",
-    "src/**/*.func.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.src.json" },
+    { "path": "./tsconfig.playwright.json" },
+    { "path": "./tsconfig.bun.json" }
   ]
 }

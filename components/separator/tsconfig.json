@@ -1,4 +1,7 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig",
-  "include": ["src", "playwright-ct.config.ts"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.src.json" },
+    { "path": "./tsconfig.playwright.json" }
+  ]
 }

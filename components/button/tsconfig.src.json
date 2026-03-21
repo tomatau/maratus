@@ -1,0 +1,10 @@
+{
+  "extends": "@arachne/dotfiles/tsconfig",
+  "include": ["src"],
+  "exclude": [
+    "src/**/*.func.ts",
+    "src/**/*.func.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
+}
