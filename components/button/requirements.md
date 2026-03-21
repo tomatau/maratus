@@ -17,6 +17,7 @@
 - Disabled state
 - Toggle button state
 - Loading state semantics
+- HTML form-associated behaviour
 
 ### Potential scope
 
@@ -24,7 +25,6 @@
 - Focus modality
 - Icon slots
 - Progress or pending announcement patterns beyond `aria-busy`
-- Full HTML form-associated behaviour
 - Command and popover button features
 
 ## Normative Matrix
@@ -41,11 +41,11 @@
 | REQ-008 | MUST   | When the button exposes a supported state such as pressed, disabled, busy, or expanded, expose that state programmatically.                                                                  | WCAG 2.2 SC 4.1.2                                                                   | Current       |
 | REQ-009 | MUST   | Do not include interactive descendants or descendants with a `tabindex` attribute inside the button content model.                                                                           | HTML Standard `button` element                                                      | Current       |
 | REQ-010 | SHOULD | When the button is a native `<button>`, do not set a redundant explicit `role="button"`.                                                                                                     | ARIA in HTML `button`                                                               | Current       |
-| REQ-011 | MUST   | When the button renders with `type="submit"`, allow normal HTML form submission behaviour.                                                                                                   | HTML Standard `button` element                                                      | Potential     |
-| REQ-012 | MUST   | When the button renders with `type="reset"`, allow normal HTML form reset behaviour.                                                                                                         | HTML Standard `button` element                                                      | Potential     |
-| REQ-013 | MUST   | When the button omits `type` or uses an invalid `type`, use the HTML button missing-value and invalid-value default.                                                                         | HTML Standard `button` element                                                      | Potential     |
-| REQ-014 | MUST   | When the button uses HTML form submission attributes, only use attributes valid for submit buttons, including `formaction`, `formenctype`, `formmethod`, `formnovalidate`, and `formtarget`. | HTML Standard `button` element                                                      | Potential     |
-| REQ-015 | SHOULD | When the button uses HTML form association, support the `form`, `name`, and `value` attributes according to the HTML button element rules.                                                   | HTML Standard `button` element                                                      | Potential     |
+| REQ-011 | MUST   | When the button renders with `type="submit"`, allow normal HTML form submission behaviour.                                                                                                   | HTML Standard `button` element                                                      | Current       |
+| REQ-012 | MUST   | When the button renders with `type="reset"`, allow normal HTML form reset behaviour.                                                                                                         | HTML Standard `button` element                                                      | Current       |
+| REQ-013 | MUST   | When the button omits `type` or uses an invalid `type`, use the HTML button missing-value and invalid-value default.                                                                         | HTML Standard `button` element                                                      | Current       |
+| REQ-014 | MUST   | When the button uses HTML form submission attributes, only use attributes valid for submit buttons, including `formaction`, `formenctype`, `formmethod`, `formnovalidate`, and `formtarget`. | HTML Standard `button` element                                                      | Current       |
+| REQ-015 | SHOULD | When the button uses HTML form association, support the `form`, `name`, and `value` attributes according to the HTML button element rules.                                                   | HTML Standard `button` element                                                      | Current       |
 | REQ-016 | SHOULD | When the button supports command or popover behaviour, support the relevant HTML button attributes such as `command`, `commandfor`, `popovertarget`, and `popovertargetaction`.              | HTML Standard `button` element                                                      | Potential     |
 
 ## Product Requirements
