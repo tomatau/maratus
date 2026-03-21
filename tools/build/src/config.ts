@@ -1,4 +1,5 @@
 export const SRC_DIR = 'src'
+export const TS_EXT = '.ts'
 export const TSX_EXT = '.tsx'
 export const CSS_EXT = '.css'
 export const CSS_MODULE_EXT = '.module.css'
@@ -6,9 +7,9 @@ export const REGISTRY_META_FILENAME = 'meta.json'
 export const REGISTRY_PACKAGE_FILENAME = 'package.json'
 
 export enum ConfigStyle {
-	CssFiles = 'css-files',
-	CssModules = 'css-modules',
-	TailwindCss = 'tailwind-css',
+  CssFiles = 'css-files',
+  CssModules = 'css-modules',
+  TailwindCss = 'tailwind-css',
 }
 
 export function styleDirFor(style: ConfigStyle): string {

@@ -1,6 +1,7 @@
 import type { ComponentMeta } from './component-meta'
+import type { ComponentSourceFile } from './component-source-file'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import {
   ConfigStyle,
   CSS_EXT,
@@ -9,15 +10,13 @@ import {
   REGISTRY_PACKAGE_FILENAME,
   styleDirFor,
 } from './config'
-import { componentSourceFileName } from './monorepo'
 
 export async function writeCssFilesArtifacts(
   componentName: string,
-  componentSource: string,
+  componentSources: ComponentSourceFile[],
   css: string,
   registryDir: string,
 ): Promise<string[]> {
-  const fileName = componentSourceFileName(componentName)
   const dir = join(
     registryDir,
     componentName,
@@ -25,24 +24,26 @@ export async function writeCssFilesArtifacts(
   )
   await mkdir(dir, { recursive: true })
 
-  const wrappedPath = join(dir, fileName)
-  await writeFile(
-    wrappedPath,
-    `import "./${componentName}${CSS_EXT}"\n\n${componentSource}`,
-    'utf8',
-  )
+  const writtenPaths: string[] = []
+
+  for (const { fileName, source } of componentSources) {
+    const filePath = join(dir, fileName)
+    await mkdir(dirname(filePath), { recursive: true })
+    await writeFile(filePath, source, 'utf8')
+    writtenPaths.push(filePath)
+  }
+
   const cssPath = join(dir, `${componentName}${CSS_EXT}`)
   await writeFile(cssPath, css, 'utf8')
-  return [wrappedPath, cssPath]
+  return [...writtenPaths, cssPath]
 }
 
 export async function writeTailwindCssArtifacts(
   componentName: string,
-  componentSource: string,
+  componentSources: ComponentSourceFile[],
   css: string,
   registryDir: string,
 ): Promise<string[]> {
-  const fileName = componentSourceFileName(componentName)
   const dir = join(
     registryDir,
     componentName,
@@ -50,24 +51,26 @@ export async function writeTailwindCssArtifacts(
   )
   await mkdir(dir, { recursive: true })
 
-  const wrappedPath = join(dir, fileName)
-  await writeFile(
-    wrappedPath,
-    `import "./${componentName}${CSS_EXT}"\n\n${componentSource}`,
-    'utf8',
-  )
+  const writtenPaths: string[] = []
+
+  for (const { fileName, source } of componentSources) {
+    const filePath = join(dir, fileName)
+    await mkdir(dirname(filePath), { recursive: true })
+    await writeFile(filePath, source, 'utf8')
+    writtenPaths.push(filePath)
+  }
+
   const cssPath = join(dir, `${componentName}${CSS_EXT}`)
   await writeFile(cssPath, css, 'utf8')
-  return [wrappedPath, cssPath]
+  return [...writtenPaths, cssPath]
 }
 
 export async function writeCssModulesArtifacts(
   componentName: string,
-  componentSource: string,
+  componentSources: ComponentSourceFile[],
   cssModuleSource: string,
   registryDir: string,
 ): Promise<string[]> {
-  const fileName = componentSourceFileName(componentName)
   const dir = join(
     registryDir,
     componentName,
@@ -75,11 +78,18 @@ export async function writeCssModulesArtifacts(
   )
   await mkdir(dir, { recursive: true })
 
-  const componentPath = join(dir, fileName)
+  const writtenPaths: string[] = []
+
+  for (const { fileName, source } of componentSources) {
+    const filePath = join(dir, fileName)
+    await mkdir(dirname(filePath), { recursive: true })
+    await writeFile(filePath, source, 'utf8')
+    writtenPaths.push(filePath)
+  }
+
   const cssModulePath = join(dir, `${componentName}${CSS_MODULE_EXT}`)
-  await writeFile(componentPath, componentSource, 'utf8')
   await writeFile(cssModulePath, cssModuleSource, 'utf8')
-  return [componentPath, cssModulePath]
+  return [...writtenPaths, cssModulePath]
 }
 
 export async function writeRegistryComponentFiles(

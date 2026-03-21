@@ -1,11 +1,17 @@
 import type { ImportDeclaration, SourceFile } from 'ts-morph'
 import { Project, QuoteKind, ScriptKind, SyntaxKind } from 'ts-morph'
 
+export type TransformCssModuleSourceResult = {
+  didTransformCssModuleImport: boolean
+  source: string
+}
+
 export function transformCssModuleSource(
   sourceText: string,
   cssModuleSpecifier: string,
+  cssImportSpecifier: string,
   cssModuleExports: Record<string, string>,
-): string {
+): TransformCssModuleSourceResult {
   const project = new Project({
     manipulationSettings: {
       quoteKind: QuoteKind.Single,
@@ -24,7 +30,10 @@ export function transformCssModuleSource(
 
   const cssModuleImport = findCssModuleImport(sourceFile, cssModuleSpecifier)
   if (!cssModuleImport) {
-    throw new Error(`Missing CSS module import: ${cssModuleSpecifier}`)
+    return {
+      didTransformCssModuleImport: false,
+      source: sourceText,
+    }
   }
 
   const defaultImport = cssModuleImport.getDefaultImport()
@@ -39,9 +48,13 @@ export function transformCssModuleSource(
     defaultImport.getText(),
     cssModuleExports,
   )
-  cssModuleImport.remove()
+  cssModuleImport.setModuleSpecifier(cssImportSpecifier)
+  cssModuleImport.removeDefaultImport()
   ensureBlankLineAfterImports(sourceFile)
-  return sourceFile.getFullText().trimStart()
+  return {
+    didTransformCssModuleImport: true,
+    source: sourceFile.getFullText().trimStart(),
+  }
 }
 
 function findCssModuleImport(

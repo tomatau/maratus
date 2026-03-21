@@ -3,16 +3,21 @@
 ## Styling
 
 - Source of truth: CSS Modules in component `src/`.
+- CLI aggregates installed component tokens into:
+  - `arachne-components.json`
+  - `arachne-theme.css`
+- Arachne structurally owns the `arachne-theme.css` file.
+- Consumers may edit token values, but should keep the single generated wrapper block intact.
+
+### Build
+
 - Build outputs:
   - `css-files`
   - `css-modules`
   - `tailwind-css`
-- Theme tokens are extracted at build time into `registry/<component>/meta.json`.
-- CLI aggregates installed component tokens into:
-  - `arachne-components.json`
-  - `arachne-theme.css`
-- `arachne-theme.css` is owned by Arachne structurally.
-- Consumers may edit token values, but should keep the single generated wrapper block intact.
+- Builds from the component entry file plus its local relative TS/TSX dependency graph within `src/`.
+- Transform any CSS Module import in that local graph into compiled class names and remove the import from the generated source artifact.
+- Extract theme tokens into `registry/<component>/meta.json`.
 
 ## Composition
 

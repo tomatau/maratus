@@ -8,6 +8,7 @@ import {
 } from './artifact-writer'
 import { compileCssModule } from './compile-css-module'
 import { extractComponentMeta } from './component-meta'
+import { collectComponentSourceGraph } from './component-source-graph'
 import { emitTailwindCssWithLightning } from './emit-tailwind-css'
 import { formatGeneratedFiles } from './formatter'
 import {
@@ -48,7 +49,6 @@ export async function buildArtifacts(
       componentName,
       'package.json',
     )
-    const componentSource = await readFile(componentSourcePath, 'utf8')
     const cssModuleSource = await readFile(cssModulePath, 'utf8')
     const cssModule = await compileCssModule(cssModulePath)
     const componentMeta = await extractComponentMeta(cssModulePath)
@@ -57,16 +57,27 @@ export async function buildArtifacts(
       componentPackagePath,
     )
 
-    const componentSourceForCssFiles = transformCssModuleSource(
-      componentSource,
-      `./${componentCssModuleFileName(componentName)}`,
-      cssModule.exports,
+    const componentSrcDir = join(componentsDir, componentName, 'src')
+    const componentSourceGraph = await collectComponentSourceGraph(
+      componentSourcePath,
+      componentSrcDir,
+    )
+    const componentSourcesForCssFiles = componentSourceGraph.map(
+      ({ fileName, source }) => ({
+        fileName,
+        source: transformCssModuleSource(
+          source,
+          `./${componentCssModuleFileName(componentName)}`,
+          `./${componentName}.css`,
+          cssModule.exports,
+        ).source,
+      }),
     )
 
     generatedFiles.push(
       ...(await writeCssModulesArtifacts(
         componentName,
-        componentSource,
+        componentSourceGraph,
         cssModuleSource,
         registryDir,
       )),
@@ -74,7 +85,7 @@ export async function buildArtifacts(
     generatedFiles.push(
       ...(await writeCssFilesArtifacts(
         componentName,
-        componentSourceForCssFiles,
+        componentSourcesForCssFiles,
         cssModule.css,
         registryDir,
       )),
@@ -82,7 +93,7 @@ export async function buildArtifacts(
     generatedFiles.push(
       ...(await writeTailwindCssArtifacts(
         componentName,
-        componentSourceForCssFiles,
+        componentSourcesForCssFiles,
         emitTailwindCssWithLightning(cssModule.css),
         registryDir,
       )),
