@@ -16,13 +16,13 @@ type ExampleProps = {
 ## Content
 
 - Prefer `children` over wrapper-specific content props such as `label`.
-- Add explicit slots only when structure requires them.
+- Add explicit slots when structure requires them.
 
 ## Styling
 
 - Base components expose CSS variable hooks.
 - Visual variant taxonomy lives in consumer wrappers, not base components.
-- Build outputs are generated from CSS Modules source.
+- Generated build outputs from CSS Modules source.
 - Semantic categories:
   - `control`
   - `nav`
@@ -34,6 +34,12 @@ type ExampleProps = {
   - `spacing`
   - `border`
   - `radius`
+  - `shadow`
+- Shared color property groups:
+  - `bg`
+  - `fg`
+  - `detail`
+  - `focus`
 - Theme token word order is:
   - namespace
   - token kind
@@ -43,9 +49,12 @@ type ExampleProps = {
 
 ```css
 --ara-color-control-bg
---ara-color-control-text
---ara-color-content-border
+--ara-color-control-fg
+--ara-color-content-detail
+--ara-color-control-focus
 --ara-color-control-bg--disabled
+--ara-shadow-control
+--ara-shadow-control--hover
 ```
 
 ## State

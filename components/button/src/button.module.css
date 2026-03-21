@@ -5,51 +5,79 @@
   --ara-button-bg--hover: var(--ara-color-control-bg--hover);
   --ara-button-bg--loading: var(--ara-color-control-bg--loading);
   --ara-button-bg--pressed: var(--ara-color-control-bg--pressed);
-  --ara-button-border-color: var(--ara-color-border-subtle);
+  --ara-button-detail: var(--ara-color-control-detail);
+  --ara-button-detail--disabled: var(--ara-color-control-detail--disabled);
+  --ara-button-detail--focus: var(--ara-color-control-detail--focus);
+  --ara-button-detail--hover: var(--ara-color-control-detail--hover);
+  --ara-button-detail--loading: var(--ara-color-control-detail--loading);
+  --ara-button-detail--pressed: var(--ara-color-control-detail--pressed);
   --ara-button-border-radius: var(--ara-radius-x1);
   --ara-button-border-width: var(--ara-border-width-x1);
-  --ara-button-outline-color: var(--ara-color-outline);
-  --ara-button-outline-offset: var(--ara-spacing-x1);
-  --ara-button-outline-width: var(--ara-border-width-x1);
+  --ara-button-focus: var(--ara-color-control-focus);
+  --ara-button-focus-offset: var(--ara-spacing-x1);
+  --ara-button-focus-width: var(--ara-border-width-x1);
   --ara-button-padding-block: var(--ara-spacing-x1);
   --ara-button-padding-inline: var(--ara-spacing-x1);
-  --ara-button-text: var(--ara-color-control-text);
-  --ara-button-text--disabled: var(--ara-color-control-text--disabled);
-  --ara-button-text--loading: var(--ara-color-control-text--loading);
+  --ara-button-fg: var(--ara-color-control-fg);
+  --ara-button-fg--disabled: var(--ara-color-control-fg--disabled);
+  --ara-button-fg--focus: var(--ara-color-control-fg--focus);
+  --ara-button-fg--hover: var(--ara-color-control-fg--hover);
+  --ara-button-fg--loading: var(--ara-color-control-fg--loading);
+  --ara-button-fg--pressed: var(--ara-color-control-fg--pressed);
+  --ara-button-shadow: var(--ara-shadow-control);
+  --ara-button-shadow--disabled: var(--ara-shadow-control--disabled);
+  --ara-button-shadow--focus: var(--ara-shadow-control--focus);
+  --ara-button-shadow--hover: var(--ara-shadow-control--hover);
+  --ara-button-shadow--loading: var(--ara-shadow-control--loading);
+  --ara-button-shadow--pressed: var(--ara-shadow-control--pressed);
 }
 
 .button {
   background-color: var(--ara-button-bg);
-  border-color: var(--ara-button-border-color);
+  border-color: var(--ara-button-detail);
   border-radius: var(--ara-button-border-radius);
   border-width: var(--ara-button-border-width);
-  color: var(--ara-button-text);
+  box-shadow: var(--ara-button-shadow);
+  color: var(--ara-button-fg);
   padding-block: var(--ara-button-padding-block);
   padding-inline: var(--ara-button-padding-inline);
 }
 
 .button:hover {
   background-color: var(--ara-button-bg--hover);
+  border-color: var(--ara-button-detail--hover);
+  box-shadow: var(--ara-button-shadow--hover);
+  color: var(--ara-button-fg--hover);
 }
 
 .button:focus {
   background-color: var(--ara-button-bg--focus);
-  outline-color: var(--ara-button-outline-color);
-  outline-offset: var(--ara-button-outline-offset);
-  outline-width: var(--ara-button-outline-width);
+  border-color: var(--ara-button-detail--focus);
+  box-shadow: var(--ara-button-shadow--focus);
+  color: var(--ara-button-fg--focus);
+  outline-color: var(--ara-button-focus);
+  outline-offset: var(--ara-button-focus-offset);
+  outline-width: var(--ara-button-focus-width);
 }
 
 .button[data-pressed] {
   background-color: var(--ara-button-bg--pressed);
+  border-color: var(--ara-button-detail--pressed);
+  box-shadow: var(--ara-button-shadow--pressed);
+  color: var(--ara-button-fg--pressed);
 }
 
 .button:disabled,
 .button[aria-disabled='true'] {
   background-color: var(--ara-button-bg--disabled);
-  color: var(--ara-button-text--disabled);
+  border-color: var(--ara-button-detail--disabled);
+  box-shadow: var(--ara-button-shadow--disabled);
+  color: var(--ara-button-fg--disabled);
 }
 
 .button[data-loading] {
   background-color: var(--ara-button-bg--loading);
-  color: var(--ara-button-text--loading);
+  border-color: var(--ara-button-detail--loading);
+  box-shadow: var(--ara-button-shadow--loading);
+  color: var(--ara-button-fg--loading);
 }

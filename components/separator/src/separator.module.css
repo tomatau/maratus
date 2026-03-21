@@ -1,11 +1,13 @@
 :root {
-  --ara-separator-color: var(--ara-color-content-border);
+  --ara-separator-detail: var(--ara-color-content-detail);
+  --ara-separator-shadow: var(--ara-shadow-content);
   --ara-separator-thickness: var(--ara-border-width-x1);
   --ara-separator-margin-block: var(--ara-spacing-x1);
 }
 
 .separator {
-  border-top-color: var(--ara-separator-color);
+  border-top-color: var(--ara-separator-detail);
   border-top-width: var(--ara-separator-thickness);
+  box-shadow: var(--ara-separator-shadow);
   margin-block: var(--ara-separator-margin-block);
 }
