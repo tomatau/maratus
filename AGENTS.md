@@ -24,15 +24,37 @@
 For each component:
 
 1. Identify normative sources (HTML, ARIA, WCAG, APG if relevant).
-2. Create a requirements matrix with IDs (e.g. `REQ-001`) and source links.
+2. Create `requirements.md` in the component package with IDs (e.g. `REQ-001`) and source links.
 3. Mark each requirement as `MUST` or `SHOULD`.
 4. Map each requirement to a Playwright component test.
+
+## Requirement Writing
+
+- Requirements translate normative specs into testable component rules.
+- Each requirement must be:
+  - normative
+  - testable
+  - independent
+  - source-backed
+- Use exact spec obligations where possible instead of paraphrased policy.
+- Record allowed alternatives explicitly when the spec defines them.
+- Organize the matrix with explicit columns for:
+  - `ID`
+  - `Level`
+  - `Requirement`
+  - `Source`
+  - `Applicability`
+- Use `Applicability` to distinguish:
+  - `Current`
+  - `Potential`
+  - `N/A`
+- When a requirement applies only in a specific mode, variant, or state, include that condition explicitly in the requirement.
 
 ## Enforcement Strategy
 
 A component is done only when:
 
 - Playwright component tests pass.
-- Keyboard behavior tests pass (if interactive).
+- Keyboard behaviour tests pass (if interactive).
 - Semantics/ARIA assertions pass.
 - Axe checks via `@axe-core/playwright` report no violations.
