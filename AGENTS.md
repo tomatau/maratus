@@ -36,8 +36,11 @@ For each component:
   - testable
   - independent
   - source-backed
+- Prefer observable DOM, ARIA, and keyboard outcomes over abstract wording.
 - Use exact spec obligations where possible instead of paraphrased policy.
+- Prefer specific spec-defined attributes, states, and behaviors over umbrella requirement statements.
 - Record allowed alternatives explicitly when the spec defines them.
+- Record relevant spec-defined prohibitions and not-recommended cases when they affect the component contract.
 - Organize the matrix with explicit columns for:
   - `ID`
   - `Level`
