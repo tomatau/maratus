@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react'
 import { FocusModalityProbe } from './useFocusModality.story'
 
-test('PRD-001 exposes useFocusModality() as the low-level shared hook for reading the current global modality', async ({
+test('PRD-001 exposes useFocusModality() for reading the current global modality', async ({
   mount,
   page,
 }) => {
@@ -19,4 +19,16 @@ test('REQ-001 keyboard interaction switches the global focus modality to keyboar
   await page.keyboard.press('Tab')
 
   await expect(page.locator('#root output')).toHaveText('keyboard')
+})
+
+test('REQ-002 pointer interaction switches the global focus modality to pointer', async ({
+  mount,
+  page,
+}) => {
+  await mount(<FocusModalityProbe />)
+
+  await page.mouse.move(10, 10)
+  await page.mouse.down()
+
+  await expect(page.locator('#root output')).toHaveText('pointer')
 })

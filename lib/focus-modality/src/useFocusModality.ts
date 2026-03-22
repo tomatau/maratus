@@ -32,10 +32,18 @@ export function useFocusModality(): FocusModality {
       })
     }
 
+    const handlePointerDown = () => {
+      store.setState({
+        modality: 'pointer',
+      })
+    }
+
     document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('pointerdown', handlePointerDown)
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('pointerdown', handlePointerDown)
     }
   }, [store])
 
