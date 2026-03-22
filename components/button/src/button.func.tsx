@@ -146,6 +146,107 @@ test('REQ-010 native button does not set a redundant explicit button role', asyn
   )
 })
 
+test('REQ-017 enabled buttons activate through pointer interaction', async ({
+  mount,
+  page,
+}) => {
+  let activated = 0
+
+  await mount(
+    <Button
+      onClick={() => {
+        activated += 1
+      }}
+    >
+      Press me
+    </Button>,
+  )
+
+  await page.locator('#root button').click()
+  expect(activated).toBe(1)
+})
+
+test('REQ-018 enabled buttons activate through keyboard interaction', async ({
+  mount,
+  page,
+}) => {
+  let enterActivated = 0
+  let spaceActivated = 0
+
+  await mount(
+    <>
+      <Button
+        onClick={() => {
+          enterActivated += 1
+        }}
+      >
+        Enter
+      </Button>
+      <Button
+        onClick={() => {
+          spaceActivated += 1
+        }}
+      >
+        Space
+      </Button>
+    </>,
+  )
+
+  await page.getByRole('button', { name: 'Enter' }).focus()
+  await page.getByRole('button', { name: 'Enter' }).press('Enter')
+  expect(enterActivated).toBe(1)
+
+  await page.getByRole('button', { name: 'Space' }).focus()
+  await page.getByRole('button', { name: 'Space' }).press('Space')
+  expect(spaceActivated).toBe(1)
+})
+
+test('REQ-019 disabled buttons do not activate through pointer interaction', async ({
+  mount,
+  page,
+}) => {
+  let activated = 0
+
+  await mount(
+    <Button
+      disabled
+      disabledBehavior="focusable"
+      onClick={() => {
+        activated += 1
+      }}
+    >
+      Press me
+    </Button>,
+  )
+
+  await page.locator('#root button').dispatchEvent('click')
+  expect(activated).toBe(0)
+})
+
+test('REQ-020 disabled buttons do not activate through keyboard interaction', async ({
+  mount,
+  page,
+}) => {
+  let activated = 0
+
+  await mount(
+    <Button
+      disabled
+      disabledBehavior="focusable"
+      onClick={() => {
+        activated += 1
+      }}
+    >
+      Press me
+    </Button>,
+  )
+
+  await page.locator('#root button').focus()
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('Space')
+  expect(activated).toBe(0)
+})
+
 test('REQ-011 submit buttons allow normal HTML form submission behaviour', async ({
   mount,
   page,

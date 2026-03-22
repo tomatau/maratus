@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from 'react'
 import { afterEach, describe, expect, test } from 'bun:test'
 import { cleanup, renderHook } from '@testing-library/react'
 import { useButton } from './useButton'
@@ -5,6 +6,16 @@ import { useButton } from './useButton'
 afterEach(() => {
   cleanup()
 })
+
+function createKeyboardEvent(
+  key: string,
+  preventDefault: () => void = () => undefined,
+) {
+  return {
+    key,
+    preventDefault,
+  } as unknown as KeyboardEvent<HTMLButtonElement>
+}
 
 describe('useButton', () => {
   test('sets aria and data state props from button state', () => {
@@ -93,5 +104,128 @@ describe('useButton', () => {
       onClick,
       tabIndex,
     })
+  })
+
+  test('preventActivation preserves keyboard handlers when enabled', () => {
+    let keyDownCalls = 0
+    let keyUpCalls = 0
+
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+      }),
+    )
+
+    const handlers = result.current.preventActivation({
+      onKeyDown: () => {
+        keyDownCalls += 1
+      },
+      onKeyUp: () => {
+        keyUpCalls += 1
+      },
+    })
+
+    handlers.onKeyDown?.(createKeyboardEvent('Enter'))
+    handlers.onKeyUp?.(createKeyboardEvent(' '))
+
+    expect(keyDownCalls).toBe(1)
+    expect(keyUpCalls).toBe(1)
+  })
+
+  test('preventActivation blocks Enter on keydown for focusable disabled buttons', () => {
+    let keyDownCalls = 0
+    let prevented = false
+
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        disabled: true,
+        disabledBehavior: 'focusable',
+      }),
+    )
+
+    const handlers = result.current.preventActivation({
+      onKeyDown: () => {
+        keyDownCalls += 1
+      },
+    })
+
+    handlers.onKeyDown?.(
+      createKeyboardEvent('Enter', () => {
+        prevented = true
+      }),
+    )
+
+    expect(prevented).toBe(true)
+    expect(keyDownCalls).toBe(0)
+  })
+
+  test('preventActivation blocks Space on keydown and keyup for focusable disabled buttons', () => {
+    let keyDownCalls = 0
+    let keyUpCalls = 0
+    let preventedKeyDown = false
+    let preventedKeyUp = false
+
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        disabled: true,
+        disabledBehavior: 'focusable',
+      }),
+    )
+
+    const handlers = result.current.preventActivation({
+      onKeyDown: () => {
+        keyDownCalls += 1
+      },
+      onKeyUp: () => {
+        keyUpCalls += 1
+      },
+    })
+
+    handlers.onKeyDown?.(
+      createKeyboardEvent(' ', () => {
+        preventedKeyDown = true
+      }),
+    )
+
+    handlers.onKeyUp?.(
+      createKeyboardEvent(' ', () => {
+        preventedKeyUp = true
+      }),
+    )
+
+    expect(preventedKeyDown).toBe(true)
+    expect(preventedKeyUp).toBe(true)
+    expect(keyDownCalls).toBe(0)
+    expect(keyUpCalls).toBe(0)
+  })
+
+  test('preventActivation does not block non-activation keys for focusable disabled buttons', () => {
+    let keyDownCalls = 0
+    let prevented = false
+
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        disabled: true,
+        disabledBehavior: 'focusable',
+      }),
+    )
+
+    const handlers = result.current.preventActivation({
+      onKeyDown: () => {
+        keyDownCalls += 1
+      },
+    })
+
+    handlers.onKeyDown?.(
+      createKeyboardEvent('Tab', () => {
+        prevented = true
+      }),
+    )
+
+    expect(prevented).toBe(false)
+    expect(keyDownCalls).toBe(1)
   })
 })

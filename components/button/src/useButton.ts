@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, KeyboardEventHandler } from 'react'
 import clsx from 'clsx'
 import { useCallback } from 'react'
 import styles from './button.module.css'
@@ -47,6 +47,15 @@ export type ButtonRootProps = Omit<HTMLButtonProps, ManagedRootProps> & {
 
 export type WhenEnabled = <T extends object>(props: T) => T | {}
 
+type ActivationHandlerProps = {
+  onKeyDown?: KeyboardEventHandler<HTMLButtonElement>
+  onKeyUp?: KeyboardEventHandler<HTMLButtonElement>
+}
+
+export type PreventActivation = (
+  props: ActivationHandlerProps,
+) => ActivationHandlerProps
+
 export type UseButtonResult = {
   buttonProps: ButtonRootProps
 
@@ -54,6 +63,12 @@ export type UseButtonResult = {
    * Helper function that suppresses props when the button is disabled
    */
   whenEnabled: WhenEnabled
+
+  /**
+   * Helper function that prevents keyboard-triggered activation while the
+   * button remains focusable.
+   */
+  preventActivation: PreventActivation
 }
 
 export function useButton(props: ButtonProps): UseButtonResult {
@@ -78,6 +93,28 @@ export function useButton(props: ButtonProps): UseButtonResult {
     [isInteractionDisabled],
   )
 
+  const preventActivation = useCallback<PreventActivation>(
+    ({ onKeyDown, onKeyUp }) => ({
+      onKeyDown: wrapActivationHandler(
+        'onKeyDown',
+        {
+          disabledBehavior: props.disabledBehavior,
+          isInteractionDisabled,
+        },
+        onKeyDown,
+      ),
+      onKeyUp: wrapActivationHandler(
+        'onKeyUp',
+        {
+          disabledBehavior: props.disabledBehavior,
+          isInteractionDisabled,
+        },
+        onKeyUp,
+      ),
+    }),
+    [isInteractionDisabled, props.disabledBehavior],
+  )
+
   return {
     buttonProps: {
       ...nativeProps,
@@ -89,6 +126,43 @@ export function useButton(props: ButtonProps): UseButtonResult {
       className: clsx(styles.button, className),
       'data-loading': isLoading ? '' : undefined,
     },
+    preventActivation,
     whenEnabled,
+  }
+}
+
+type ActivationPhase = keyof ActivationHandlerProps
+const activationKeysByPhase: Record<ActivationPhase, Set<string>> = {
+  onKeyDown: new Set(['Enter', ' ']),
+  onKeyUp: new Set([' ']),
+}
+
+function wrapActivationHandler(
+  phase: ActivationPhase,
+  options: {
+    disabledBehavior?: DisabledBehavior
+    isInteractionDisabled: boolean
+  },
+  handler?: KeyboardEventHandler<HTMLButtonElement>,
+): KeyboardEventHandler<HTMLButtonElement> | undefined {
+  if (!handler && !options.isInteractionDisabled) {
+    return undefined
+  }
+
+  // Native buttons still activate from the keyboard when they remain focusable.
+  // Block Enter on keydown and Space on both keydown and keyup so focusable
+  // disabled buttons stay inert without losing focusability.
+  return (event) => {
+    const shouldPrevent =
+      options.isInteractionDisabled &&
+      options.disabledBehavior === 'focusable' &&
+      activationKeysByPhase[phase].has(event.key)
+
+    if (shouldPrevent) {
+      event.preventDefault()
+      return
+    }
+
+    handler?.(event)
   }
 }
