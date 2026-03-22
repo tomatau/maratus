@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@arachne/dotfiles": "workspace:*",
+    "@arachne/playwright": "workspace:*",
     "@playwright/experimental-ct-react": "^1.55.1"
   },
   "peerDependencies": {

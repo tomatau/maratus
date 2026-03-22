@@ -100,6 +100,18 @@
         "vite": "^7.1.7",
       },
     },
+    "lib/focus-modality": {
+      "name": "@arachne/focus-modality",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@arachne/dotfiles": "workspace:*",
+        "@arachne/playwright": "workspace:*",
+        "@playwright/experimental-ct-react": "^1.55.1",
+      },
+      "peerDependencies": {
+        "react": "^19.1.1",
+      },
+    },
     "registry/button": {
       "name": "@arachne/button",
       "version": "0.0.0",
@@ -166,6 +178,8 @@
     "@arachne/button": ["@arachne/button@workspace:registry/button"],
 
     "@arachne/dotfiles": ["@arachne/dotfiles@workspace:tools/dotfiles"],
+
+    "@arachne/focus-modality": ["@arachne/focus-modality@workspace:lib/focus-modality"],
 
     "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
 

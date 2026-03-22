@@ -1,4 +1,4 @@
 {
   "extends": "@arachne/dotfiles/tsconfig/playwright",
-  "include": ["playwright-ct.config.ts", "src/**/*.func.ts", "src/**/*.func.tsx"]
+  "include": ["playwright-ct.config.ts", "specs"]
 }
