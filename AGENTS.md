@@ -38,7 +38,8 @@ For each component:
   - source-backed
 - Prefer observable DOM, ARIA, and keyboard outcomes over abstract wording.
 - Use exact spec obligations where possible instead of paraphrased policy.
-- Prefer specific spec-defined attributes, states, and behaviors over umbrella requirement statements.
+- Prefer specific spec-defined attributes, states, and behaviours over umbrella requirement statements.
+- For interactive components, requirements must explicitly cover each supported interaction path and the disabled-state behaviour for that path.
 - Record allowed alternatives explicitly when the spec defines them.
 - Record relevant spec-defined prohibitions and not-recommended cases when they affect the component contract.
 - Organize the matrix with explicit columns for:
@@ -51,13 +52,13 @@ For each component:
   - `Current`
   - `Potential`
   - `N/A`
-- When a requirement applies only in a specific mode, variant, or state, include that condition explicitly in the requirement.
+- When a requirement applies in a specific mode, variant, or state, include that condition explicitly in the requirement.
 - Keep spec-derived requirements in a normative matrix.
 - Capture UX, DX, and library-policy decisions in a separate product requirements section.
 
 ## Enforcement Strategy
 
-A component is done only when:
+A component is "done" when:
 
 - Playwright component tests pass.
 - Keyboard behaviour tests pass (if interactive).
