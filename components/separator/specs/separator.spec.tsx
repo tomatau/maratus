@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/experimental-ct-react'
-import { Separator } from '.'
+import { Separator } from '../src'
 
 test('REQ-001 REQ-002 renders with horizontal semantics and has no automatic axe violations', async ({
   mount,

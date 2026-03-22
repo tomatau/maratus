@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/experimental-ct-react'
-import { Button } from '.'
+import { Button } from '../src'
 
 test('REQ-001 REQ-002 PRD-003 button renders native button semantics and has no automatic axe violations', async ({
   mount,

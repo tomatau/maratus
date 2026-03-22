@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:unit": "bun test --preload @arachne/bun/unit-test",
+    "test:unit": "bun test --preload @arachne/bun/unit-test src/**",
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "devDependencies": {
