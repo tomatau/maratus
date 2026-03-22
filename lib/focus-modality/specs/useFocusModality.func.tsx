@@ -9,3 +9,14 @@ test('PRD-001 exposes useFocusModality() as the low-level shared hook for readin
 
   await expect(page.locator('#root output')).toHaveText('null')
 })
+
+test('REQ-001 keyboard interaction switches the global focus modality to keyboard', async ({
+  mount,
+  page,
+}) => {
+  await mount(<FocusModalityProbe />)
+
+  await page.keyboard.press('Tab')
+
+  await expect(page.locator('#root output')).toHaveText('keyboard')
+})
