@@ -15,7 +15,7 @@ export function Button(props: ButtonProps) {
     type,
     ...hookProps
   } = props
-  const { buttonProps, preventActivation, whenEnabled } = useButton({
+  const { buttonProps, preventDisabledActivation, whenEnabled } = useButton({
     ...hookProps,
     disabled,
     disabledBehavior,
@@ -28,7 +28,7 @@ export function Button(props: ButtonProps) {
     <button
       {...rootProps}
       disabled={isInteractionDisabled && disabledBehavior === 'native'}
-      {...preventActivation({
+      {...preventDisabledActivation({
         onKeyDown,
         onKeyUp,
       })}

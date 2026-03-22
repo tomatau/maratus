@@ -17,7 +17,7 @@ function createKeyboardEvent(
   } as unknown as KeyboardEvent<HTMLButtonElement>
 }
 
-describe('useButton', () => {
+describe(useButton, () => {
   test('sets aria and data state props from button state', () => {
     const { result } = renderHook(() =>
       useButton({
@@ -106,7 +106,7 @@ describe('useButton', () => {
     })
   })
 
-  test('preventActivation preserves keyboard handlers when enabled', () => {
+  test('preventDisabledActivation preserves keyboard handlers when enabled', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
 
@@ -116,7 +116,7 @@ describe('useButton', () => {
       }),
     )
 
-    const handlers = result.current.preventActivation({
+    const handlers = result.current.preventDisabledActivation({
       onKeyDown: () => {
         keyDownCalls += 1
       },
@@ -132,7 +132,7 @@ describe('useButton', () => {
     expect(keyUpCalls).toBe(1)
   })
 
-  test('preventActivation blocks Enter on keydown for focusable disabled buttons', () => {
+  test('preventDisabledActivation blocks Enter on keydown for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -144,7 +144,7 @@ describe('useButton', () => {
       }),
     )
 
-    const handlers = result.current.preventActivation({
+    const handlers = result.current.preventDisabledActivation({
       onKeyDown: () => {
         keyDownCalls += 1
       },
@@ -160,7 +160,7 @@ describe('useButton', () => {
     expect(keyDownCalls).toBe(0)
   })
 
-  test('preventActivation blocks Space on keydown and keyup for focusable disabled buttons', () => {
+  test('preventDisabledActivation blocks Space on keydown and keyup for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
     let preventedKeyDown = false
@@ -174,7 +174,7 @@ describe('useButton', () => {
       }),
     )
 
-    const handlers = result.current.preventActivation({
+    const handlers = result.current.preventDisabledActivation({
       onKeyDown: () => {
         keyDownCalls += 1
       },
@@ -201,7 +201,7 @@ describe('useButton', () => {
     expect(keyUpCalls).toBe(0)
   })
 
-  test('preventActivation does not block non-activation keys for focusable disabled buttons', () => {
+  test('preventDisabledActivation does not block non-activation keys for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -213,7 +213,7 @@ describe('useButton', () => {
       }),
     )
 
-    const handlers = result.current.preventActivation({
+    const handlers = result.current.preventDisabledActivation({
       onKeyDown: () => {
         keyDownCalls += 1
       },

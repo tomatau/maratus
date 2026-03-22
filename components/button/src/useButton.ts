@@ -3,25 +3,10 @@ import clsx from 'clsx'
 import { useCallback } from 'react'
 import styles from './button.module.css'
 
-type HTMLButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
+type NativeButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
 
-type PublicNativeButtonProps = Omit<HTMLButtonProps, 'aria-pressed' | 'role'>
-
-type ManagedRootProps =
-  | 'children'
-  | 'className'
-  | 'data-loading'
-  | 'disabled'
-  | 'onClick'
-  | 'onMouseDown'
-  | 'onPointerDown'
-  | 'onTouchStart'
-  | 'type'
-
-export type DisabledBehavior = 'native' | 'focusable'
-
-type CommonButtonProps = PublicNativeButtonProps & {
-  disabledBehavior?: DisabledBehavior
+type CommonButtonProps = Omit<NativeButtonProps, 'aria-pressed' | 'role'> & {
+  disabledBehavior?: 'native' | 'focusable'
   isLoading?: boolean
 }
 
@@ -38,21 +23,18 @@ type ToggleButtonProps = {
 export type ButtonProps = CommonButtonProps &
   (CommandButtonProps | ToggleButtonProps)
 
-export type ButtonRootProps = Omit<HTMLButtonProps, ManagedRootProps> & {
-  'aria-pressed'?: HTMLButtonProps['aria-pressed']
-  className?: string
-  children?: HTMLButtonProps['children']
+type ButtonRootProps = NativeButtonProps & {
   'data-loading'?: ''
 }
 
-export type WhenEnabled = <T extends object>(props: T) => T | {}
+type WhenEnabled = <T extends {}>(props: T) => T | {}
 
 type ActivationHandlerProps = {
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>
   onKeyUp?: KeyboardEventHandler<HTMLButtonElement>
 }
 
-export type PreventActivation = (
+type PreventDisabledActivation = (
   props: ActivationHandlerProps,
 ) => ActivationHandlerProps
 
@@ -68,7 +50,7 @@ export type UseButtonResult = {
    * Helper function that prevents keyboard-triggered activation while the
    * button remains focusable.
    */
-  preventActivation: PreventActivation
+  preventDisabledActivation: PreventDisabledActivation
 }
 
 export function useButton(props: ButtonProps): UseButtonResult {
@@ -77,7 +59,7 @@ export function useButton(props: ButtonProps): UseButtonResult {
     'aria-disabled': ariaDisabled,
     className,
     disabled,
-    disabledBehavior: _disabledBehavior,
+    disabledBehavior,
     isLoading = false,
     kind = 'command',
     pressed,
@@ -93,26 +75,15 @@ export function useButton(props: ButtonProps): UseButtonResult {
     [isInteractionDisabled],
   )
 
-  const preventActivation = useCallback<PreventActivation>(
-    ({ onKeyDown, onKeyUp }) => ({
-      onKeyDown: wrapActivationHandler(
-        'onKeyDown',
-        {
-          disabledBehavior: props.disabledBehavior,
-          isInteractionDisabled,
-        },
-        onKeyDown,
-      ),
-      onKeyUp: wrapActivationHandler(
-        'onKeyUp',
-        {
-          disabledBehavior: props.disabledBehavior,
-          isInteractionDisabled,
-        },
-        onKeyUp,
-      ),
-    }),
-    [isInteractionDisabled, props.disabledBehavior],
+  const preventDisabledActivation = useCallback<PreventDisabledActivation>(
+    ({ onKeyDown, onKeyUp }) => {
+      const options = { disabledBehavior, isInteractionDisabled }
+      return {
+        onKeyDown: wrapActivationHandler('onKeyDown', options, onKeyDown),
+        onKeyUp: wrapActivationHandler('onKeyUp', options, onKeyUp),
+      }
+    },
+    [disabledBehavior, isInteractionDisabled],
   )
 
   return {
@@ -126,7 +97,7 @@ export function useButton(props: ButtonProps): UseButtonResult {
       className: clsx(styles.button, className),
       'data-loading': isLoading ? '' : undefined,
     },
-    preventActivation,
+    preventDisabledActivation,
     whenEnabled,
   }
 }
@@ -140,7 +111,7 @@ const activationKeysByPhase: Record<ActivationPhase, Set<string>> = {
 function wrapActivationHandler(
   phase: ActivationPhase,
   options: {
-    disabledBehavior?: DisabledBehavior
+    disabledBehavior?: CommonButtonProps['disabledBehavior']
     isInteractionDisabled: boolean
   },
   handler?: KeyboardEventHandler<HTMLButtonElement>,
