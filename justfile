@@ -1,6 +1,10 @@
 set export := true
 
-TMP_CONFIG_FILE := env("ARACHNE_CONFIG_FILE", "./tmp/arachne.json")
+TMP_DIR := "./tmp"
+TMP_SRC_DIR := TMP_DIR + "/src"
+TMP_BIN_DIR := TMP_DIR + "/bin"
+CLI_BIN := TMP_BIN_DIR + "/arachne"
+TMP_CONFIG_FILE := env("ARACHNE_CONFIG_FILE", TMP_DIR + "/arachne.json")
 
 default:
   @just --list
@@ -9,13 +13,16 @@ cli-test:
   go -C cli test ./...
 
 cli-build:
-  go -C cli build -o ../tmp/bin/arachne .
+  go -C cli build -o ../{{CLI_BIN}} .
 
 build-artifacts:
   bun run --cwd tools/build build:artifacts
 
 package-name workspace package:
   @bun --print "require('./{{workspace}}/{{package}}/package.json').name"
+
+consumer-config-file name:
+  @echo "consumers/{{name}}/arachne.json"
 
 test workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
@@ -38,7 +45,10 @@ test-unit workspace='' package='':
   fi
 
 clear-tmp-src:
-  rm -rf ./tmp/src/
+  rm -rf {{TMP_SRC_DIR}}/
 
-cli-run command='' *args:
-  ./tmp/bin/arachne -cf={{TMP_CONFIG_FILE}} {{command}} {{args}}
+cli name command='' *args:
+  {{CLI_BIN}} -cf="$(just consumer-config-file {{name}})" {{command}} {{args}}
+
+cli-tmp command='' *args:
+  {{CLI_BIN}} -cf={{TMP_CONFIG_FILE}} {{command}} {{args}}
