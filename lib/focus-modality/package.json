@@ -1,0 +1,19 @@
+{
+  "name": "@arachne/focus-modality",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "playwright test -c playwright-ct.config.ts"
+  },
+  "devDependencies": {
+    "@arachne/dotfiles": "workspace:*",
+    "@playwright/experimental-ct-react": "^1.55.1"
+  },
+  "peerDependencies": {
+    "react": "^19.1.1"
+  }
+}
