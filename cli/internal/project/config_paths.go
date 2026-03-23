@@ -25,9 +25,14 @@ func NormalizeConfigForPath(cwd string, configPath string, cfg config.Config) (c
 	if err != nil {
 		return config.Config{}, err
 	}
+	libDir, err := relativizeToConfigDir(configDir, configDir, cfg.LibDir)
+	if err != nil {
+		return config.Config{}, err
+	}
 
 	cfg.SrcDir = srcDir
 	cfg.ComponentsDir = componentsDir
+	cfg.LibDir = libDir
 	return cfg, nil
 }
 
@@ -61,6 +66,25 @@ func ResolveComponentsDir(configPath string, cfg config.Config) string {
 	}
 
 	return ResolvePathFromConfig(configPath, filepath.Join(srcDir, componentsDir))
+}
+
+func ResolveLibDir(configPath string, cfg config.Config) string {
+	libDir := filepath.Clean(cfg.LibDir)
+	if filepath.IsAbs(libDir) {
+		return libDir
+	}
+
+	srcDir := filepath.Clean(cfg.SrcDir)
+	if srcDir == "" || srcDir == "." {
+		return ResolvePathFromConfig(configPath, libDir)
+	}
+
+	prefix := srcDir + string(os.PathSeparator)
+	if libDir == srcDir || hasPathPrefix(libDir, prefix) {
+		return ResolvePathFromConfig(configPath, libDir)
+	}
+
+	return ResolvePathFromConfig(configPath, filepath.Join(srcDir, libDir))
 }
 
 func relativizeToConfigDir(cwd string, configDir string, path string) (string, error) {

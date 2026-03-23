@@ -11,6 +11,7 @@ type Project struct {
 	Config        config.Config
 	RegistryRoot  string
 	ComponentsDir string
+	LibDir        string
 }
 
 func Open(rootDir string, configFilePath string) (Project, error) {
@@ -26,5 +27,6 @@ func Open(rootDir string, configFilePath string) (Project, error) {
 		Config:        cfg,
 		RegistryRoot:  registry.ResolveRoot(rootDir),
 		ComponentsDir: ResolveComponentsDir(resolvedConfigPath, cfg),
+		LibDir:        ResolveLibDir(resolvedConfigPath, cfg),
 	}, nil
 }

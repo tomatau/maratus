@@ -76,6 +76,7 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	var cfg struct {
 		SrcDir           string `json:"srcDir"`
 		ComponentsDir    string `json:"componentsDir"`
+		LibDir           string `json:"libDir"`
 		ThemeDir         string `json:"themeDir"`
 		ComponentsLayout string `json:"componentsLayout"`
 		Style            string `json:"style"`
@@ -88,6 +89,9 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 	if cfg.ComponentsDir != "components" {
 		t.Fatalf("expected componentsDir to default to components, got %q", cfg.ComponentsDir)
+	}
+	if cfg.LibDir != "lib" {
+		t.Fatalf("expected libDir to default to lib, got %q", cfg.LibDir)
 	}
 	if cfg.ThemeDir != "styles" {
 		t.Fatalf("expected themeDir to default to styles, got %q", cfg.ThemeDir)
@@ -136,6 +140,7 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	var cfg struct {
 		SrcDir           string `json:"srcDir"`
 		ComponentsDir    string `json:"componentsDir"`
+		LibDir           string `json:"libDir"`
 		ThemeDir         string `json:"themeDir"`
 		ComponentsLayout string `json:"componentsLayout"`
 		Style            string `json:"style"`
@@ -148,6 +153,9 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	}
 	if cfg.ComponentsDir != "components" {
 		t.Fatalf("expected componentsDir to stay config-relative as components, got %q", cfg.ComponentsDir)
+	}
+	if cfg.LibDir != "lib" {
+		t.Fatalf("expected libDir to stay config-relative as lib, got %q", cfg.LibDir)
 	}
 	if cfg.ThemeDir != "styles" {
 		t.Fatalf("expected themeDir to stay config-relative as styles, got %q", cfg.ThemeDir)
