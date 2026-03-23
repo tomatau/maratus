@@ -247,6 +247,51 @@ test('REQ-020 disabled buttons do not activate through keyboard interaction', as
   expect(activated).toBe(0)
 })
 
+test('REQ-021 PRD-004 keyboard focus exposes a focus-visible state hook', async ({
+  mount,
+  page,
+}) => {
+  await mount(<Button>Press me</Button>)
+
+  await page.keyboard.press('Tab')
+
+  await expect(page.locator('#root button')).toBeFocused()
+  await expect(page.locator('#root button')).toHaveAttribute(
+    'data-focus-visible',
+    '',
+  )
+})
+
+test('REQ-022 pointer focus does not expose the focus-visible state hook', async ({
+  mount,
+  page,
+}) => {
+  await mount(<Button>Press me</Button>)
+
+  await page.locator('#root button').click()
+
+  await expect(page.locator('#root button')).toBeFocused()
+  await expect(page.locator('#root button')).not.toHaveAttribute(
+    'data-focus-visible',
+    '',
+  )
+})
+
+test('REQ-021 native button remains compatible with the browser focus-visible pseudo-class', async ({
+  mount,
+  page,
+}) => {
+  await mount(<Button>Press me</Button>)
+
+  await page.keyboard.press('Tab')
+
+  const matchesFocusVisible = await page
+    .locator('#root button')
+    .evaluate((element) => element.matches(':focus-visible'))
+
+  expect(matchesFocusVisible).toBe(true)
+})
+
 test('REQ-011 submit buttons allow normal HTML form submission behaviour', async ({
   mount,
   page,

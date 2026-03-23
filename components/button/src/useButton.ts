@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, KeyboardEventHandler } from 'react'
+import { useIsFocusVisible } from '@arachne/focus-modality'
 import clsx from 'clsx'
 import { useCallback } from 'react'
 import styles from './button.module.css'
@@ -24,6 +25,7 @@ export type ButtonProps = CommonButtonProps &
   (CommandButtonProps | ToggleButtonProps)
 
 type ButtonRootProps = NativeButtonProps & {
+  'data-focus-visible'?: ''
   'data-loading'?: ''
 }
 
@@ -68,6 +70,7 @@ export function useButton(props: ButtonProps): UseButtonResult {
   } = props
   const isInteractionDisabled = disabled || isLoading
   const ariaPressed = kind === 'toggle' ? pressed : undefined
+  const isFocusVisible = useIsFocusVisible()
 
   const whenEnabled = useCallback<WhenEnabled>(
     <T extends object>(enabledProps: T) =>
@@ -95,6 +98,7 @@ export function useButton(props: ButtonProps): UseButtonResult {
       'aria-pressed': ariaPressed,
       children,
       className: clsx(styles.button, className),
+      'data-focus-visible': isFocusVisible ? '' : undefined,
       'data-loading': isLoading ? '' : undefined,
     },
     preventDisabledActivation,

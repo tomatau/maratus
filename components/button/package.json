@@ -7,6 +7,9 @@
     "test:unit": "bun test --preload @arachne/bun/unit-test src/**",
     "test": "playwright test -c playwright-ct.config.ts"
   },
+  "dependencies": {
+    "@arachne/focus-modality": "workspace:*"
+  },
   "devDependencies": {
     "@arachne/build": "workspace:*",
     "@arachne/bun": "workspace:*",

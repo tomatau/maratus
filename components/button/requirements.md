@@ -7,6 +7,8 @@
 - WAI-ARIA 1.2: [`aria-pressed`](https://www.w3.org/TR/wai-aria-1.2/#aria-pressed)
 - WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
 - ARIA in HTML: [`button` element](https://www.w3.org/TR/html-aria/#el-button)
+- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
+- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
 - WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
 
 ## Scope
@@ -17,12 +19,12 @@
 - Disabled state
 - Toggle button state
 - Loading state semantics
+- Focus-visible behavior
 - HTML form-associated behaviour
 
 ### Potential scope
 
 - Alternate rendered elements
-- Focus modality
 - Icon slots
 - Progress or pending announcement patterns beyond `aria-busy`
 - Command and popover button features
@@ -51,11 +53,14 @@
 | REQ-018 | MUST   | When the enabled button is focused and activated with the keyboard, dispatch normal button activation behaviour for the supported keyboard interaction paths.                                | HTML Standard `button` activation behaviour; WAI-ARIA 1.2 `button`                  | Current       |
 | REQ-019 | MUST   | When the button is disabled through the rendered variant, do not activate through pointer or click interaction.                                                                              | HTML Standard `button` activation behaviour; WAI-ARIA 1.2 `aria-disabled`           | Current       |
 | REQ-020 | MUST   | When the button is disabled through the rendered variant, do not activate through keyboard interaction.                                                                                      | HTML Standard `button` activation behaviour; WAI-ARIA 1.2 `aria-disabled`           | Current       |
+| REQ-021 | MUST   | When the button receives keyboard focus in a focus-visible interaction mode, expose a visible focus indicator state that authors can style separately from raw focus.                        | WCAG 2.2 SC 2.4.7; Selectors Level 4 `:focus-visible`                               | Current       |
+| REQ-022 | SHOULD | When the button receives pointer focus, do not expose the focus-visible indicator state unless the browser or author explicitly does so.                                                     | Selectors Level 4 `:focus-visible`                                                  | Current       |
 
 ## Product Requirements
 
-| ID      | Requirement                                                                                                    | Applicability |
-| ------- | -------------------------------------------------------------------------------------------------------------- | ------------- |
-| PRD-001 | Support a loading API that exposes busy semantics without requiring consumers to wire the ARIA state manually. | Current       |
-| PRD-002 | Support a focusable disabled mode for cases such as tooltip-triggered disabled explanations.                   | Current       |
-| PRD-003 | Keep native `<button>` as the default rendered element.                                                        | Current       |
+| ID      | Requirement                                                                                                          | Applicability |
+| ------- | -------------------------------------------------------------------------------------------------------------------- | ------------- |
+| PRD-001 | Support a loading API that exposes busy semantics without requiring consumers to wire the ARIA state manually.       | Current       |
+| PRD-002 | Support a focusable disabled mode for cases such as tooltip-triggered disabled explanations.                         | Current       |
+| PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
+| PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |

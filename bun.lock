@@ -14,6 +14,9 @@
     "components/button": {
       "name": "@arachne/base-button",
       "version": "0.0.0",
+      "dependencies": {
+        "@arachne/focus-modality": "workspace:*",
+      },
       "devDependencies": {
         "@arachne/build": "workspace:*",
         "@arachne/bun": "workspace:*",

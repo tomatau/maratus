@@ -50,7 +50,8 @@
   color: var(--ara-button-fg--hover);
 }
 
-.button:focus {
+.button:focus-visible,
+.button[data-focus-visible] {
   background-color: var(--ara-button-bg--focus);
   border-color: var(--ara-button-detail--focus);
   box-shadow: var(--ara-button-shadow--focus);
