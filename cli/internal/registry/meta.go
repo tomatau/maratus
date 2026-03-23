@@ -20,8 +20,10 @@ type ComponentMeta struct {
 }
 
 type PackageManifest struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+	Name             string            `json:"name"`
+	Version          string            `json:"version"`
+	Dependencies     map[string]string `json:"dependencies"`
+	PeerDependencies map[string]string `json:"peerDependencies"`
 }
 
 func LoadComponentMeta(registryRoot string, componentName string) (ComponentMeta, error) {

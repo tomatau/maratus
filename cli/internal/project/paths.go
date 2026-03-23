@@ -13,3 +13,7 @@ func ResolveComponentDir(proj Project, componentName string) string {
 
 	return componentDir
 }
+
+func ResolveLibPackageDir(proj Project, packageName string) string {
+	return filepath.Join(proj.LibDir, packageName)
+}

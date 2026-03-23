@@ -48,7 +48,7 @@ func New(configFilePath func() string) *cobra.Command {
 				}
 			}
 
-			results, err := installWithFeedback(cmd, proj, components, selectedStyle)
+			results, dependencyResults, err := installWithFeedback(cmd, proj, components, selectedStyle)
 			if err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ func New(configFilePath func() string) *cobra.Command {
 					themeFileStatus = "updated"
 				}
 			}
-			printInstallSummary(cmd, results, themeFilePath, themeFileStatus)
+			printInstallSummary(cmd, results, dependencyResults, themeFilePath, themeFileStatus)
 
 			return nil
 		},

@@ -13,17 +13,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func installWithFeedback(cmd *cobra.Command, proj project.Project, components []string, selectedStyle config.Style) ([]InstallResult, error) {
+func installWithFeedback(cmd *cobra.Command, proj project.Project, components []string, selectedStyle config.Style) ([]InstallResult, []DependencyInstallResult, error) {
 	if !tui.IsInteractiveSession(cmd) {
 		results := make([]InstallResult, 0, len(components))
 		for _, component := range components {
 			result, err := InstallComponent(proj, component, selectedStyle)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			results = append(results, result)
 		}
-		return results, nil
+		dependencyResults, err := InstallDependencies(proj, collectDependencies(results))
+		if err != nil {
+			return nil, nil, err
+		}
+		return results, dependencyResults, nil
 	}
 
 	model := newInstallSpinnerModel(proj, components, selectedStyle)
@@ -34,38 +38,60 @@ func installWithFeedback(cmd *cobra.Command, proj project.Project, components []
 	)
 	finalModel, err := program.Run()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	resultModel, ok := finalModel.(*installSpinnerModel)
 	if !ok {
-		return nil, fmt.Errorf("unexpected install spinner model type")
+		return nil, nil, fmt.Errorf("unexpected install spinner model type")
 	}
 	if resultModel.err != nil {
-		return nil, resultModel.err
+		return nil, nil, resultModel.err
 	}
-	return resultModel.results, nil
+	return resultModel.results, resultModel.dependencyResults, nil
 }
 
-func printInstallSummary(cmd *cobra.Command, results []InstallResult, themeFilePath string, themeFileStatus string) {
-	if len(results) == 0 {
+func printInstallSummary(cmd *cobra.Command, results []InstallResult, dependencyResults []DependencyInstallResult, themeFilePath string, themeFileStatus string) {
+	if len(results) == 0 && len(dependencyResults) == 0 {
 		return
 	}
-	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\n%s\n", style.PromptTitle("Installed components"))
-	for _, result := range results {
-		_, _ = fmt.Fprintf(
-			cmd.OutOrStdout(),
-			"%s%s\n",
-			style.PromptCursor(),
-			style.PromptActive(result.Component),
-		)
-		for _, file := range result.Files {
+	if len(results) > 0 {
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\n%s\n", style.PromptTitle("Installed components"))
+		for _, result := range results {
 			_, _ = fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"  %s%s\n",
-				style.PromptHint("• "),
-				style.PromptHint(file),
+				"%s%s\n",
+				style.PromptCursor(),
+				style.PromptActive(result.Component),
 			)
+			for _, file := range result.Files {
+				_, _ = fmt.Fprintf(
+					cmd.OutOrStdout(),
+					"  %s%s\n",
+					style.PromptHint("• "),
+					style.PromptHint(file),
+				)
+			}
+		}
+	}
+
+	if len(dependencyResults) > 0 {
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\n%s\n", style.PromptTitle("Installed lib dependencies"))
+		for _, result := range dependencyResults {
+			_, _ = fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"%s%s\n",
+				style.PromptCursor(),
+				style.PromptActive(result.Package),
+			)
+			for _, file := range result.Files {
+				_, _ = fmt.Fprintf(
+					cmd.OutOrStdout(),
+					"  %s%s\n",
+					style.PromptHint("• "),
+					style.PromptHint(file),
+				)
+			}
 		}
 	}
 
@@ -91,18 +117,20 @@ func printInstallSummary(cmd *cobra.Command, results []InstallResult, themeFileP
 }
 
 type installDoneMsg struct {
-	results []InstallResult
-	err     error
+	results           []InstallResult
+	dependencyResults []DependencyInstallResult
+	err               error
 }
 
 type installSpinnerModel struct {
-	proj       project.Project
-	components []string
-	style      config.Style
-	spinner    spinner.Model
-	results    []InstallResult
-	done       bool
-	err        error
+	proj              project.Project
+	components        []string
+	style             config.Style
+	spinner           spinner.Model
+	results           []InstallResult
+	dependencyResults []DependencyInstallResult
+	done              bool
+	err               error
 }
 
 func newInstallSpinnerModel(proj project.Project, components []string, selectedStyle config.Style) *installSpinnerModel {
@@ -129,6 +157,7 @@ func (m *installSpinnerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case installDoneMsg:
 		m.done = true
 		m.results = msg.results
+		m.dependencyResults = msg.dependencyResults
 		m.err = msg.err
 		return m, tea.Quit
 	default:
@@ -158,6 +187,18 @@ func (m *installSpinnerModel) installCmd() tea.Cmd {
 			}
 			results = append(results, result)
 		}
-		return installDoneMsg{results: results}
+		dependencyResults, err := InstallDependencies(m.proj, collectDependencies(results))
+		if err != nil {
+			return installDoneMsg{err: err}
+		}
+		return installDoneMsg{results: results, dependencyResults: dependencyResults}
 	}
+}
+
+func collectDependencies(results []InstallResult) []string {
+	dependencies := make([]string, 0)
+	for _, result := range results {
+		dependencies = append(dependencies, result.Dependencies...)
+	}
+	return dependencies
 }

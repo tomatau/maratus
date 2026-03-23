@@ -1,15 +1,20 @@
 package cmd
 
 import (
+	addcmd "arachne/cli/internal/cmd/add"
+	"arachne/cli/internal/config"
+	"arachne/cli/internal/project"
 	"bytes"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 )
 
 type registryFixture struct {
 	name            string
+	dependencies    map[string]string
 	themeTokens     []string
 	componentTokens [][2]string
 	cssFiles        map[string]string
@@ -18,8 +23,9 @@ type registryFixture struct {
 }
 
 const (
-	componentOnlyName     = "componentonly"
-	componentWithHookName = "componentwithhook"
+	componentOnlyName            = "componentonly"
+	componentWithHookName        = "componentwithhook"
+	singleLevelLibDependencyName = "single-level-lib-dependency"
 )
 
 func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
@@ -206,6 +212,158 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 }
 
+func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0", "react": "^19.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+	})
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "componentsLayout": "flat"
+}`)
+
+	proj, err := project.Open(wd, "arachne.json")
+	if err != nil {
+		t.Fatalf("open project: %v", err)
+	}
+
+	result, err := addcmd.InstallComponent(proj, componentWithHookName, config.StyleCSSFiles)
+	if err != nil {
+		t.Fatalf("install component: %v", err)
+	}
+
+	if len(result.Dependencies) != 1 {
+		t.Fatalf("expected 1 internal dependency, got %d (%v)", len(result.Dependencies), result.Dependencies)
+	}
+	if result.Dependencies[0] != singleLevelLibDependencyName {
+		t.Fatalf("expected dependency to be %s, got %q", singleLevelLibDependencyName, result.Dependencies[0])
+	}
+}
+
+func TestAddCopiesOneLevelInternalDependenciesToLibDir(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"), "export function dependency() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "componentsLayout": "flat"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with dependency: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"),
+		`from '../lib/`+singleLevelLibDependencyName+`'`,
+	)
+}
+
+func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentOnlyName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentOnlyName) + ".tsx": "export function " + componentTypeName(componentOnlyName) + "() { return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentOnlyName) + ".tsx": "export function " + componentTypeName(componentOnlyName) + "() { return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentOnlyName) + ".tsx": "export function " + componentTypeName(componentOnlyName) + "() { return null }\n",
+		},
+	})
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"), "export function dependency() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "componentsLayout": "flat"
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with duplicate dependency: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
+}
+
 func TestAddNoArgsInNonInteractiveModeReturnsError(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
@@ -313,7 +471,7 @@ func writeRegistryFixture(t *testing.T, wd string, fixture registryFixture) {
 	writeFile(
 		t,
 		filepath.Join(componentRootDir, "package.json"),
-		"{\n  \"name\": \"@arachne/"+fixture.name+"\",\n  \"version\": \"0.0.0\"\n}\n",
+		buildPackageJSON(fixture),
 	)
 	writeStyleFiles(t, cssFileDir, fixture.cssFiles)
 	writeStyleFiles(t, cssModulesDir, fixture.cssModules)
@@ -347,6 +505,37 @@ func buildMetaJSON(fixture registryFixture) string {
 		)
 	}
 	lines = append(lines, "  ]", "}")
+	return strings.Join(lines, "\n") + "\n"
+}
+
+func buildPackageJSON(fixture registryFixture) string {
+	lines := []string{
+		"{",
+		"  \"name\": \"@arachne/" + fixture.name + "\",",
+		"  \"version\": \"0.0.0\"",
+	}
+
+	if len(fixture.dependencies) > 0 {
+		lines[len(lines)-1] += ","
+		lines = append(lines, "  \"dependencies\": {")
+
+		keys := make([]string, 0, len(fixture.dependencies))
+		for key := range fixture.dependencies {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+
+		for index, key := range keys {
+			suffix := ","
+			if index == len(keys)-1 {
+				suffix = ""
+			}
+			lines = append(lines, `    "`+key+`": "`+fixture.dependencies[key]+`"`+suffix)
+		}
+		lines = append(lines, "  }")
+	}
+
+	lines = append(lines, "}")
 	return strings.Join(lines, "\n") + "\n"
 }
 
