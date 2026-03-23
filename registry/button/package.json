@@ -2,5 +2,13 @@
   "name": "@arachne/button",
   "version": "0.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@arachne/focus-modality": "workspace:*"
+  },
+  "peerDependencies": {
+    "clsx": "^2.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
 }

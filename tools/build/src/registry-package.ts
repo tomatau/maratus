@@ -5,10 +5,14 @@ export type RegistryPackageManifest = {
   version: string
   private: boolean
   type: 'module'
+  dependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
 }
 
 type SourcePackageManifest = {
   version?: string
+  dependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
 }
 
 export async function buildRegistryPackageManifest(
@@ -23,5 +27,7 @@ export async function buildRegistryPackageManifest(
     version: manifest.version ?? '0.0.0',
     private: true,
     type: 'module',
+    dependencies: manifest.dependencies,
+    peerDependencies: manifest.peerDependencies,
   }
 }
