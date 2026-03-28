@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/experimental-ct-react'
-import { FocusVisibleProbe } from './useIsFocusVisible.story'
+import {
+  FocusVisibleProbe,
+  MultipleFocusVisibleProbes,
+} from './useIsFocusVisible.story'
+import {
+  expectOneSharedFocusModalityListenerSet,
+  installDocumentListenerCountProbe,
+} from './sharedRuntimeAssertions'
 
 test('PRD-002 exposes useIsFocusVisible() for reading the current global focus-visible state', async ({
   mount,
@@ -34,4 +41,15 @@ test('REQ-004 pointer modality makes global focus-visible state false', async ({
   await page.mouse.down()
 
   await expect(page.locator('#root output')).toHaveText('false')
+})
+
+test('NFR-001 multiple focus-visible consumers attach one shared document listener set per runtime', async ({
+  mount,
+  page,
+}) => {
+  await installDocumentListenerCountProbe(page)
+
+  await mount(<MultipleFocusVisibleProbes />)
+
+  await expectOneSharedFocusModalityListenerSet(page)
 })

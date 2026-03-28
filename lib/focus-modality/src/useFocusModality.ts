@@ -4,7 +4,6 @@ import {
   useArachneRuntime,
   useStoreSelector,
 } from '@arachne/store-runtime'
-import { useEffect } from 'react'
 
 export type FocusModality = 'keyboard' | 'pointer' | null
 
@@ -15,21 +14,11 @@ type FocusModalityState = {
 const focusModalityStoreKey = Symbol('focus-modality')
 
 function createFocusModalityStore(): WritableArachneStore<FocusModalityState> {
-  return createStore<FocusModalityState>({
+  const store = createStore<FocusModalityState>({
     modality: null,
   })
-}
 
-function useFocusModalityStore() {
-  const runtime = useArachneRuntime()
-
-  return runtime.getStore(focusModalityStoreKey, createFocusModalityStore)
-}
-
-export function useFocusModality(): FocusModality {
-  const store = useFocusModalityStore()
-
-  useEffect(() => {
+  if (typeof document !== 'undefined') {
     const handleKeyDown = () => {
       store.setState({
         modality: 'keyboard',
@@ -44,12 +33,19 @@ export function useFocusModality(): FocusModality {
 
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('pointerdown', handlePointerDown)
+  }
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('pointerdown', handlePointerDown)
-    }
-  }, [store])
+  return store
+}
+
+function useFocusModalityStore() {
+  const runtime = useArachneRuntime()
+
+  return runtime.getStore(focusModalityStoreKey, createFocusModalityStore)
+}
+
+export function useFocusModality(): FocusModality {
+  const store = useFocusModalityStore()
 
   return useStoreSelector(store, (state) => state.modality)
 }

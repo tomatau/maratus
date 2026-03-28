@@ -5,3 +5,12 @@ export function FocusVisibleProbe() {
 
   return <output>{String(isFocusVisible)}</output>
 }
+
+export function MultipleFocusVisibleProbes() {
+  return (
+    <>
+      <FocusVisibleProbe />
+      <FocusVisibleProbe />
+    </>
+  )
+}

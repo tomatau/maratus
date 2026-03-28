@@ -5,3 +5,12 @@ export function FocusModalityProbe() {
 
   return <output>{String(modality)}</output>
 }
+
+export function MultipleFocusModalityProbes() {
+  return (
+    <>
+      <FocusModalityProbe />
+      <FocusModalityProbe />
+    </>
+  )
+}
