@@ -1,5 +1,5 @@
 import type { RewriteInternalImportsOptions } from './options'
-import type { Codemod } from '@arachne/morph'
+import type { Codemod } from '@arachne-codemod/cli-runner'
 import {
   buildInternalImportDeclarations,
   renderInternalImportDeclarations,

@@ -1,10 +1,10 @@
 {
-  "name": "@arachne/morph",
+  "name": "@arachne-codemod/cli-runner",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "bin": {
-    "arachne-morph": "./dist/cli.mjs"
+    "arachne-codemod-runner": "./dist/cli.mjs"
   },
   "exports": {
     ".": "./src/index.ts",

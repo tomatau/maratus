@@ -13,9 +13,9 @@ import (
 )
 
 type Manifest[TOptions any] struct {
-	CodemodPackageName string `json:"codemodPackageName"`
-	CodemodExportName  string `json:"codemodExportName"`
-	Files              []File `json:"files"`
+	CodemodPackageName string   `json:"codemodPackageName"`
+	CodemodExportName  string   `json:"codemodExportName"`
+	Files              []File   `json:"files"`
 	Options            TOptions `json:"options"`
 }
 
@@ -51,7 +51,7 @@ func RunManifest(manifestPath string) (Output, error) {
 	command := exec.Command(
 		"bun",
 		"run",
-		"arachne-morph",
+		"arachne-codemod-runner",
 		manifestPath,
 	)
 	command.Dir = arachneRepoRoot()

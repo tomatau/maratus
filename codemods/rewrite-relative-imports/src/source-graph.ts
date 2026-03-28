@@ -1,4 +1,4 @@
-import { joinPath, normalizePath } from '@arachne/morph'
+import { joinPath, normalizePath } from '@arachne-codemod/cli-runner'
 
 export function collectSourceGraph(files: Array<{ path: string }>) {
   const graph = new Map<string, string>()
