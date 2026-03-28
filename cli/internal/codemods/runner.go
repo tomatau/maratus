@@ -1,4 +1,4 @@
-package addcmd
+package codemods
 
 import (
 	"bytes"
@@ -12,23 +12,23 @@ import (
 	"strings"
 )
 
-type codemodManifest[TOptions any] struct {
-	CodemodPackageName string        `json:"codemodPackageName"`
-	CodemodExportName  string        `json:"codemodExportName"`
-	Files              []codemodFile `json:"files"`
-	Options            TOptions      `json:"options"`
+type Manifest[TOptions any] struct {
+	CodemodPackageName string `json:"codemodPackageName"`
+	CodemodExportName  string `json:"codemodExportName"`
+	Files              []File `json:"files"`
+	Options            TOptions `json:"options"`
 }
 
-type codemodFile struct {
+type File struct {
 	Path       string `json:"path"`
 	SourceText string `json:"sourceText"`
 }
 
-type codemodOutput struct {
-	Files []codemodFile `json:"files"`
+type Output struct {
+	Files []File `json:"files"`
 }
 
-func writeCodemodManifest(pattern string, manifest any) (string, error) {
+func WriteManifest(pattern string, manifest any) (string, error) {
 	encoded, err := json.Marshal(manifest)
 	if err != nil {
 		return "", err
@@ -47,7 +47,7 @@ func writeCodemodManifest(pattern string, manifest any) (string, error) {
 	return file.Name(), nil
 }
 
-func runCodemodManifest(manifestPath string) (codemodOutput, error) {
+func RunManifest(manifestPath string) (Output, error) {
 	command := exec.Command(
 		"bun",
 		"run",
@@ -62,16 +62,16 @@ func runCodemodManifest(manifestPath string) (codemodOutput, error) {
 	command.Stderr = &stderr
 
 	if err := command.Run(); err != nil {
-		return codemodOutput{}, fmt.Errorf(
+		return Output{}, fmt.Errorf(
 			"run codemod: %w: %s",
 			err,
 			strings.TrimSpace(stderr.String()),
 		)
 	}
 
-	var output codemodOutput
+	var output Output
 	if err := json.Unmarshal(stdout.Bytes(), &output); err != nil {
-		return codemodOutput{}, err
+		return Output{}, err
 	}
 
 	return output, nil
