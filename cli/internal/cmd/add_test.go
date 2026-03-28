@@ -60,11 +60,11 @@ func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 	assertFileContains(
 		t,
-		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
 		`import './`+componentTypeName(componentWithHookName)+`.css'`,
 	)
 }
@@ -100,11 +100,11 @@ func TestAddCSSModulesCopiesBuiltSourceGraph(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".module.css"))
 	assertFileContains(
 		t,
-		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
 		`import styles from './`+componentTypeName(componentWithHookName)+`.module.css'`,
 	)
 }
@@ -140,11 +140,11 @@ func TestAddTailwindCSSCopiesBuiltSourceGraph(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 	assertFileContains(
 		t,
-		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
 		`import './`+componentTypeName(componentWithHookName)+`.css'`,
 	)
 }
@@ -180,7 +180,7 @@ func TestAddNestedLayoutPreservesRelativeFiles(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentWithHookName+".css"))
 }
 
@@ -218,7 +218,7 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 }
 
@@ -294,11 +294,11 @@ func TestAddUsesMatchExportComponentCSSFilenameAndImportWhenConfigured(t *testin
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".css"))
 	assertFileContains(
 		t,
-		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
 		`import './`+componentTypeName(componentWithHookName)+`.css'`,
 	)
 }

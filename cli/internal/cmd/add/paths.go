@@ -4,6 +4,7 @@ import (
 	"arachne/cli/internal/config"
 	"arachne/cli/internal/project"
 	"path/filepath"
+	"regexp"
 )
 
 func ComponentSourceFileName(proj project.Project, componentName string) string {
@@ -43,4 +44,32 @@ func ResolveInstallPaths(proj project.Project, componentName string, style confi
 		ComponentFile: filepath.Join(componentDir, componentFileName),
 		CSSFile:       filepath.Join(componentDir, ComponentStyleFileName(proj, componentName, style)),
 	}
+}
+
+func RewriteInstalledComponentRelativePath(
+	proj project.Project,
+	componentName string,
+	relativePath string,
+	sourceText string,
+) string {
+	if exportsHook(sourceText) {
+		if proj.Config.FileNames.Hooks == config.FileNameKindKebabCase {
+			return project.RewriteSourceRelativePath(relativePath)
+		}
+		return relativePath
+	}
+
+	return project.RewriteComponentRelativePath(
+		relativePath,
+		componentName,
+		proj.Config.FileNames.Components,
+	)
+}
+
+var hookExportPattern = regexp.MustCompile(
+	`(?m)\bexport\s+(?:async\s+)?(?:function|const|let|var)\s+(use[A-Z0-9_]\w*)\b`,
+)
+
+func exportsHook(sourceText string) bool {
+	return hookExportPattern.MatchString(sourceText)
 }

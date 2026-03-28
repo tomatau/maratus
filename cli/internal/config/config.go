@@ -25,6 +25,7 @@ type LayoutConfig struct {
 
 type FileNamesConfig struct {
 	Lib        FileNameKind `json:"lib"`
+	Hooks      FileNameKind `json:"hooks,omitempty"`
 	Components FileNameKind `json:"components,omitempty"`
 }
 
@@ -59,6 +60,12 @@ func Load(path string) (Config, error) {
 	}
 	if !cfg.FileNames.Lib.IsValid() {
 		return Config{}, errors.New("filenames.lib must be one of: kebab-case, match-export")
+	}
+	if cfg.FileNames.Hooks == "" {
+		cfg.FileNames.Hooks = DefaultFileNameKind()
+	}
+	if !cfg.FileNames.Hooks.IsValid() {
+		return Config{}, errors.New("filenames.hooks must be one of: kebab-case, match-export")
 	}
 	if cfg.FileNames.Components == "" {
 		cfg.FileNames.Components = FileNameKindMatchExport

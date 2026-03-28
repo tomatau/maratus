@@ -85,6 +85,7 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 		} `json:"layout"`
 		FileNames struct {
 			Lib        string `json:"lib"`
+			Hooks      string `json:"hooks"`
 			Components string `json:"components"`
 		} `json:"filenames"`
 		Style string `json:"style"`
@@ -115,6 +116,9 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 	if cfg.FileNames.Lib != "kebab-case" {
 		t.Fatalf("expected filenames.lib to default to kebab-case, got %q", cfg.FileNames.Lib)
+	}
+	if cfg.FileNames.Hooks != "kebab-case" {
+		t.Fatalf("expected filenames.hooks to default to kebab-case, got %q", cfg.FileNames.Hooks)
 	}
 	if cfg.FileNames.Components != "match-export" {
 		t.Fatalf("expected filenames.components to default to match-export, got %q", cfg.FileNames.Components)
@@ -168,6 +172,7 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 		} `json:"layout"`
 		FileNames struct {
 			Lib        string `json:"lib"`
+			Hooks      string `json:"hooks"`
 			Components string `json:"components"`
 		} `json:"filenames"`
 		Style string `json:"style"`
@@ -189,6 +194,9 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	}
 	if cfg.FileNames.Lib != "kebab-case" {
 		t.Fatalf("expected filenames.lib to default to kebab-case, got %q", cfg.FileNames.Lib)
+	}
+	if cfg.FileNames.Hooks != "kebab-case" {
+		t.Fatalf("expected filenames.hooks to default to kebab-case, got %q", cfg.FileNames.Hooks)
 	}
 	if cfg.FileNames.Components != "match-export" {
 		t.Fatalf("expected filenames.components to default to match-export, got %q", cfg.FileNames.Components)

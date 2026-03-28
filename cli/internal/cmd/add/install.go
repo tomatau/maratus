@@ -78,6 +78,18 @@ func installBuiltSourceGraph(
 	if err != nil {
 		return InstallResult{}, err
 	}
+	sourceTextByRelativePath := make(map[string]string, len(sourceGraph))
+	for relativePath := range sourceGraph {
+		ext := filepath.Ext(relativePath)
+		switch ext {
+		case ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs":
+			data, readErr := os.ReadFile(filepath.Join(sourceBaseDir, filepath.FromSlash(relativePath)))
+			if readErr != nil {
+				return InstallResult{}, readErr
+			}
+			sourceTextByRelativePath[relativePath] = string(data)
+		}
+	}
 
 	err = filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
 		if err != nil {
@@ -96,7 +108,12 @@ func installBuiltSourceGraph(
 		}
 		destinationPath := filepath.Join(
 			installPaths.ComponentDir,
-			project.RewriteComponentRelativePath(relativePath, result.Component, proj.Config.FileNames.Components),
+			RewriteInstalledComponentRelativePath(
+				proj,
+				result.Component,
+				relativePath,
+				sourceTextByRelativePath[filepath.ToSlash(relativePath)],
+			),
 		)
 		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
 			return err
@@ -114,6 +131,7 @@ func installBuiltSourceGraph(
 				source,
 				result.Dependencies,
 				sourceGraph,
+				sourceTextByRelativePath,
 			)
 			if err != nil {
 				return err
@@ -163,6 +181,7 @@ func rewriteComponentImports(
 	source []byte,
 	dependencies []string,
 	sourceGraph map[string]string,
+	sourceTextByRelativePath map[string]string,
 ) ([]byte, error) {
 	rewritten, err := rewriteInternalDependencyImports(proj, destinationPath, source, dependencies)
 	if err != nil {
@@ -175,10 +194,11 @@ func rewriteComponentImports(
 		sourceGraph,
 		string(proj.Config.FileNames.Components),
 		func(relativePath string) string {
-			return project.RewriteComponentRelativePath(
-				relativePath,
+			return RewriteInstalledComponentRelativePath(
+				proj,
 				componentName,
-				proj.Config.FileNames.Components,
+				relativePath,
+				sourceTextByRelativePath[filepath.ToSlash(relativePath)],
 			)
 		},
 	)

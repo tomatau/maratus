@@ -55,6 +55,7 @@ func New(configFilePath func() string) *cobra.Command {
 				},
 				FileNames: config.FileNamesConfig{
 					Lib:        config.DefaultFileNameKind(),
+					Hooks:      config.DefaultFileNameKind(),
 					Components: config.FileNameKindMatchExport,
 				},
 				Style: style,
