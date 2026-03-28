@@ -20,7 +20,7 @@ type Config struct {
 
 type LayoutConfig struct {
 	Kind   LayoutKind `json:"kind"`
-	Barrel bool       `json:"barrel,omitempty"`
+	Barrel bool       `json:"barrel"`
 }
 
 type FileNamesConfig struct {
