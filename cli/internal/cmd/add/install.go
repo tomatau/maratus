@@ -5,6 +5,7 @@ import (
 	"arachne/cli/internal/fsutil"
 	"arachne/cli/internal/project"
 	"arachne/cli/internal/registry"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -231,10 +232,17 @@ func InstallDependencies(proj project.Project, packageNames []string) ([]Depende
 		return nil, nil
 	}
 
-	deduped := dedupePackageNames(packageNames)
-	results := make([]DependencyInstallResult, 0, len(deduped))
+	pending := dedupePackageNames(packageNames)
+	installed := make(map[string]struct{}, len(pending))
+	results := make([]DependencyInstallResult, 0, len(pending))
 
-	for _, packageName := range deduped {
+	for len(pending) > 0 {
+		packageName := pending[0]
+		pending = pending[1:]
+		if _, ok := installed[packageName]; ok {
+			continue
+		}
+
 		sourceBaseDir := filepath.Join(proj.RootDir, "lib", packageName, "src")
 		if _, err := os.Stat(sourceBaseDir); err != nil {
 			if os.IsNotExist(err) {
@@ -252,18 +260,52 @@ func InstallDependencies(proj project.Project, packageNames []string) ([]Depende
 		if err != nil {
 			return nil, err
 		}
+		internalDeps, err := loadLibInternalDependencies(proj, packageName)
+		if err != nil {
+			return nil, err
+		}
+
+		installed[packageName] = struct{}{}
 		results = append(results, DependencyInstallResult{
 			Package: packageName,
 			Files:   installedFiles,
 		})
+		for _, dependencyName := range internalDeps {
+			if _, ok := installed[dependencyName]; ok {
+				continue
+			}
+			pending = append(pending, dependencyName)
+		}
 	}
 
 	return results, nil
 }
 
+func loadLibInternalDependencies(proj project.Project, packageName string) ([]string, error) {
+	data, err := os.ReadFile(filepath.Join(proj.RootDir, "lib", packageName, registry.PackageFileName))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	var manifest registry.PackageManifest
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		return nil, err
+	}
+
+	return internalDependencies(manifest.Dependencies), nil
+}
+
 func installDependencySourceGraph(proj project.Project, sourceBaseDir string, destinationDir string) ([]string, error) {
 	files := make([]string, 0)
 	sourceGraph, err := fsutil.CollectRelativeSourceGraph(sourceBaseDir)
+	if err != nil {
+		return nil, err
+	}
+	packageName := filepath.Base(filepath.Dir(sourceBaseDir))
+	internalDeps, err := loadLibInternalDependencies(proj, packageName)
 	if err != nil {
 		return nil, err
 	}
@@ -293,10 +335,20 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 				return err
 			}
 
-			rewritten, err := rewriteRelativeImports(
+			rewritten, err := rewriteInternalDependencyImports(
+				proj,
+				destinationPath,
+				source,
+				internalDeps,
+			)
+			if err != nil {
+				return err
+			}
+
+			rewritten, err = rewriteRelativeImports(
 				filepath.ToSlash(relativePath),
 				filepath.ToSlash(destinationPath),
-				string(source),
+				rewritten,
 				sourceGraph,
 				string(proj.Config.FileNames.Lib),
 				func(sourceRelativePath string) string {

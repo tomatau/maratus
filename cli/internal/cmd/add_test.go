@@ -26,6 +26,7 @@ const (
 	componentOnlyName            = "componentonly"
 	componentWithHookName        = "componentwithhook"
 	singleLevelLibDependencyName = "single-level-lib-dependency"
+	transitiveLibDependencyName  = "transitive-lib-dependency"
 )
 
 func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
@@ -524,6 +525,78 @@ func TestAddCopiesOneLevelInternalDependenciesToLibDir(t *testing.T) {
 		filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"),
 		`from '../lib/`+singleLevelLibDependencyName+`'`,
 	)
+}
+
+func TestAddCopiesTransitiveInternalDependenciesToLibDir(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+	})
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", singleLevelLibDependencyName, "package.json"),
+		"{\n  \"name\": \"@arachne/"+singleLevelLibDependencyName+"\",\n  \"dependencies\": {\n    \"@arachne/"+transitiveLibDependencyName+"\": \"workspace:*\"\n  }\n}\n",
+	)
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"),
+		"import { transitiveDependency } from '@arachne/"+transitiveLibDependencyName+"'\nexport function dependency() { return transitiveDependency() }\n",
+	)
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", transitiveLibDependencyName, "package.json"),
+		"{\n  \"name\": \"@arachne/"+transitiveLibDependencyName+"\"\n}\n",
+	)
+	writeFile(t, filepath.Join(wd, "lib", transitiveLibDependencyName, "src", "index.ts"), "export * from './transitiveDependency'\n")
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", transitiveLibDependencyName, "src", "transitiveDependency.ts"),
+		"export function transitiveDependency() { return null }\n",
+	)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with transitive dependency: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", transitiveLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", transitiveLibDependencyName, "transitive-dependency.ts"))
 }
 
 func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
