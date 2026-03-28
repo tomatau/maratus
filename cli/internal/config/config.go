@@ -49,6 +49,9 @@ func Load(path string) (Config, error) {
 	if cfg.ThemeDir == "" {
 		cfg.ThemeDir = "styles"
 	}
+	if cfg.FormatCommand == "" {
+		cfg.FormatCommand = ":"
+	}
 	if cfg.Layout.Kind == "" {
 		cfg.Layout.Kind = DefaultLayoutKind()
 	}

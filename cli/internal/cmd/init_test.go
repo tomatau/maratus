@@ -105,8 +105,8 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	if cfg.ThemeDir != "styles" {
 		t.Fatalf("expected themeDir to default to styles, got %q", cfg.ThemeDir)
 	}
-	if cfg.FormatCommand != "" {
-		t.Fatalf("expected formatCommand to default to empty, got %q", cfg.FormatCommand)
+	if cfg.FormatCommand != ":" {
+		t.Fatalf("expected formatCommand to default to :, got %q", cfg.FormatCommand)
 	}
 	if cfg.Layout.Kind != "nested" {
 		t.Fatalf("expected layout.kind to default to nested, got %q", cfg.Layout.Kind)

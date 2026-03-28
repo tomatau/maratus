@@ -50,6 +50,7 @@ func New(configFilePath func() string) *cobra.Command {
 				ComponentsDir: componentsDir,
 				LibDir:        libDir,
 				ThemeDir:      themeDir,
+				FormatCommand: ":",
 				Layout: config.LayoutConfig{
 					Kind: config.LayoutKind(componentsLayout),
 				},

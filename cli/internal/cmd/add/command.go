@@ -69,6 +69,7 @@ func New(configFilePath func() string) *cobra.Command {
 					themeFileStatus = "updated"
 				}
 			}
+			runFormatCommand(proj, results, dependencyResults, themeFilePath)
 			printInstallSummary(cmd, results, dependencyResults, themeFilePath, themeFileStatus)
 
 			return nil
