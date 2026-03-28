@@ -9,6 +9,9 @@
   "scripts": {
     "test": "playwright test -c playwright-ct.config.ts"
   },
+  "dependencies": {
+    "@arachne/store-runtime": "workspace:*"
+  },
   "devDependencies": {
     "@arachne/dotfiles": "workspace:*",
     "@arachne/playwright": "workspace:*",

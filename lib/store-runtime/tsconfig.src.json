@@ -1,0 +1,4 @@
+{
+  "extends": "@arachne/dotfiles/tsconfig",
+  "include": ["src"]
+}

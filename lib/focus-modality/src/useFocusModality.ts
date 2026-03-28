@@ -1,6 +1,10 @@
-import type { WritableArachneStore } from './runtime'
+import type { WritableArachneStore } from '@arachne/store-runtime'
+import {
+  createStore,
+  useArachneRuntime,
+  useStoreSelector,
+} from '@arachne/store-runtime'
 import { useEffect } from 'react'
-import { createStore, useArachneRuntime, useStoreSelector } from './runtime'
 
 export type FocusModality = 'keyboard' | 'pointer' | null
 

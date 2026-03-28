@@ -136,11 +136,21 @@
     "lib/focus-modality": {
       "name": "@arachne/focus-modality",
       "version": "0.0.0",
+      "dependencies": {
+        "@arachne/store-runtime": "workspace:*",
+      },
       "devDependencies": {
         "@arachne/dotfiles": "workspace:*",
         "@arachne/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.1",
       },
+      "peerDependencies": {
+        "react": "^19.1.1",
+      },
+    },
+    "lib/store-runtime": {
+      "name": "@arachne/store-runtime",
+      "version": "0.0.0",
       "peerDependencies": {
         "react": "^19.1.1",
       },
@@ -230,6 +240,8 @@
     "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
 
     "@arachne/separator": ["@arachne/separator@workspace:registry/separator"],
+
+    "@arachne/store-runtime": ["@arachne/store-runtime@workspace:lib/store-runtime"],
 
     "@arachne/utils": ["@arachne/utils@workspace:tools/utils"],
 
