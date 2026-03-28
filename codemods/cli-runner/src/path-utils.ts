@@ -14,7 +14,9 @@ export function normalizePath(path: string) {
     normalized.push(part)
   }
 
-  return `${withSlashes.startsWith('/') ? '/' : ''}${normalized.join('/')}` || '.'
+  return (
+    `${withSlashes.startsWith('/') ? '/' : ''}${normalized.join('/')}` || '.'
+  )
 }
 
 export function dirname(path: string) {
@@ -52,7 +54,7 @@ export function trimExtension(path: string) {
   if (extIndex < 0) {
     return path
   }
-  return path.slice(0, path.length-(base.length-extIndex))
+  return path.slice(0, path.length - (base.length - extIndex))
 }
 
 export function trimSuffix(value: string, suffix: string) {
@@ -63,15 +65,15 @@ export function relativePathBetween(fromDir: string, toPath: string) {
   const normalizedFrom = normalizePath(fromDir)
   const normalizedTo = normalizePath(toPath)
   const fromParts =
-    normalizedFrom === '.'
-      ? []
-      : normalizedFrom.split('/').filter(Boolean)
+    normalizedFrom === '.' ? [] : normalizedFrom.split('/').filter(Boolean)
   const toParts =
-    normalizedTo === '.'
-      ? []
-      : normalizedTo.split('/').filter(Boolean)
+    normalizedTo === '.' ? [] : normalizedTo.split('/').filter(Boolean)
 
-  while (fromParts.length > 0 && toParts.length > 0 && fromParts[0] === toParts[0]) {
+  while (
+    fromParts.length > 0 &&
+    toParts.length > 0 &&
+    fromParts[0] === toParts[0]
+  ) {
     fromParts.shift()
     toParts.shift()
   }
@@ -85,7 +87,10 @@ export function relativePathBetween(fromDir: string, toPath: string) {
 
 export function moduleSpecifierBetween(fromDir: string, toPath: string) {
   const from = fromDir === '' ? '.' : fromDir
-  const targetWithoutExt = trimSuffix(trimExtension(toPath), '/index')
+  const targetWithoutExt = trimSuffix(
+    hasSourceExtension(toPath) ? trimExtension(toPath) : toPath,
+    '/index',
+  )
   const relativePath = relativePathBetween(from, targetWithoutExt)
 
   if (relativePath.startsWith('.')) {
@@ -93,6 +98,12 @@ export function moduleSpecifierBetween(fromDir: string, toPath: string) {
   }
 
   return `./${relativePath}`
+}
+
+function hasSourceExtension(pathValue: string) {
+  return ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(
+    pathValue.slice(pathValue.lastIndexOf('.')),
+  )
 }
 
 export function toKebabCase(value: string) {
@@ -119,7 +130,10 @@ export function toKebabCase(value: string) {
   return result
 }
 
-export function rewriteSourcePath(path: string, fileNameKind: 'match-export' | 'kebab-case') {
+export function rewriteSourcePath(
+  path: string,
+  fileNameKind: 'match-export' | 'kebab-case',
+) {
   if (fileNameKind !== 'kebab-case') {
     return normalizePath(path)
   }

@@ -17,6 +17,7 @@ export function resolveRelativeModuleTarget(
 ) {
   const base = normalizePath(joinPath(sourceDir, specifier))
   const candidates = [
+    base,
     `${base}.ts`,
     `${base}.tsx`,
     `${base}.js`,

@@ -4,7 +4,6 @@ import (
 	"arachne/cli/internal/config"
 	"arachne/cli/internal/project"
 	"path/filepath"
-	"strings"
 )
 
 func ComponentSourceFileName(proj project.Project, componentName string) string {
@@ -14,7 +13,7 @@ func ComponentSourceFileName(proj project.Project, componentName string) string 
 	if proj.Config.FileNames.Components == config.FileNameKindKebabCase {
 		return componentName + ".tsx"
 	}
-	return componentExportName(componentName) + ".tsx"
+	return project.ComponentExportName(componentName) + ".tsx"
 }
 
 type InstallPaths struct {
@@ -23,12 +22,17 @@ type InstallPaths struct {
 	CSSFile       string
 }
 
-func ComponentStyleFileName(componentName string, style config.Style) string {
-	if style == config.StyleCSSModules {
-		return componentName + ".module.css"
+func ComponentStyleFileName(proj project.Project, componentName string, style config.Style) string {
+	baseName := componentName
+	if proj.Config.FileNames.Components == config.FileNameKindMatchExport {
+		baseName = project.ComponentExportName(componentName)
 	}
 
-	return componentName + ".css"
+	if style == config.StyleCSSModules {
+		return baseName + ".module.css"
+	}
+
+	return baseName + ".css"
 }
 
 func ResolveInstallPaths(proj project.Project, componentName string, style config.Style) InstallPaths {
@@ -37,27 +41,6 @@ func ResolveInstallPaths(proj project.Project, componentName string, style confi
 	return InstallPaths{
 		ComponentDir:  componentDir,
 		ComponentFile: filepath.Join(componentDir, componentFileName),
-		CSSFile:       filepath.Join(componentDir, ComponentStyleFileName(componentName, style)),
+		CSSFile:       filepath.Join(componentDir, ComponentStyleFileName(proj, componentName, style)),
 	}
-}
-
-func componentExportName(componentName string) string {
-	if componentName == "" {
-		return ""
-	}
-
-	parts := strings.Split(componentName, "-")
-	var builder strings.Builder
-	for _, part := range parts {
-		if part == "" {
-			continue
-		}
-
-		builder.WriteString(strings.ToUpper(part[:1]))
-		if len(part) > 1 {
-			builder.WriteString(part[1:])
-		}
-	}
-
-	return builder.String()
 }

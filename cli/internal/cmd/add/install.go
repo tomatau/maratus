@@ -14,6 +14,7 @@ import (
 
 type InstallResult struct {
 	Component    string
+	InstalledAs  string
 	Files        []string
 	Dependencies []string
 }
@@ -49,6 +50,10 @@ func InstallComponent(proj project.Project, componentName string, style config.S
 	}
 
 	installPaths := ResolveInstallPaths(proj, componentName, style)
+	result.InstalledAs = strings.TrimSuffix(
+		filepath.Base(installPaths.ComponentFile),
+		filepath.Ext(installPaths.ComponentFile),
+	)
 
 	if err := os.MkdirAll(installPaths.ComponentDir, 0o755); err != nil {
 		return InstallResult{}, err
@@ -91,7 +96,7 @@ func installBuiltSourceGraph(
 		}
 		destinationPath := filepath.Join(
 			installPaths.ComponentDir,
-			project.RewriteComponentRelativePath(relativePath, proj.Config.FileNames.Components),
+			project.RewriteComponentRelativePath(relativePath, result.Component, proj.Config.FileNames.Components),
 		)
 		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
 			return err
@@ -103,6 +108,7 @@ func installBuiltSourceGraph(
 			}
 			rewritten, err := rewriteComponentImports(
 				proj,
+				result.Component,
 				relativePath,
 				destinationPath,
 				source,
@@ -151,6 +157,7 @@ func shouldRewriteComponentSourceFile(path string) bool {
 
 func rewriteComponentImports(
 	proj project.Project,
+	componentName string,
 	sourceRelativePath string,
 	destinationPath string,
 	source []byte,
@@ -167,6 +174,13 @@ func rewriteComponentImports(
 		rewritten,
 		sourceGraph,
 		string(proj.Config.FileNames.Components),
+		func(relativePath string) string {
+			return project.RewriteComponentRelativePath(
+				relativePath,
+				componentName,
+				proj.Config.FileNames.Components,
+			)
+		},
 	)
 	if err != nil {
 		return nil, err
@@ -265,6 +279,12 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 				string(source),
 				sourceGraph,
 				string(proj.Config.FileNames.Lib),
+				func(sourceRelativePath string) string {
+					return project.RewriteLibRelativePath(
+						sourceRelativePath,
+						proj.Config.FileNames.Lib,
+					)
+				},
 			)
 			if err != nil {
 				return err

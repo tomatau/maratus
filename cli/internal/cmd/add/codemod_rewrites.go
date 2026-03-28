@@ -42,6 +42,7 @@ func rewriteRelativeImports(
 	source string,
 	sourceGraph map[string]string,
 	fileNameKind string,
+	rewritePath func(string) string,
 ) (string, error) {
 	options := codemods.RewriteRelativeImportsOptions{
 		Files: make([]codemods.RewriteRelativeImportsFileOption, 0, len(sourceGraph)),
@@ -52,8 +53,9 @@ func rewriteRelativeImports(
 		options.Files = append(
 			options.Files,
 			codemods.RewriteRelativeImportsFileOption{
-				Path:         normalizedPath,
-				FileNameKind: fileNameKind,
+				Path:          normalizedPath,
+				FileNameKind:  fileNameKind,
+				RewrittenPath: filepath.ToSlash(rewritePath(graphPath)),
 			},
 		)
 	}

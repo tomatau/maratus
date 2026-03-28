@@ -11,8 +11,9 @@ type RewriteRelativeImportsOptions struct {
 }
 
 type RewriteRelativeImportsFileOption struct {
-	Path         string `json:"path"`
-	FileNameKind string `json:"fileNameKind"`
+	Path          string `json:"path"`
+	FileNameKind  string `json:"fileNameKind"`
+	RewrittenPath string `json:"rewrittenPath"`
 }
 
 func RewriteRelativeImports(

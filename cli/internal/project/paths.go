@@ -19,12 +19,12 @@ func ResolveLibPackageDir(proj Project, packageName string) string {
 	return filepath.Join(proj.LibDir, packageName)
 }
 
-func RewriteComponentRelativePath(relativePath string, naming config.FileNameKind) string {
-	if naming != config.FileNameKindKebabCase {
-		return relativePath
+func RewriteComponentRelativePath(relativePath string, componentName string, naming config.FileNameKind) string {
+	if naming == config.FileNameKindKebabCase {
+		return RewriteSourceRelativePath(relativePath)
 	}
 
-	return RewriteSourceRelativePath(relativePath)
+	return rewriteComponentMatchExportRelativePath(relativePath, componentName)
 }
 
 func RewriteLibRelativePath(relativePath string, naming config.FileNameKind) string {
@@ -51,6 +51,47 @@ func RewriteSourceRelativePath(relativePath string) string {
 	}
 
 	return filepath.Join(dir, rewritten)
+}
+
+func rewriteComponentMatchExportRelativePath(relativePath string, componentName string) string {
+	dir := filepath.Dir(relativePath)
+	base := filepath.Base(relativePath)
+
+	switch base {
+	case componentName + ".css":
+		if dir == "." {
+			return ComponentExportName(componentName) + ".css"
+		}
+		return filepath.Join(dir, ComponentExportName(componentName)+".css")
+	case componentName + ".module.css":
+		if dir == "." {
+			return ComponentExportName(componentName) + ".module.css"
+		}
+		return filepath.Join(dir, ComponentExportName(componentName)+".module.css")
+	default:
+		return relativePath
+	}
+}
+
+func ComponentExportName(componentName string) string {
+	if componentName == "" {
+		return ""
+	}
+
+	parts := strings.Split(componentName, "-")
+	var builder strings.Builder
+	for _, part := range parts {
+		if part == "" {
+			continue
+		}
+
+		builder.WriteString(strings.ToUpper(part[:1]))
+		if len(part) > 1 {
+			builder.WriteString(part[1:])
+		}
+	}
+
+	return builder.String()
 }
 
 func toKebabCase(value string) string {

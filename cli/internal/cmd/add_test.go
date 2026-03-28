@@ -65,7 +65,7 @@ func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
-		`import './`+componentWithHookName+`.css'`,
+		`import './`+componentTypeName(componentWithHookName)+`.css'`,
 	)
 }
 
@@ -105,7 +105,7 @@ func TestAddCSSModulesCopiesBuiltSourceGraph(t *testing.T) {
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
-		`import styles from './`+componentWithHookName+`.module.css'`,
+		`import styles from './`+componentTypeName(componentWithHookName)+`.module.css'`,
 	)
 }
 
@@ -145,7 +145,7 @@ func TestAddTailwindCSSCopiesBuiltSourceGraph(t *testing.T) {
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
-		`import './`+componentWithHookName+`.css'`,
+		`import './`+componentTypeName(componentWithHookName)+`.css'`,
 	)
 }
 
@@ -257,6 +257,50 @@ func TestAddUsesKebabCaseComponentFilenameWhenConfigured(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".tsx"))
+}
+
+func TestAddUsesMatchExportComponentCSSFilenameAndImportWhenConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "flat"
+  },
+  "filenames": {
+    "lib": "kebab-case",
+    "components": "match-export"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add match-export component css filename: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".css"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", "useComponent.ts"),
+		`import './`+componentTypeName(componentWithHookName)+`.css'`,
+	)
 }
 
 func TestAddUsesKebabCaseForAllComponentSourceFilesWhenConfigured(t *testing.T) {

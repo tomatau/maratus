@@ -58,11 +58,15 @@ func printInstallSummary(cmd *cobra.Command, results []InstallResult, dependency
 	if len(results) > 0 {
 		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\n%s\n", style.PromptTitle("Installed components"))
 		for _, result := range results {
+			label := result.Component
+			if result.InstalledAs != "" {
+				label = result.InstalledAs
+			}
 			_, _ = fmt.Fprintf(
 				cmd.OutOrStdout(),
 				"%s%s\n",
 				style.PromptCursor(),
-				style.PromptActive(result.Component),
+				style.PromptActive(label),
 			)
 			for _, file := range result.Files {
 				_, _ = fmt.Fprintf(

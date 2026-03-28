@@ -32,6 +32,8 @@ export const rewriteRelativeImports: Codemod<RewriteRelativeImportsOptions> = ({
       file.sourceText,
       sourceGraph,
       fileOption.fileNameKind,
+      normalizePath(fileOption.rewrittenPath),
+      fileOptionsByPath,
     )
 
     project.getSourceFileOrThrow(file.path).replaceWithText(rewritten)
@@ -48,13 +50,18 @@ function rewriteRelativeSourceImports(
   sourceText: string,
   sourceGraph: Map<string, string>,
   fileNameKind: FileNameKind,
+  rewrittenSourcePath: string,
+  fileOptionsByPath: Map<
+    string,
+    {
+      path: string
+      fileNameKind: FileNameKind
+      rewrittenPath: string
+    }
+  >,
 ) {
   const normalizedSourcePath = normalizePath(sourcePath)
   const sourceDir = dirname(normalizedSourcePath)
-  const rewrittenSourcePath = rewriteSourcePath(
-    normalizedSourcePath,
-    fileNameKind,
-  )
   const rewrittenDir = dirname(rewrittenSourcePath)
 
   return sourceText.replaceAll(
@@ -74,7 +81,10 @@ function rewriteRelativeSourceImports(
         return match
       }
 
-      const targetRewritten = rewriteSourcePath(targetOriginal, fileNameKind)
+      const targetOption = fileOptionsByPath.get(normalizePath(targetOriginal))
+      const targetRewritten = targetOption
+        ? normalizePath(targetOption.rewrittenPath)
+        : rewriteSourcePath(targetOriginal, fileNameKind)
       const rewrittenSpecifier = moduleSpecifierBetween(
         rewrittenDir,
         targetRewritten,
