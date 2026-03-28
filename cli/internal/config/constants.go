@@ -28,6 +28,24 @@ func DefaultFileNameKind() FileNameKind {
 	return FileNameKindKebabCase
 }
 
+func (kind LayoutKind) IsValid() bool {
+	switch kind {
+	case LayoutKindNested, LayoutKindFlat:
+		return true
+	default:
+		return false
+	}
+}
+
+func (kind FileNameKind) IsValid() bool {
+	switch kind {
+	case FileNameKindKebabCase, FileNameKindMatchExport:
+		return true
+	default:
+		return false
+	}
+}
+
 func ParseStyle(style string) (Style, bool) {
 	parsed := Style(style)
 	if !parsed.IsValid() {

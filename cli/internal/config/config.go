@@ -51,14 +51,26 @@ func Load(path string) (Config, error) {
 	if cfg.Layout.Kind == "" {
 		cfg.Layout.Kind = DefaultLayoutKind()
 	}
+	if !cfg.Layout.Kind.IsValid() {
+		return Config{}, errors.New("layout.kind must be one of: nested, flat")
+	}
 	if cfg.FileNames.Lib == "" {
 		cfg.FileNames.Lib = DefaultFileNameKind()
+	}
+	if !cfg.FileNames.Lib.IsValid() {
+		return Config{}, errors.New("filenames.lib must be one of: kebab-case, match-export")
 	}
 	if cfg.FileNames.Components == "" {
 		cfg.FileNames.Components = FileNameKindMatchExport
 	}
+	if !cfg.FileNames.Components.IsValid() {
+		return Config{}, errors.New("filenames.components must be one of: kebab-case, match-export")
+	}
 	if cfg.Style == "" {
 		cfg.Style = DefaultStyle()
+	}
+	if !cfg.Style.IsValid() {
+		return Config{}, errors.New("style must be one of: css-files, css-modules, tailwind-css")
 	}
 
 	return cfg, nil
