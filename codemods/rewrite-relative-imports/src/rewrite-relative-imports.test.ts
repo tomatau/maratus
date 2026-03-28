@@ -23,10 +23,14 @@ describe(rewriteRelativeImports, () => {
           {
             path: '/consumer/lib/dependency-lib/useDependencyFeature.ts',
             fileNameKind: 'kebab-case',
+            rewrittenPath:
+              '/consumer/lib/dependency-lib/use-dependency-feature.ts',
           },
           {
             path: '/consumer/lib/dependency-lib/useDependencyHook.ts',
             fileNameKind: 'kebab-case',
+            rewrittenPath:
+              '/consumer/lib/dependency-lib/use-dependency-hook.ts',
           },
         ],
       },
@@ -54,10 +58,12 @@ describe(rewriteRelativeImports, () => {
           {
             path: '/consumer/components/component/Component.tsx',
             fileNameKind: 'match-export',
+            rewrittenPath: '/consumer/components/component/Component.tsx',
           },
           {
             path: '/consumer/components/component/utils/index.ts',
             fileNameKind: 'match-export',
+            rewrittenPath: '/consumer/components/component/utils/index.ts',
           },
         ],
       },
@@ -85,10 +91,12 @@ describe(rewriteRelativeImports, () => {
           {
             path: '/consumer/components/component/Component.tsx',
             fileNameKind: 'match-export',
+            rewrittenPath: '/consumer/components/component/Component.tsx',
           },
           {
             path: '/consumer/components/component/useComponent.ts',
             fileNameKind: 'match-export',
+            rewrittenPath: '/consumer/components/component/useComponent.ts',
           },
         ],
       },
