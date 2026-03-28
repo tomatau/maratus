@@ -5,11 +5,12 @@ import (
 
 	"arachne/cli/internal/config"
 	"arachne/cli/internal/style"
+
 	"github.com/spf13/cobra"
 )
 
 func AskComponentsLayout(cmd *cobra.Command) (string, error) {
-	defaultLayout := config.DefaultComponentsLayout()
+	defaultLayout := string(config.DefaultLayoutKind())
 
 	if !isInteractiveSession(cmd) {
 		return defaultLayout, nil
@@ -24,13 +25,13 @@ func AskComponentsLayout(cmd *cobra.Command) (string, error) {
 
 	items := []optionItem{
 		{
-			Value:       config.ComponentsLayoutNested,
-			Label:       config.ComponentsLayoutNested,
+			Value:       string(config.LayoutKindNested),
+			Label:       string(config.LayoutKindNested),
 			Description: "One directory per component.",
 		},
 		{
-			Value:       config.ComponentsLayoutFlat,
-			Label:       config.ComponentsLayoutFlat,
+			Value:       string(config.LayoutKindFlat),
+			Label:       string(config.LayoutKindFlat),
 			Description: "Files directly in components directory.",
 		},
 	}

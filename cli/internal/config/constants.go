@@ -1,31 +1,31 @@
 package config
 
 type Style string
+type LayoutKind string
+type FileNameKind string
 
 const (
-	ComponentsLayoutNested = "nested"
-	ComponentsLayoutFlat   = "flat"
+	LayoutKindNested LayoutKind = "nested"
+	LayoutKindFlat   LayoutKind = "flat"
+
+	FileNameKindKebabCase   FileNameKind = "kebab-case"
+	FileNameKindMatchExport FileNameKind = "match-export"
 
 	StyleCSSFiles    Style = "css-files"
 	StyleCSSModules  Style = "css-modules"
 	StyleTailwindCSS Style = "tailwind-css"
 )
 
-func DefaultComponentsLayout() string {
-	return ComponentsLayoutNested
-}
-
 func DefaultStyle() Style {
 	return StyleCSSFiles
 }
 
-func IsValidComponentsLayout(layout string) bool {
-	switch layout {
-	case ComponentsLayoutNested, ComponentsLayoutFlat:
-		return true
-	default:
-		return false
-	}
+func DefaultLayoutKind() LayoutKind {
+	return LayoutKindNested
+}
+
+func DefaultFileNameKind() FileNameKind {
+	return FileNameKindKebabCase
 }
 
 func ParseStyle(style string) (Style, bool) {

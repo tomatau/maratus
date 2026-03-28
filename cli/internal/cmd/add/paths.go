@@ -7,11 +7,14 @@ import (
 	"strings"
 )
 
-func ComponentSourceFileName(componentName string) string {
+func ComponentSourceFileName(proj project.Project, componentName string) string {
 	if componentName == "" {
 		return ".tsx"
 	}
-	return strings.ToUpper(componentName[:1]) + componentName[1:] + ".tsx"
+	if proj.Config.FileNames.Components == config.FileNameKindKebabCase {
+		return componentName + ".tsx"
+	}
+	return componentExportName(componentName) + ".tsx"
 }
 
 type InstallPaths struct {
@@ -30,10 +33,31 @@ func ComponentStyleFileName(componentName string, style config.Style) string {
 
 func ResolveInstallPaths(proj project.Project, componentName string, style config.Style) InstallPaths {
 	componentDir := project.ResolveComponentDir(proj, componentName)
-	componentFileName := ComponentSourceFileName(componentName)
+	componentFileName := ComponentSourceFileName(proj, componentName)
 	return InstallPaths{
 		ComponentDir:  componentDir,
 		ComponentFile: filepath.Join(componentDir, componentFileName),
 		CSSFile:       filepath.Join(componentDir, ComponentStyleFileName(componentName, style)),
 	}
+}
+
+func componentExportName(componentName string) string {
+	if componentName == "" {
+		return ""
+	}
+
+	parts := strings.Split(componentName, "-")
+	var builder strings.Builder
+	for _, part := range parts {
+		if part == "" {
+			continue
+		}
+
+		builder.WriteString(strings.ToUpper(part[:1]))
+		if len(part) > 1 {
+			builder.WriteString(part[1:])
+		}
+	}
+
+	return builder.String()
 }

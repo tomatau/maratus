@@ -11,6 +11,26 @@
         "oxlint": "^1.51.0",
       },
     },
+    "codemods/rewrite-internal-imports": {
+      "name": "@arachne-codemod/rewrite-internal-imports",
+      "version": "0.0.0",
+      "dependencies": {
+        "@arachne/morph": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.3.10",
+      },
+    },
+    "codemods/rewrite-relative-imports": {
+      "name": "@arachne-codemod/rewrite-relative-imports",
+      "version": "0.0.0",
+      "dependencies": {
+        "@arachne/morph": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.3.10",
+      },
+    },
     "components/button": {
       "name": "@arachne/base-button",
       "version": "0.0.0",
@@ -118,10 +138,23 @@
     "registry/button": {
       "name": "@arachne/button",
       "version": "0.0.0",
+      "dependencies": {
+        "@arachne/focus-modality": "workspace:*",
+      },
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
     },
     "registry/separator": {
       "name": "@arachne/separator",
       "version": "0.0.0",
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
     },
     "tools/adapters": {
       "name": "@arachne/adapters",
@@ -146,6 +179,16 @@
       "name": "@arachne/dotfiles",
       "version": "0.0.0",
     },
+    "tools/morph": {
+      "name": "@arachne/morph",
+      "version": "0.0.0",
+      "bin": {
+        "arachne-morph": "./dist/cli.mjs",
+      },
+      "dependencies": {
+        "ts-morph": "^25.0.1",
+      },
+    },
     "tools/playwright": {
       "name": "@arachne/playwright",
       "version": "0.0.0",
@@ -161,6 +204,10 @@
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
+
+    "@arachne-codemod/rewrite-internal-imports": ["@arachne-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
+
+    "@arachne-codemod/rewrite-relative-imports": ["@arachne-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
 
     "@arachne-consumer/next-tailwind": ["@arachne-consumer/next-tailwind@workspace:consumers/next-tailwind"],
 
@@ -183,6 +230,8 @@
     "@arachne/dotfiles": ["@arachne/dotfiles@workspace:tools/dotfiles"],
 
     "@arachne/focus-modality": ["@arachne/focus-modality@workspace:lib/focus-modality"],
+
+    "@arachne/morph": ["@arachne/morph@workspace:tools/morph"],
 
     "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
 

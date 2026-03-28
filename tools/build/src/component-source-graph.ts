@@ -14,8 +14,26 @@ export async function collectComponentSourceGraph(
   const seen = new Set<string>()
   const files: ComponentSourceFile[] = []
 
+  // Visit the main entry first; add the barrel after if it exists.
   await visitComponentSourceFile(entryPath, srcDir, seen, files)
+  await visitComponentIndexFile(srcDir, seen, files)
   return files
+}
+
+async function visitComponentIndexFile(
+  srcDir: string,
+  seen: Set<string>,
+  files: ComponentSourceFile[],
+): Promise<void> {
+  for (const extension of TS_SOURCE_EXTENSIONS) {
+    const indexPath = join(srcDir, `index${extension}`)
+    if (!existsSync(indexPath)) {
+      continue
+    }
+
+    await visitComponentSourceFile(indexPath, srcDir, seen, files)
+    return
+  }
 }
 
 async function visitComponentSourceFile(

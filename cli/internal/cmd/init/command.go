@@ -46,12 +46,18 @@ func New(configFilePath func() string) *cobra.Command {
 			}
 
 			cfg, err := project.NormalizeConfigForPath(cwd, configFilePath(), config.Config{
-				SrcDir:           srcDir,
-				ComponentsDir:    componentsDir,
-				LibDir:           libDir,
-				ThemeDir:         themeDir,
-				ComponentsLayout: componentsLayout,
-				Style:            style,
+				SrcDir:        srcDir,
+				ComponentsDir: componentsDir,
+				LibDir:        libDir,
+				ThemeDir:      themeDir,
+				Layout: config.LayoutConfig{
+					Kind: config.LayoutKind(componentsLayout),
+				},
+				FileNames: config.FileNamesConfig{
+					Lib:        config.DefaultFileNameKind(),
+					Components: config.FileNameKindMatchExport,
+				},
+				Style: style,
 			})
 			if err != nil {
 				return err

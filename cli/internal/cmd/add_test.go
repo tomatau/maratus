@@ -35,7 +35,9 @@ func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -73,7 +75,9 @@ func TestAddCSSModulesCopiesBuiltSourceGraph(t *testing.T) {
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -111,7 +115,9 @@ func TestAddTailwindCSSCopiesBuiltSourceGraph(t *testing.T) {
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -149,7 +155,9 @@ func TestAddNestedLayoutPreservesRelativeFiles(t *testing.T) {
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "nested"
+  "layout": {
+    "kind": "nested"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -183,7 +191,9 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -212,6 +222,168 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 }
 
+func TestAddUsesKebabCaseComponentFilenameWhenConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "flat"
+  },
+  "filenames": {
+    "lib": "kebab-case",
+    "components": "kebab-case"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add kebab-case component filename: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".tsx"))
+}
+
+func TestAddUsesKebabCaseForAllComponentSourceFilesWhenConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, componentWithHookFixture(componentWithHookName))
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "flat"
+  },
+  "filenames": {
+    "lib": "kebab-case",
+    "components": "kebab-case"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add kebab-case component source files: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".tsx"),
+		`from './use-component'`,
+	)
+}
+
+func TestAddSkipsComponentBarrelWhenBarrelsDisabled(t *testing.T) {
+	wd := t.TempDir()
+	fixture := componentOnlyFixture(componentOnlyName)
+	fixture.cssFiles["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	fixture.cssModules["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	fixture.tailwindCSS["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	writeRegistryFixture(t, wd, fixture)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "nested",
+    "barrel": false
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add without component barrel: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName, componentTypeName(componentOnlyName)+".tsx"))
+	assertFileMissing(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName, "index.ts"))
+}
+
+func TestAddKeepsComponentBarrelWhenNestedAndEnabled(t *testing.T) {
+	wd := t.TempDir()
+	fixture := componentOnlyFixture(componentOnlyName)
+	fixture.cssFiles["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	fixture.cssModules["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	fixture.tailwindCSS["index.ts"] = `export { Componentonly } from './Componentonly'` + "\n"
+	writeRegistryFixture(t, wd, fixture)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "nested",
+    "barrel": true
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with component barrel: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName, "index.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", componentOnlyName, "index.ts"),
+		`from './Componentonly'`,
+	)
+}
+
 func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
@@ -231,7 +403,10 @@ func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
   "srcDir": "./tmp/src",
   "componentsDir": "components",
   "libDir": "lib",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  }
 }`)
 
 	proj, err := project.Open(wd, "arachne.json")
@@ -273,7 +448,10 @@ func TestAddCopiesOneLevelInternalDependenciesToLibDir(t *testing.T) {
   "srcDir": "./tmp/src",
   "componentsDir": "components",
   "libDir": "lib",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  }
 }`)
 
 	root := NewRootCmd()
@@ -338,7 +516,10 @@ func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
   "srcDir": "./tmp/src",
   "componentsDir": "components",
   "libDir": "lib",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  }
 }`)
 
 	root := NewRootCmd()
@@ -364,13 +545,303 @@ func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
 }
 
+func TestAddUsesMatchExportLibFilenamesWhenConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"), "export function dependency() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  },
+  "filenames": {
+    "lib": "match-export",
+    "components": "match-export"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add match-export lib filenames: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"),
+		`from '../lib/`+singleLevelLibDependencyName+`'`,
+	)
+}
+
+func TestAddUsesKebabCaseLibFilenamesWhenConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './useDependencyHook'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "useDependencyHook.ts"), "export function useDependencyHook() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  },
+  "filenames": {
+    "lib": "kebab-case",
+    "components": "match-export"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add kebab-case lib filenames: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "use-dependency-hook.ts"))
+}
+
+func TestAddRewritesRelativeImportsWithinLibSourcesWhenKebabCaseConfigured(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './useDependencyFeature'\n")
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "useDependencyFeature.ts"),
+		"import { useDependencyHook } from './useDependencyHook'\nexport function useDependencyFeature() { return useDependencyHook() === 'ready' }\n",
+	)
+	writeFile(
+		t,
+		filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "useDependencyHook.ts"),
+		"export function useDependencyHook() { return 'ready' }\n",
+	)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "nested",
+    "barrel": false
+  },
+  "filenames": {
+    "lib": "kebab-case",
+    "components": "kebab-case"
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with kebab-case lib relative imports: %v", err)
+	}
+
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "use-dependency-feature.ts"),
+		`from './use-dependency-hook'`,
+	)
+}
+
+func TestAddSkipsLibBarrelWhenBarrelsDisabled(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"), "export function dependency() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": false
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add without lib barrel: %v", err)
+	}
+
+	assertFileMissing(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "dependency.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"),
+		`from '../lib/`+singleLevelLibDependencyName+`/dependency'`,
+	)
+}
+
+func TestAddKeepsLibBarrelWhenBarrelsEnabled(t *testing.T) {
+	wd := t.TempDir()
+	writeRegistryFixture(t, wd, registryFixture{
+		name:         componentWithHookName,
+		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		cssFiles: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		cssModules: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+		tailwindCSS: map[string]string{
+			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
+		},
+	})
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
+	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"), "export function dependency() { return null }\n")
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": true
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentWithHookName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with lib barrel: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "lib", singleLevelLibDependencyName, "index.ts"),
+		`export * from './dependency'`,
+	)
+}
+
 func TestAddNoArgsInNonInteractiveModeReturnsError(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
-  "componentsLayout": "flat"
+  "layout": {
+    "kind": "flat"
+  }
 }`)
 
 	root := NewRootCmd()
@@ -563,6 +1034,13 @@ func assertFileExists(t *testing.T, path string) {
 	}
 }
 
+func assertFileMissing(t *testing.T, path string) {
+	t.Helper()
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Fatalf("expected file %s to be missing, got err=%v", path, err)
+	}
+}
+
 func assertFileContains(t *testing.T, path string, expected string) {
 	t.Helper()
 	content, err := os.ReadFile(path)
@@ -578,5 +1056,19 @@ func componentTypeName(name string) string {
 	if name == "" {
 		return ""
 	}
-	return strings.ToUpper(name[:1]) + name[1:]
+
+	parts := strings.Split(name, "-")
+	var builder strings.Builder
+	for _, part := range parts {
+		if part == "" {
+			continue
+		}
+
+		builder.WriteString(strings.ToUpper(part[:1]))
+		if len(part) > 1 {
+			builder.WriteString(part[1:])
+		}
+	}
+
+	return builder.String()
 }

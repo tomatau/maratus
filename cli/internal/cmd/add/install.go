@@ -69,7 +69,12 @@ func installBuiltSourceGraph(
 	sourceBaseDir string,
 	installPaths InstallPaths,
 ) (InstallResult, error) {
-	err := filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
+	sourceGraph, err := fsutil.CollectRelativeSourceGraph(sourceBaseDir)
+	if err != nil {
+		return InstallResult{}, err
+	}
+
+	err = filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -81,7 +86,13 @@ func installBuiltSourceGraph(
 		if err != nil {
 			return err
 		}
-		destinationPath := filepath.Join(installPaths.ComponentDir, relativePath)
+		if isComponentBarrelFile(relativePath) && !shouldKeepComponentBarrel(proj) {
+			return nil
+		}
+		destinationPath := filepath.Join(
+			installPaths.ComponentDir,
+			project.RewriteComponentRelativePath(relativePath, proj.Config.FileNames.Components),
+		)
 		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
 			return err
 		}
@@ -90,7 +101,17 @@ func installBuiltSourceGraph(
 			if err != nil {
 				return err
 			}
-			rewritten := rewriteComponentDependencyImports(proj, destinationPath, source, result.Dependencies)
+			rewritten, err := rewriteComponentImports(
+				proj,
+				relativePath,
+				destinationPath,
+				source,
+				result.Dependencies,
+				sourceGraph,
+			)
+			if err != nil {
+				return err
+			}
 			if err := os.WriteFile(destinationPath, rewritten, 0o644); err != nil {
 				return err
 			}
@@ -102,11 +123,21 @@ func installBuiltSourceGraph(
 		result.Files = append(result.Files, destinationPath)
 		return nil
 	})
+
 	if err != nil {
 		return InstallResult{}, err
 	}
 
 	return result, nil
+}
+
+func isComponentBarrelFile(relativePath string) bool {
+	base := filepath.Base(relativePath)
+	return base == "index.ts" || base == "index.tsx"
+}
+
+func shouldKeepComponentBarrel(proj project.Project) bool {
+	return proj.Config.Layout.Kind == config.LayoutKindNested && proj.Config.Layout.Barrel
 }
 
 func shouldRewriteComponentSourceFile(path string) bool {
@@ -118,26 +149,30 @@ func shouldRewriteComponentSourceFile(path string) bool {
 	}
 }
 
-func rewriteComponentDependencyImports(proj project.Project, destinationPath string, source []byte, dependencies []string) []byte {
-	rewritten := string(source)
-
-	for _, dependency := range dependencies {
-		relativeImportPath, err := filepath.Rel(filepath.Dir(destinationPath), project.ResolveLibPackageDir(proj, dependency))
-		if err != nil {
-			continue
-		}
-
-		modulePath := filepath.ToSlash(relativeImportPath)
-		if !strings.HasPrefix(modulePath, ".") {
-			modulePath = "./" + modulePath
-		}
-
-		packageSpecifier := "@arachne/" + dependency
-		rewritten = strings.ReplaceAll(rewritten, `"`+packageSpecifier+`"`, `"`+modulePath+`"`)
-		rewritten = strings.ReplaceAll(rewritten, `'`+packageSpecifier+`'`, `'`+modulePath+`'`)
+func rewriteComponentImports(
+	proj project.Project,
+	sourceRelativePath string,
+	destinationPath string,
+	source []byte,
+	dependencies []string,
+	sourceGraph map[string]string,
+) ([]byte, error) {
+	rewritten, err := rewriteInternalDependencyImports(proj, destinationPath, source, dependencies)
+	if err != nil {
+		return nil, err
+	}
+	rewritten, err = rewriteRelativeImports(
+		filepath.ToSlash(sourceRelativePath),
+		filepath.ToSlash(destinationPath),
+		rewritten,
+		sourceGraph,
+		string(proj.Config.FileNames.Components),
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	return []byte(rewritten)
+	return []byte(rewritten), nil
 }
 
 func internalDependencies(dependencies map[string]string) []string {
@@ -179,7 +214,7 @@ func InstallDependencies(proj project.Project, packageNames []string) ([]Depende
 			return nil, err
 		}
 
-		installedFiles, err := installDependencySourceGraph(sourceBaseDir, destinationDir)
+		installedFiles, err := installDependencySourceGraph(proj, sourceBaseDir, destinationDir)
 		if err != nil {
 			return nil, err
 		}
@@ -192,10 +227,14 @@ func InstallDependencies(proj project.Project, packageNames []string) ([]Depende
 	return results, nil
 }
 
-func installDependencySourceGraph(sourceBaseDir string, destinationDir string) ([]string, error) {
+func installDependencySourceGraph(proj project.Project, sourceBaseDir string, destinationDir string) ([]string, error) {
 	files := make([]string, 0)
+	sourceGraph, err := fsutil.CollectRelativeSourceGraph(sourceBaseDir)
+	if err != nil {
+		return nil, err
+	}
 
-	err := filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
+	err = filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -207,12 +246,36 @@ func installDependencySourceGraph(sourceBaseDir string, destinationDir string) (
 		if err != nil {
 			return err
 		}
-		destinationPath := filepath.Join(destinationDir, relativePath)
+		if isLibBarrelFile(relativePath) && !proj.Config.Layout.Barrel {
+			return nil
+		}
+		destinationPath := filepath.Join(destinationDir, project.RewriteLibRelativePath(relativePath, proj.Config.FileNames.Lib))
 		if err := os.MkdirAll(filepath.Dir(destinationPath), 0o755); err != nil {
 			return err
 		}
-		if err := fsutil.CopyFile(sourcePath, destinationPath); err != nil {
-			return err
+		if shouldRewriteComponentSourceFile(destinationPath) {
+			source, err := os.ReadFile(sourcePath)
+			if err != nil {
+				return err
+			}
+
+			rewritten, err := rewriteRelativeImports(
+				filepath.ToSlash(relativePath),
+				filepath.ToSlash(destinationPath),
+				string(source),
+				sourceGraph,
+				string(proj.Config.FileNames.Lib),
+			)
+			if err != nil {
+				return err
+			}
+			if err := os.WriteFile(destinationPath, []byte(rewritten), 0o644); err != nil {
+				return err
+			}
+		} else {
+			if err := fsutil.CopyFile(sourcePath, destinationPath); err != nil {
+				return err
+			}
 		}
 		files = append(files, destinationPath)
 		return nil
@@ -222,6 +285,11 @@ func installDependencySourceGraph(sourceBaseDir string, destinationDir string) (
 	}
 
 	return files, nil
+}
+
+func isLibBarrelFile(relativePath string) bool {
+	base := filepath.Base(relativePath)
+	return base == "index.ts" || base == "index.tsx"
 }
 
 func dedupePackageNames(packageNames []string) []string {

@@ -74,12 +74,20 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 
 	var cfg struct {
-		SrcDir           string `json:"srcDir"`
-		ComponentsDir    string `json:"componentsDir"`
-		LibDir           string `json:"libDir"`
-		ThemeDir         string `json:"themeDir"`
-		ComponentsLayout string `json:"componentsLayout"`
-		Style            string `json:"style"`
+		SrcDir        string `json:"srcDir"`
+		ComponentsDir string `json:"componentsDir"`
+		LibDir        string `json:"libDir"`
+		ThemeDir      string `json:"themeDir"`
+		FormatCommand string `json:"formatCommand"`
+		Layout        struct {
+			Kind   string `json:"kind"`
+			Barrel bool   `json:"barrel"`
+		} `json:"layout"`
+		FileNames struct {
+			Lib        string `json:"lib"`
+			Components string `json:"components"`
+		} `json:"filenames"`
+		Style string `json:"style"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		t.Fatalf("unmarshal config: %v", err)
@@ -96,8 +104,20 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	if cfg.ThemeDir != "styles" {
 		t.Fatalf("expected themeDir to default to styles, got %q", cfg.ThemeDir)
 	}
-	if cfg.ComponentsLayout != "nested" {
-		t.Fatalf("expected componentsLayout to default to nested, got %q", cfg.ComponentsLayout)
+	if cfg.FormatCommand != "" {
+		t.Fatalf("expected formatCommand to default to empty, got %q", cfg.FormatCommand)
+	}
+	if cfg.Layout.Kind != "nested" {
+		t.Fatalf("expected layout.kind to default to nested, got %q", cfg.Layout.Kind)
+	}
+	if cfg.Layout.Barrel {
+		t.Fatalf("expected layout.barrel to default to false")
+	}
+	if cfg.FileNames.Lib != "kebab-case" {
+		t.Fatalf("expected filenames.lib to default to kebab-case, got %q", cfg.FileNames.Lib)
+	}
+	if cfg.FileNames.Components != "match-export" {
+		t.Fatalf("expected filenames.components to default to match-export, got %q", cfg.FileNames.Components)
 	}
 	if cfg.Style != "css-files" {
 		t.Fatalf("expected style to default to css-files, got %q", cfg.Style)
@@ -138,12 +158,19 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	}
 
 	var cfg struct {
-		SrcDir           string `json:"srcDir"`
-		ComponentsDir    string `json:"componentsDir"`
-		LibDir           string `json:"libDir"`
-		ThemeDir         string `json:"themeDir"`
-		ComponentsLayout string `json:"componentsLayout"`
-		Style            string `json:"style"`
+		SrcDir        string `json:"srcDir"`
+		ComponentsDir string `json:"componentsDir"`
+		LibDir        string `json:"libDir"`
+		ThemeDir      string `json:"themeDir"`
+		Layout        struct {
+			Kind   string `json:"kind"`
+			Barrel bool   `json:"barrel"`
+		} `json:"layout"`
+		FileNames struct {
+			Lib        string `json:"lib"`
+			Components string `json:"components"`
+		} `json:"filenames"`
+		Style string `json:"style"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		t.Fatalf("unmarshal config: %v", err)
@@ -156,6 +183,15 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	}
 	if cfg.LibDir != "lib" {
 		t.Fatalf("expected libDir to stay config-relative as lib, got %q", cfg.LibDir)
+	}
+	if cfg.Layout.Kind != "nested" {
+		t.Fatalf("expected layout.kind to default to nested, got %q", cfg.Layout.Kind)
+	}
+	if cfg.FileNames.Lib != "kebab-case" {
+		t.Fatalf("expected filenames.lib to default to kebab-case, got %q", cfg.FileNames.Lib)
+	}
+	if cfg.FileNames.Components != "match-export" {
+		t.Fatalf("expected filenames.components to default to match-export, got %q", cfg.FileNames.Components)
 	}
 	if cfg.ThemeDir != "styles" {
 		t.Fatalf("expected themeDir to stay config-relative as styles, got %q", cfg.ThemeDir)

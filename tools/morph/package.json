@@ -1,0 +1,19 @@
+{
+  "name": "@arachne/morph",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "arachne-morph": "./dist/cli.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./cli": "./dist/cli.mjs"
+  },
+  "scripts": {
+    "build": "bun build ./src/cli.ts --target=node --outfile ./dist/cli.mjs"
+  },
+  "dependencies": {
+    "ts-morph": "^25.0.1"
+  }
+}

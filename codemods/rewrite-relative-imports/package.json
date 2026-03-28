@@ -1,0 +1,19 @@
+{
+  "name": "@arachne-codemod/rewrite-relative-imports",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=node --outfile ./dist/index.mjs",
+    "test:unit": "bun test"
+  },
+  "dependencies": {
+    "@arachne/morph": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.10"
+  }
+}

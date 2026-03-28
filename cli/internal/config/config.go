@@ -8,12 +8,24 @@ import (
 )
 
 type Config struct {
-	SrcDir           string `json:"srcDir"`
-	ComponentsDir    string `json:"componentsDir"`
-	LibDir           string `json:"libDir"`
-	ThemeDir         string `json:"themeDir"`
-	ComponentsLayout string `json:"componentsLayout"`
-	Style            Style  `json:"style"`
+	SrcDir        string          `json:"srcDir"`
+	ComponentsDir string          `json:"componentsDir"`
+	LibDir        string          `json:"libDir"`
+	ThemeDir      string          `json:"themeDir"`
+	FormatCommand string          `json:"formatCommand,omitempty"`
+	Layout        LayoutConfig    `json:"layout"`
+	FileNames     FileNamesConfig `json:"filenames"`
+	Style         Style           `json:"style"`
+}
+
+type LayoutConfig struct {
+	Kind   LayoutKind `json:"kind"`
+	Barrel bool       `json:"barrel,omitempty"`
+}
+
+type FileNamesConfig struct {
+	Lib        FileNameKind `json:"lib"`
+	Components FileNameKind `json:"components,omitempty"`
 }
 
 func Load(path string) (Config, error) {
@@ -36,8 +48,14 @@ func Load(path string) (Config, error) {
 	if cfg.ThemeDir == "" {
 		cfg.ThemeDir = "styles"
 	}
-	if cfg.ComponentsLayout == "" {
-		cfg.ComponentsLayout = DefaultComponentsLayout()
+	if cfg.Layout.Kind == "" {
+		cfg.Layout.Kind = DefaultLayoutKind()
+	}
+	if cfg.FileNames.Lib == "" {
+		cfg.FileNames.Lib = DefaultFileNameKind()
+	}
+	if cfg.FileNames.Components == "" {
+		cfg.FileNames.Components = FileNameKindMatchExport
 	}
 	if cfg.Style == "" {
 		cfg.Style = DefaultStyle()
