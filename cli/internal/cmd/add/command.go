@@ -55,21 +55,16 @@ func New(configFilePath func() string) *cobra.Command {
 			if err := updateComponentsManifest(proj, results, selectedStyle); err != nil {
 				return err
 			}
-			themeFilePath := ""
-			themeFileStatus := ""
-			if selectedStyle == config.StyleTailwindCSS || selectedStyle == config.StyleCSSFiles || selectedStyle == config.StyleCSSModules {
-				path, created, err := updateThemeFile(proj)
-				if err != nil {
-					return err
-				}
-				themeFilePath = path
-				if created {
-					themeFileStatus = "created"
-				} else {
-					themeFileStatus = "updated"
-				}
+			themeFilePath, themeFileStatus, err := runPostInstallWithFeedback(
+				cmd,
+				proj,
+				selectedStyle,
+				results,
+				dependencyResults,
+			)
+			if err != nil {
+				return err
 			}
-			runFormatCommand(proj, results, dependencyResults, themeFilePath)
 			printInstallSummary(cmd, results, dependencyResults, themeFilePath, themeFileStatus)
 
 			return nil

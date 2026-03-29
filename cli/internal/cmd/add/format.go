@@ -4,7 +4,13 @@ import (
 	"arachne/cli/internal/project"
 	"os/exec"
 	"sort"
+	"strings"
 )
+
+func shouldRunFormatCommand(proj project.Project) bool {
+	command := strings.TrimSpace(proj.Config.FormatCommand)
+	return command != "" && command != ":"
+}
 
 func runFormatCommand(
 	proj project.Project,
