@@ -9,37 +9,44 @@ TMP_CONFIG_FILE := env("ARACHNE_CONFIG_FILE", TMP_DIR + "/arachne.json")
 default:
   @just --list
 
+[group('cli')]
+[group('test')]
 cli-test:
   go -C cli test ./...
 
+[group('cli')]
+[group('build')]
 cli-build:
   go -C cli build -o ../{{CLI_BIN}} .
 
+[group('test')]
 test workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
-    bun run --filter "$(just _package-name {{workspace}} {{package}})" test; \
+    just _test-package {{workspace}} {{package}}; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    bun run --filter '*' test; \
+    just _run-workspace test; \
   else \
-    echo "expected both workspace and package" >&2; \
+    echo "expected workspace" >&2; \
     exit 1; \
   fi
 
+[group('test')]
 test-unit workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
-    bun run --filter "$(just _package-name {{workspace}} {{package}})" test:unit; \
+    just _test-package {{workspace}} {{package}} test:unit; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    bun run --filter '*' test:unit; \
+    just _run-workspace test:unit; \
   else \
-    echo "expected both workspace and package" >&2; \
+    echo "expected workspace" >&2; \
     exit 1; \
   fi
 
 # workspace=artifacts|codemod
+[group('build')]
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _build-package tools build build:artifacts && \
-    just _build-filter '@arachne-codemod/*'; \
+    just _run-workspace build '@arachne-codemod/*'; \
   elif [ "{{workspace}}" = "artifacts" ]; then \
     just _build-package tools build build:artifacts; \
   elif [ "{{workspace}}" != "codemod" ]; then \
@@ -48,26 +55,36 @@ build workspace='' package='':
   elif [ -n "{{package}}" ]; then \
     just _build-package codemods {{package}}; \
   else \
-    just _build-filter '@arachne-codemod/*'; \
+    just _run-workspace build '@arachne-codemod/*'; \
   fi
 
+[group('tmp')]
 clear-tmp-src:
   rm -rf {{TMP_SRC_DIR}}/
 
+[group('cli')]
 cli consumer command='' *args:
   {{CLI_BIN}} -cf="$(just _consumer-config-file {{consumer}})" {{command}} {{args}}
 
+[group('cli')]
+[group('tmp')]
 cli-tmp command='' *args:
   {{CLI_BIN}} -cf={{TMP_CONFIG_FILE}} {{command}} {{args}}
 
-_package-name workspace package:
-  @bun --print "require('./{{workspace}}/{{package}}/package.json').name"
+@_package-name workspace package:
+  bun --print "require('./{{workspace}}/{{package}}/package.json').name"
 
-_consumer-config-file name:
-  @echo "consumers/{{name}}/arachne.json"
+@_consumer-config-file name:
+  echo "consumers/{{name}}/arachne.json"
 
-_build-filter filter command='build':
-  bun run --filter "{{filter}}" {{command}}
+_run-workspace command workspace='"*"':
+  bunx bun-workspaces run {{command}} {{workspace}}
 
-_build-package workspace package command='build':
-  just _build-filter "$(just _package-name {{workspace}} {{package}})" {{command}}
+@_run-package command workspace package:
+  just _run-workspace {{command}} "$(just _package-name {{workspace}} {{package}})"
+
+@_build-package workspace package command='build':
+  just _run-package {{command}} {{workspace}} {{package}}
+
+@_test-package workspace package command='test':
+  just _run-package {{command}} {{workspace}} {{package}}
