@@ -81,6 +81,7 @@ func installBuiltSourceGraph(
 		return InstallResult{}, err
 	}
 	sourceTextByRelativePath := make(map[string]string, len(sourceGraph))
+	rewriteablePaths := make([]string, 0)
 	for relativePath := range sourceGraph {
 		ext := filepath.Ext(relativePath)
 		switch ext {
@@ -90,7 +91,20 @@ func installBuiltSourceGraph(
 				return InstallResult{}, readErr
 			}
 			sourceTextByRelativePath[relativePath] = string(data)
+			rewriteablePaths = append(rewriteablePaths, filepath.ToSlash(relativePath))
 		}
+	}
+	rewrittenByPath, err := rewriteComponentSources(
+		proj,
+		result.Component,
+		installPaths.ComponentDir,
+		result.Dependencies,
+		sourceGraph,
+		sourceTextByRelativePath,
+		rewriteablePaths,
+	)
+	if err != nil {
+		return InstallResult{}, err
 	}
 
 	err = filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
@@ -121,24 +135,7 @@ func installBuiltSourceGraph(
 			return err
 		}
 		if shouldRewriteComponentSourceFile(destinationPath) {
-			source, err := os.ReadFile(sourcePath)
-			if err != nil {
-				return err
-			}
-			rewritten, err := rewriteComponentImports(
-				proj,
-				result.Component,
-				relativePath,
-				destinationPath,
-				source,
-				result.Dependencies,
-				sourceGraph,
-				sourceTextByRelativePath,
-			)
-			if err != nil {
-				return err
-			}
-			if err := os.WriteFile(destinationPath, rewritten, 0o644); err != nil {
+			if err := os.WriteFile(destinationPath, []byte(rewrittenByPath[filepath.ToSlash(relativePath)]), 0o644); err != nil {
 				return err
 			}
 		} else {
@@ -168,42 +165,6 @@ func shouldRewriteComponentSourceFile(path string) bool {
 	default:
 		return false
 	}
-}
-
-func rewriteComponentImports(
-	proj project.Project,
-	componentName string,
-	sourceRelativePath string,
-	destinationPath string,
-	source []byte,
-	dependencies []string,
-	sourceGraph map[string]string,
-	sourceTextByRelativePath map[string]string,
-) ([]byte, error) {
-	rewritten, err := rewriteInternalDependencyImports(proj, destinationPath, source, dependencies)
-	if err != nil {
-		return nil, err
-	}
-	rewritten, err = rewriteRelativeImports(
-		filepath.ToSlash(sourceRelativePath),
-		filepath.ToSlash(destinationPath),
-		rewritten,
-		sourceGraph,
-		string(proj.Config.FileNames.Components),
-		func(relativePath string) string {
-			return RewriteInstalledComponentRelativePath(
-				proj,
-				componentName,
-				relativePath,
-				sourceTextByRelativePath[filepath.ToSlash(relativePath)],
-			)
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return []byte(rewritten), nil
 }
 
 func internalDependencies(dependencies map[string]string) []string {
@@ -305,6 +266,8 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 	if err != nil {
 		return nil, err
 	}
+	rewrittenSources := make(map[string]string)
+	rewriteablePaths := make([]string, 0)
 
 	err = filepath.WalkDir(sourceBaseDir, func(sourcePath string, entry os.DirEntry, err error) error {
 		if err != nil {
@@ -329,40 +292,12 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 			return err
 		}
 		if shouldRewriteComponentSourceFile(destinationPath) {
-			source, err := os.ReadFile(sourcePath)
+			sourceBytes, err := os.ReadFile(sourcePath)
 			if err != nil {
 				return err
 			}
-
-			rewritten, err := rewriteInternalDependencyImports(
-				proj,
-				destinationPath,
-				source,
-				internalDeps,
-			)
-			if err != nil {
-				return err
-			}
-
-			rewritten, err = rewriteRelativeImports(
-				filepath.ToSlash(relativePath),
-				filepath.ToSlash(destinationPath),
-				rewritten,
-				sourceGraph,
-				string(proj.Config.FileNames.Lib),
-				func(sourceRelativePath string) string {
-					return project.RewriteLibRelativePath(
-						sourceRelativePath,
-						proj.Config.FileNames.Lib,
-					)
-				},
-			)
-			if err != nil {
-				return err
-			}
-			if err := os.WriteFile(destinationPath, []byte(rewritten), 0o644); err != nil {
-				return err
-			}
+			rewrittenSources[filepath.ToSlash(relativePath)] = string(sourceBytes)
+			rewriteablePaths = append(rewriteablePaths, filepath.ToSlash(relativePath))
 		} else {
 			if err := fsutil.CopyFile(sourcePath, destinationPath); err != nil {
 				return err
@@ -373,6 +308,28 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if len(rewriteablePaths) == 0 {
+		return files, nil
+	}
+
+	rewrittenByPath, err := rewriteLibSources(
+		proj,
+		destinationDir,
+		internalDeps,
+		sourceGraph,
+		rewrittenSources,
+		rewriteablePaths,
+	)
+	if err != nil {
+		return nil, err
+	}
+	for _, relativePath := range rewriteablePaths {
+		destinationPath := filepath.Join(destinationDir, project.RewriteLibRelativePath(relativePath, proj.Config.FileNames.Lib))
+		if err := os.WriteFile(destinationPath, []byte(rewrittenByPath[filepath.ToSlash(relativePath)]), 0o644); err != nil {
+			return nil, err
+		}
 	}
 
 	return files, nil

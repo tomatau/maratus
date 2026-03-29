@@ -14,7 +14,7 @@ func ComponentSourceFileName(proj project.Project, componentName string) string 
 	if proj.Config.FileNames.Components == config.FileNameKindKebabCase {
 		return componentName + ".tsx"
 	}
-	return project.ComponentExportName(componentName) + ".tsx"
+	return project.ComponentMatchExportName(componentName) + ".tsx"
 }
 
 type InstallPaths struct {
@@ -26,7 +26,7 @@ type InstallPaths struct {
 func ComponentStyleFileName(proj project.Project, componentName string, style config.Style) string {
 	baseName := componentName
 	if proj.Config.FileNames.Components == config.FileNameKindMatchExport {
-		baseName = project.ComponentExportName(componentName)
+		baseName = project.ComponentMatchExportName(componentName)
 	}
 
 	if style == config.StyleCSSModules {

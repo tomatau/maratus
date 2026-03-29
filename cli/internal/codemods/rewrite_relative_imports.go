@@ -73,3 +73,44 @@ func RewriteRelativeImports(
 
 	return source, nil
 }
+
+func RewriteRelativeImportsBatch(
+	files []File,
+	sourceGraph map[string]string,
+	options RewriteRelativeImportsOptions,
+) ([]File, error) {
+	if len(files) == 0 {
+		return nil, nil
+	}
+
+	supported := MustGet(RewriteRelativeImportsName)
+	manifest := Manifest[RewriteRelativeImportsOptions]{
+		CodemodPackageName: supported.PackageName,
+		CodemodExportName:  supported.ExportName,
+		Files:              files,
+		Options:            options,
+	}
+
+	sort.Slice(manifest.Files, func(i, j int) bool {
+		return manifest.Files[i].Path < manifest.Files[j].Path
+	})
+	sort.Slice(manifest.Options.Files, func(i, j int) bool {
+		return manifest.Options.Files[i].Path < manifest.Options.Files[j].Path
+	})
+
+	manifestPath, err := WriteManifest(
+		"arachne-rewrite-relative-imports-*.json",
+		manifest,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(manifestPath)
+
+	output, err := RunManifest(manifestPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.Files, nil
+}

@@ -23,29 +23,15 @@ func RewriteInternalImports(
 		return string(source), nil
 	}
 
-	supported := MustGet(RewriteInternalImportsName)
-	manifest := Manifest[RewriteInternalImportsOptions]{
-		CodemodPackageName: supported.PackageName,
-		CodemodExportName:  supported.ExportName,
-		Files: []File{
+	output, err := rewriteInternalImportsOutput(
+		[]File{
 			{
 				Path:       destinationPath,
 				SourceText: string(source),
 			},
 		},
-		Options: options,
-	}
-
-	manifestPath, err := WriteManifest(
-		"arachne-rewrite-internal-imports-*.json",
-		manifest,
+		options,
 	)
-	if err != nil {
-		return "", err
-	}
-	defer os.Remove(manifestPath)
-
-	output, err := RunManifest(manifestPath)
 	if err != nil {
 		return "", err
 	}
@@ -54,4 +40,44 @@ func RewriteInternalImports(
 	}
 
 	return output.Files[0].SourceText, nil
+}
+
+func RewriteInternalImportsBatch(
+	files []File,
+	options RewriteInternalImportsOptions,
+) ([]File, error) {
+	if len(options.Packages) == 0 || len(files) == 0 {
+		return files, nil
+	}
+
+	output, err := rewriteInternalImportsOutput(files, options)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.Files, nil
+}
+
+func rewriteInternalImportsOutput(
+	files []File,
+	options RewriteInternalImportsOptions,
+) (Output, error) {
+	supported := MustGet(RewriteInternalImportsName)
+	manifest := Manifest[RewriteInternalImportsOptions]{
+		CodemodPackageName: supported.PackageName,
+		CodemodExportName:  supported.ExportName,
+		Files:              files,
+		Options:            options,
+	}
+
+	manifestPath, err := WriteManifest(
+		"arachne-rewrite-internal-imports-*.json",
+		manifest,
+	)
+	if err != nil {
+		return Output{}, err
+	}
+	defer os.Remove(manifestPath)
+
+	return RunManifest(manifestPath)
 }

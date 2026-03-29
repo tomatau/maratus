@@ -104,4 +104,34 @@ describe(rewriteRelativeImports, () => {
 
     expect(result.sourceText).toContain("from './useComponent'")
   })
+
+  it('rewrites css imports using the rewritten target path', async () => {
+    const [result] = await runCodemod(
+      rewriteRelativeImports,
+      [
+        {
+          path: '/consumer/components/component/use-component.ts',
+          sourceText:
+            "import './component-with-hook.css'\nexport function useComponent() { return null }\n",
+        },
+      ],
+      {
+        files: [
+          {
+            path: '/consumer/components/component/use-component.ts',
+            fileNameKind: 'kebab-case',
+            rewrittenPath: '/consumer/components/component/use-component.ts',
+          },
+          {
+            path: '/consumer/components/component/component-with-hook.css',
+            fileNameKind: 'match-export',
+            rewrittenPath:
+              '/consumer/components/component/ComponentWithHook.css',
+          },
+        ],
+      },
+    )
+
+    expect(result.sourceText).toContain("import './ComponentWithHook.css'")
+  })
 })

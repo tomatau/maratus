@@ -16,7 +16,7 @@ export const rewriteRelativeImports: Codemod<RewriteRelativeImportsOptions> = ({
   options,
   project,
 }) => {
-  const sourceGraph = collectSourceGraph(files)
+  const sourceGraph = collectSourceGraph(options.files)
   const fileOptionsByPath = new Map(
     options.files.map((file) => [normalizePath(file.path), file]),
   )

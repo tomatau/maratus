@@ -60,20 +60,30 @@ func rewriteComponentMatchExportRelativePath(relativePath string, componentName 
 	switch base {
 	case componentName + ".css":
 		if dir == "." {
-			return ComponentExportName(componentName) + ".css"
+			return ComponentMatchExportName(componentName) + ".css"
 		}
-		return filepath.Join(dir, ComponentExportName(componentName)+".css")
+		return filepath.Join(dir, ComponentMatchExportName(componentName)+".css")
+	case strings.ReplaceAll(componentName, "-", "") + ".css":
+		if dir == "." {
+			return ComponentMatchExportName(componentName) + ".css"
+		}
+		return filepath.Join(dir, ComponentMatchExportName(componentName)+".css")
 	case componentName + ".module.css":
 		if dir == "." {
-			return ComponentExportName(componentName) + ".module.css"
+			return ComponentMatchExportName(componentName) + ".module.css"
 		}
-		return filepath.Join(dir, ComponentExportName(componentName)+".module.css")
+		return filepath.Join(dir, ComponentMatchExportName(componentName)+".module.css")
+	case strings.ReplaceAll(componentName, "-", "") + ".module.css":
+		if dir == "." {
+			return ComponentMatchExportName(componentName) + ".module.css"
+		}
+		return filepath.Join(dir, ComponentMatchExportName(componentName)+".module.css")
 	default:
 		return relativePath
 	}
 }
 
-func ComponentExportName(componentName string) string {
+func ComponentMatchExportName(componentName string) string {
 	if componentName == "" {
 		return ""
 	}
