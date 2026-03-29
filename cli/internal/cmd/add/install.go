@@ -5,6 +5,7 @@ import (
 	"arachne/cli/internal/fsutil"
 	"arachne/cli/internal/project"
 	"arachne/cli/internal/registry"
+	"arachne/cli/internal/source"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -104,7 +105,7 @@ func installBuiltSourceGraph(
 		if err != nil {
 			return err
 		}
-		if isComponentBarrelFile(relativePath) && !shouldKeepComponentBarrel(proj) {
+		if source.IsBarrelFile(relativePath) && !shouldKeepComponentBarrel(proj) {
 			return nil
 		}
 		destinationPath := filepath.Join(
@@ -154,11 +155,6 @@ func installBuiltSourceGraph(
 	}
 
 	return result, nil
-}
-
-func isComponentBarrelFile(relativePath string) bool {
-	base := filepath.Base(relativePath)
-	return base == "index.ts" || base == "index.tsx"
 }
 
 func shouldKeepComponentBarrel(proj project.Project) bool {
@@ -243,7 +239,7 @@ func InstallDependencies(proj project.Project, packageNames []string) ([]Depende
 			continue
 		}
 
-		sourceBaseDir := filepath.Join(proj.RootDir, "lib", packageName, "src")
+		sourceBaseDir := source.ResolveSourceDir(filepath.Join(proj.RootDir, "lib", packageName))
 		if _, err := os.Stat(sourceBaseDir); err != nil {
 			if os.IsNotExist(err) {
 				return nil, fmt.Errorf("lib package %q not found. expected %s", packageName, filepath.Join("lib", packageName, "src"))
@@ -322,7 +318,10 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 		if err != nil {
 			return err
 		}
-		if isLibBarrelFile(relativePath) && !proj.Config.Layout.Barrel {
+		if source.IsTestFile(relativePath) {
+			return nil
+		}
+		if source.IsBarrelFile(relativePath) && !proj.Config.Layout.Barrel {
 			return nil
 		}
 		destinationPath := filepath.Join(destinationDir, project.RewriteLibRelativePath(relativePath, proj.Config.FileNames.Lib))
@@ -377,11 +376,6 @@ func installDependencySourceGraph(proj project.Project, sourceBaseDir string, de
 	}
 
 	return files, nil
-}
-
-func isLibBarrelFile(relativePath string) bool {
-	base := filepath.Base(relativePath)
-	return base == "index.ts" || base == "index.tsx"
 }
 
 func dedupePackageNames(packageNames []string) []string {
