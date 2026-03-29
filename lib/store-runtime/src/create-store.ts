@@ -1,28 +1,76 @@
-import type { WritableArachneStore } from './types'
+import type {
+  ArachneStoreListener,
+  ArachneStoreValue,
+  WritableArachneStore,
+} from './types'
 
-export function createStore<TState>(
+export function createStore<TState extends Record<string, ArachneStoreValue>>(
   initialState: TState,
 ): WritableArachneStore<TState> {
   let state = initialState
-  const listeners = new Set<() => void>()
+  const anyListeners = new Set<ArachneStoreListener>()
+  const keyListeners = new Map<keyof TState, Set<ArachneStoreListener>>()
 
   return {
-    getState() {
+    get(key) {
+      return state[key]
+    },
+    getSnapshot() {
       return state
     },
-    setState(nextState) {
-      state = nextState
+    set(key, value) {
+      const previousValue = state[key]
+      const nextValue = resolveNextValue(previousValue, value)
+      if (Object.is(previousValue, nextValue)) {
+        return
+      }
 
-      for (const listener of listeners) {
+      state = {
+        ...state,
+        [key]: nextValue,
+      }
+
+      const listenersForKey = keyListeners.get(key)
+      if (listenersForKey) {
+        for (const listener of listenersForKey) {
+          listener()
+        }
+      }
+
+      for (const listener of anyListeners) {
         listener()
       }
     },
-    subscribe(listener) {
-      listeners.add(listener)
+    subscribeAny(listener) {
+      anyListeners.add(listener)
 
       return () => {
-        listeners.delete(listener)
+        anyListeners.delete(listener)
+      }
+    },
+    subscribeKey(key, listener) {
+      const listenersForKey =
+        keyListeners.get(key) ?? new Set<ArachneStoreListener>()
+      listenersForKey.add(listener)
+      keyListeners.set(key, listenersForKey)
+
+      return () => {
+        listenersForKey.delete(listener)
+        if (listenersForKey.size === 0) {
+          keyListeners.delete(key)
+        }
       }
     },
   }
+}
+
+function resolveNextValue<TValue extends ArachneStoreValue>(
+  previousValue: TValue,
+  value: TValue | ((previousValue: TValue) => TValue),
+): TValue {
+  if (typeof value === 'function') {
+    return value(previousValue)
+  }
+
+  return value
 }

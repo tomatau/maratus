@@ -1,6 +1,8 @@
 {
   "files": [],
   "references": [
+    { "path": "./tsconfig.bun.json" },
+    { "path": "./tsconfig.playwright.json" },
     { "path": "./tsconfig.src.json" }
   ]
 }

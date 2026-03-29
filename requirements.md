@@ -16,6 +16,7 @@ These requirements cover shared non-functional expectations that should hold acr
 | ID      | Level | Requirement                                                                                                                                                                                              | Source         | Applicability |
 | ------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
 | NFR-001 | MUST  | Shared global behaviour that is coordinated through document-level or window-level event listeners MUST attach at most one listener set per runtime instance when one shared listener set is sufficient. | Library policy | Current       |
+| NFR-002 | MUST  | Shared selector-based state consumption MUST avoid unnecessary re-renders when a state update does not change the selected value observed by the current consumer.                                       | Library policy | Current       |
 
 ## Notes
 

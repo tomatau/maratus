@@ -6,6 +6,16 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "test": "playwright test -c playwright-ct.config.ts",
+    "test:unit": "bun test --preload @arachne/bun/unit-test src/**"
+  },
+  "devDependencies": {
+    "@arachne/bun": "workspace:*",
+    "@arachne/dotfiles": "workspace:*",
+    "@arachne/playwright": "workspace:*",
+    "@playwright/experimental-ct-react": "^1.55.1"
+  },
   "peerDependencies": {
     "react": "^19.1.1"
   }

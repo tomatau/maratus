@@ -151,6 +151,12 @@
     "lib/store-runtime": {
       "name": "@arachne/store-runtime",
       "version": "0.0.0",
+      "devDependencies": {
+        "@arachne/bun": "workspace:*",
+        "@arachne/dotfiles": "workspace:*",
+        "@arachne/playwright": "workspace:*",
+        "@playwright/experimental-ct-react": "^1.55.1",
+      },
       "peerDependencies": {
         "react": "^19.1.1",
       },
