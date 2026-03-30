@@ -1,57 +1,24 @@
 package initcmd
 
 import (
-	"fmt"
-
-	"arachne/cli/internal/style"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )
 
 func AskThemeDir(cmd *cobra.Command, configRoot string, srcDir string) (string, error) {
-	const defaultThemeDir = "styles"
-
-	srcRoot := sourceAbsPath(configRoot, srcDir)
-	suggestions, err := childDirs(srcRoot)
-	if err != nil {
-		return "", err
-	}
-
-	if !isInteractiveSession(cmd) {
-		return defaultThemeDir, nil
-	}
-
-	_, _ = fmt.Fprintf(
-		cmd.OutOrStdout(),
-		"%s %s\n",
-		style.Violet("Theme directory"),
-		style.Muted("Directory under source for arachne-theme.css."),
+	return askDirectory(
+		cmd,
+		configRoot,
+		srcDir,
+		"styles",
+		"Theme directory",
+		"Directory under source for arachne-theme.css.",
+		func(defaultValue string, suggestions []string, existingDirs []string) tea.Model {
+			return newThemeDirModel(defaultValue, suggestions, existingDirs)
+		},
+		"theme dir",
+		"theme directory selection cancelled",
 	)
-
-	existingDirs := append([]string(nil), suggestions...)
-	model := newThemeDirModel(defaultThemeDir, suggestions, existingDirs)
-	program := tea.NewProgram(
-		model,
-		tea.WithInput(cmd.InOrStdin()),
-		tea.WithOutput(cmd.OutOrStdout()),
-	)
-	finalModel, err := program.Run()
-	if err != nil {
-		return "", err
-	}
-
-	resultModel, ok := finalModel.(*themeDirModel)
-	if !ok {
-		return "", fmt.Errorf("unexpected theme dir model type")
-	}
-	if resultModel.cancelled {
-		return "", fmt.Errorf("theme directory selection cancelled")
-	}
-
-	value := resultModel.result()
-	printSelectedValue(cmd, value)
-	return value, nil
 }
 
 type themeDirModel struct {
@@ -84,3 +51,4 @@ func (m *themeDirModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 func (m *themeDirModel) View() string { return m.directoryPromptModel.View() }
+func (m *themeDirModel) isCancelled() bool { return m.cancelled }
