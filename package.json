@@ -1,5 +1,5 @@
 {
-  "name": "arachne",
+  "name": "@arachne/monorepo",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -10,13 +10,13 @@
     "registry/*",
     "tools/*"
   ],
+  "dependencies": {
+    "bun-workspaces": "^1.1.0"
+  },
   "devDependencies": {
     "@types/bun": "^1.3.10",
     "@types/node": "^25.3.5",
     "oxfmt": "^0.36.0",
     "oxlint": "^1.51.0"
-  },
-  "dependencies": {
-    "bun-workspaces": "^1.1.0"
   }
 }
