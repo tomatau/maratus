@@ -14,16 +14,6 @@
         "oxlint": "^1.51.0",
       },
     },
-    "packages/arachne-codemod-runner": {
-      "name": "@arachne/codemod-runner",
-      "version": "0.0.0",
-      "bin": {
-        "arachne-codemod-runner": "./dist/cli.mjs",
-      },
-      "dependencies": {
-        "ts-morph": "^25.0.1",
-      },
-    },
     "codemods/rewrite-internal-imports": {
       "name": "@arachne-codemod/rewrite-internal-imports",
       "version": "0.0.0",
@@ -164,6 +154,48 @@
         "react": "^19.1.1",
       },
     },
+    "packages/arachne-cli": {
+      "name": "@arachne/cli",
+      "version": "0.0.0",
+      "bin": {
+        "arachne": "./bin/arachne.mjs",
+      },
+      "dependencies": {
+        "@arachne/codemod-runner": "workspace:*",
+      },
+      "optionalDependencies": {
+        "@arachne/cli-darwin-arm64": "workspace:*",
+        "@arachne/cli-darwin-x64": "workspace:*",
+        "@arachne/cli-linux-x64": "workspace:*",
+        "@arachne/cli-win32-x64": "workspace:*",
+      },
+    },
+    "packages/arachne-cli-darwin-arm64": {
+      "name": "@arachne/cli-darwin-arm64",
+      "version": "0.0.0",
+    },
+    "packages/arachne-cli-darwin-x64": {
+      "name": "@arachne/cli-darwin-x64",
+      "version": "0.0.0",
+    },
+    "packages/arachne-cli-linux-x64": {
+      "name": "@arachne/cli-linux-x64",
+      "version": "0.0.0",
+    },
+    "packages/arachne-cli-win32-x64": {
+      "name": "@arachne/cli-win32-x64",
+      "version": "0.0.0",
+    },
+    "packages/arachne-codemod-runner": {
+      "name": "@arachne/codemod-runner",
+      "version": "0.0.0",
+      "bin": {
+        "arachne-codemod-runner": "./dist/cli.mjs",
+      },
+      "dependencies": {
+        "ts-morph": "^25.0.1",
+      },
+    },
     "registry/button": {
       "name": "@arachne-registry/button",
       "version": "0.0.0",
@@ -220,11 +252,13 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@arachne/codemod-runner": ["@arachne/codemod-runner@workspace:packages/arachne-codemod-runner"],
-
     "@arachne-codemod/rewrite-internal-imports": ["@arachne-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
 
     "@arachne-codemod/rewrite-relative-imports": ["@arachne-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
+
+    "@arachne-component/button": ["@arachne-component/button@workspace:components/button"],
+
+    "@arachne-component/separator": ["@arachne-component/separator@workspace:components/separator"],
 
     "@arachne-consumer/next-tailwind": ["@arachne-consumer/next-tailwind@workspace:consumers/next-tailwind"],
 
@@ -232,23 +266,31 @@
 
     "@arachne-consumer/vite-raw-css": ["@arachne-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
 
-    "@arachne-component/button": ["@arachne-component/button@workspace:components/button"],
+    "@arachne-registry/button": ["@arachne-registry/button@workspace:registry/button"],
 
-    "@arachne-component/separator": ["@arachne-component/separator@workspace:components/separator"],
+    "@arachne-registry/separator": ["@arachne-registry/separator@workspace:registry/separator"],
 
     "@arachne/build": ["@arachne/build@workspace:tools/build"],
 
     "@arachne/bun": ["@arachne/bun@workspace:tools/bun"],
 
-    "@arachne-registry/button": ["@arachne-registry/button@workspace:registry/button"],
+    "@arachne/cli": ["@arachne/cli@workspace:packages/arachne-cli"],
+
+    "@arachne/cli-darwin-arm64": ["@arachne/cli-darwin-arm64@workspace:packages/arachne-cli-darwin-arm64"],
+
+    "@arachne/cli-darwin-x64": ["@arachne/cli-darwin-x64@workspace:packages/arachne-cli-darwin-x64"],
+
+    "@arachne/cli-linux-x64": ["@arachne/cli-linux-x64@workspace:packages/arachne-cli-linux-x64"],
+
+    "@arachne/cli-win32-x64": ["@arachne/cli-win32-x64@workspace:packages/arachne-cli-win32-x64"],
+
+    "@arachne/codemod-runner": ["@arachne/codemod-runner@workspace:packages/arachne-codemod-runner"],
 
     "@arachne/dotfiles": ["@arachne/dotfiles@workspace:tools/dotfiles"],
 
     "@arachne/focus-modality": ["@arachne/focus-modality@workspace:lib/focus-modality"],
 
     "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
-
-    "@arachne-registry/separator": ["@arachne-registry/separator@workspace:registry/separator"],
 
     "@arachne/store-runtime": ["@arachne/store-runtime@workspace:lib/store-runtime"],
 
@@ -836,7 +878,7 @@
 
     "scheduler": ["scheduler@0.27.0", "", {}, "sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q=="],
 
-    "semver": ["semver@7.7.4", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA=="],
+    "semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
 
     "sharp": ["sharp@0.34.5", "", { "dependencies": { "@img/colour": "^1.0.0", "detect-libc": "^2.1.2", "semver": "^7.7.3" }, "optionalDependencies": { "@img/sharp-darwin-arm64": "0.34.5", "@img/sharp-darwin-x64": "0.34.5", "@img/sharp-libvips-darwin-arm64": "1.2.4", "@img/sharp-libvips-darwin-x64": "1.2.4", "@img/sharp-libvips-linux-arm": "1.2.4", "@img/sharp-libvips-linux-arm64": "1.2.4", "@img/sharp-libvips-linux-ppc64": "1.2.4", "@img/sharp-libvips-linux-riscv64": "1.2.4", "@img/sharp-libvips-linux-s390x": "1.2.4", "@img/sharp-libvips-linux-x64": "1.2.4", "@img/sharp-libvips-linuxmusl-arm64": "1.2.4", "@img/sharp-libvips-linuxmusl-x64": "1.2.4", "@img/sharp-linux-arm": "0.34.5", "@img/sharp-linux-arm64": "0.34.5", "@img/sharp-linux-ppc64": "0.34.5", "@img/sharp-linux-riscv64": "0.34.5", "@img/sharp-linux-s390x": "0.34.5", "@img/sharp-linux-x64": "0.34.5", "@img/sharp-linuxmusl-arm64": "0.34.5", "@img/sharp-linuxmusl-x64": "0.34.5", "@img/sharp-wasm32": "0.34.5", "@img/sharp-win32-arm64": "0.34.5", "@img/sharp-win32-ia32": "0.34.5", "@img/sharp-win32-x64": "0.34.5" } }, "sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg=="],
 
@@ -896,10 +938,6 @@
 
     "@asamuzakjp/css-color/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
 
-    "@babel/core/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
-
-    "@babel/helper-compilation-targets/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
-
     "@playwright/experimental-ct-core/vite": ["vite@6.4.1", "", { "dependencies": { "esbuild": "^0.25.0", "fdir": "^6.4.4", "picomatch": "^4.0.2", "postcss": "^8.5.3", "rollup": "^4.34.9", "tinyglobby": "^0.2.13" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0", "jiti": ">=1.21.0", "less": "*", "lightningcss": "^1.21.0", "sass": "*", "sass-embedded": "*", "stylus": "*", "sugarss": "*", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "jiti", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g=="],
 
     "@playwright/experimental-ct-react/@vitejs/plugin-react": ["@vitejs/plugin-react@4.7.0", "", { "dependencies": { "@babel/core": "^7.28.0", "@babel/plugin-transform-react-jsx-self": "^7.27.1", "@babel/plugin-transform-react-jsx-source": "^7.27.1", "@rolldown/pluginutils": "1.0.0-beta.27", "@types/babel__core": "^7.20.5", "react-refresh": "^0.17.0" }, "peerDependencies": { "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" } }, "sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA=="],
@@ -921,6 +959,8 @@
     "next/postcss": ["postcss@8.4.31", "", { "dependencies": { "nanoid": "^3.3.6", "picocolors": "^1.0.0", "source-map-js": "^1.0.2" } }, "sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ=="],
 
     "playwright/fsevents": ["fsevents@2.3.2", "", { "os": "darwin" }, "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="],
+
+    "sharp/semver": ["semver@7.7.4", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA=="],
 
     "@playwright/experimental-ct-core/vite/esbuild": ["esbuild@0.25.12", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.25.12", "@esbuild/android-arm": "0.25.12", "@esbuild/android-arm64": "0.25.12", "@esbuild/android-x64": "0.25.12", "@esbuild/darwin-arm64": "0.25.12", "@esbuild/darwin-x64": "0.25.12", "@esbuild/freebsd-arm64": "0.25.12", "@esbuild/freebsd-x64": "0.25.12", "@esbuild/linux-arm": "0.25.12", "@esbuild/linux-arm64": "0.25.12", "@esbuild/linux-ia32": "0.25.12", "@esbuild/linux-loong64": "0.25.12", "@esbuild/linux-mips64el": "0.25.12", "@esbuild/linux-ppc64": "0.25.12", "@esbuild/linux-riscv64": "0.25.12", "@esbuild/linux-s390x": "0.25.12", "@esbuild/linux-x64": "0.25.12", "@esbuild/netbsd-arm64": "0.25.12", "@esbuild/netbsd-x64": "0.25.12", "@esbuild/openbsd-arm64": "0.25.12", "@esbuild/openbsd-x64": "0.25.12", "@esbuild/openharmony-arm64": "0.25.12", "@esbuild/sunos-x64": "0.25.12", "@esbuild/win32-arm64": "0.25.12", "@esbuild/win32-ia32": "0.25.12", "@esbuild/win32-x64": "0.25.12" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg=="],
 

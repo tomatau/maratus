@@ -77,13 +77,13 @@ cli-tmp command='' *args:
 @_package-name workspace package:
   bun --print "require('./{{workspace}}/{{package}}/package.json').name"
 
-@_consumer-config-file name:
+_consumer-config-file name:
   echo "consumers/{{name}}/arachne.json"
 
 _run-workspace command workspace='"*"':
   bunx bun-workspaces run {{command}} {{workspace}}
 
-@_workspace-scope workspace:
+_workspace-scope workspace:
   @if [ "{{workspace}}" = "codemods" ]; then \
     echo "@arachne-codemod/"; \
   elif [ "{{workspace}}" = "registry" ]; then \

@@ -1,0 +1,21 @@
+{
+  "name": "@arachne/cli",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "arachne": "./bin/arachne.mjs"
+  },
+  "files": [
+    "bin"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@arachne/codemod-runner": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@arachne/cli-darwin-arm64": "workspace:*",
+    "@arachne/cli-darwin-x64": "workspace:*",
+    "@arachne/cli-linux-x64": "workspace:*",
+    "@arachne/cli-win32-x64": "workspace:*"
+  }
+}
