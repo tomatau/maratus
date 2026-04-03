@@ -19,6 +19,11 @@ cli-test:
 cli-build:
   go -C cli build -o ../{{CLI_BIN}} .
 
+[group('cli')]
+[group('build')]
+cli-build-prod:
+  go -C cli build -o ../{{CLI_BIN}} -ldflags="-s -w" .
+
 [group('test')]
 test workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \

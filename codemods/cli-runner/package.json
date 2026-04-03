@@ -2,10 +2,10 @@
   "name": "@arachne-codemod/cli-runner",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "bin": {
     "arachne-codemod-runner": "./dist/cli.mjs"
   },
+  "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./cli": "./dist/cli.mjs"

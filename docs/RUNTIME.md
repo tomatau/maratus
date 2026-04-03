@@ -4,13 +4,13 @@
 
 - A shared runtime coordinates domain stores.
 - The runtime is a singleton by default.
-- A provider override may be added later.
-- Domain stores are resolved lazily.
+- We may add a provider override later.
+- Resolve domain stores lazily.
 - Packages own their store keys and factories.
 - Local instance ids are hook-owned by default.
 - Selector hooks are the subscription surface.
-- Store state must be safe to read during SSR.
-- Initial store state must be deterministic for the environment.
+- Keep store state safe to read during SSR.
+- Keep initial store state deterministic for the environment.
 
 ## Contracts
 
@@ -23,10 +23,7 @@ export type ArachneStore<TState> = {
 
 ```ts
 export type ArachneRuntime = {
-  getStore<TStore>(
-    key: symbol,
-    createStore: () => TStore,
-  ): TStore
+  getStore<TStore>(key: symbol, createStore: () => TStore): TStore
 }
 ```
 
@@ -50,10 +47,7 @@ const focusModalityStoreKey = Symbol('focus-modality')
 function useFocusModalityStore() {
   const runtime = useArachneRuntime()
 
-  return runtime.getStore(
-    focusModalityStoreKey,
-    createFocusModalityStore,
-  )
+  return runtime.getStore(focusModalityStoreKey, createFocusModalityStore)
 }
 ```
 
@@ -72,16 +66,12 @@ function useFocusScope() {
 function useSomething() {
   const store = useSomethingStore()
 
-  return useStoreSelector(
-    store,
-    (state) => state.value,
-  )
+  return useStoreSelector(store, (state) => state.value)
 }
 ```
 
 ## SSR
 
-`useStoreSelector` should be implemented on top of `useSyncExternalStore`.
+Implement `useStoreSelector` on top of `useSyncExternalStore`.
 
-Server snapshot reads from `selector(store.getState())`.
-```
+Read the server snapshot from `selector(store.getState())`.
