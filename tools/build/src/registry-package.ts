@@ -23,9 +23,9 @@ export async function buildRegistryPackageManifest(
   const manifest = JSON.parse(source) as SourcePackageManifest
 
   return {
-    name: `@arachne/${componentName}`,
+    name: `@arachne-registry/${componentName}`,
     version: manifest.version ?? '0.0.0',
-    private: true,
+    private: false,
     type: 'module',
     dependencies: manifest.dependencies,
     peerDependencies: manifest.peerDependencies,

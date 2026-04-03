@@ -1,7 +1,7 @@
 {
-  "name": "@arachne/button",
+  "name": "@arachne-registry/button",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "dependencies": {
     "@arachne/focus-modality": "workspace:*"

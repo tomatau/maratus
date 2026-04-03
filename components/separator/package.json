@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/base-separator",
+  "name": "@arachne-component/separator",
   "version": "0.0.0",
   "private": true,
   "type": "module",

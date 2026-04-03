@@ -1,7 +1,7 @@
 {
-  "name": "@arachne/separator",
+  "name": "@arachne-registry/separator",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "peerDependencies": {
     "clsx": "^2.1.1",

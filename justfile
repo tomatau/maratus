@@ -86,6 +86,10 @@ _run-workspace command workspace='"*"':
 @_workspace-scope workspace:
   @if [ "{{workspace}}" = "codemods" ]; then \
     echo "@arachne-codemod/"; \
+  elif [ "{{workspace}}" = "registry" ]; then \
+    echo "@arachne-registry/"; \
+  elif [ "{{workspace}}" = "components" ]; then \
+    echo "@arachne-component/"; \
   elif [ "{{workspace}}" = "consumers" ]; then \
     echo "@arachne-consumer/"; \
   else \

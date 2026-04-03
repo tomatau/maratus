@@ -45,7 +45,7 @@
       },
     },
     "components/button": {
-      "name": "@arachne/base-button",
+      "name": "@arachne-component/button",
       "version": "0.0.0",
       "dependencies": {
         "@arachne/focus-modality": "workspace:*",
@@ -73,7 +73,7 @@
       },
     },
     "components/separator": {
-      "name": "@arachne/base-separator",
+      "name": "@arachne-component/separator",
       "version": "0.0.0",
       "devDependencies": {
         "@arachne/build": "workspace:*",
@@ -165,7 +165,7 @@
       },
     },
     "registry/button": {
-      "name": "@arachne/button",
+      "name": "@arachne-registry/button",
       "version": "0.0.0",
       "dependencies": {
         "@arachne/focus-modality": "workspace:*",
@@ -177,7 +177,7 @@
       },
     },
     "registry/separator": {
-      "name": "@arachne/separator",
+      "name": "@arachne-registry/separator",
       "version": "0.0.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
@@ -232,15 +232,15 @@
 
     "@arachne-consumer/vite-raw-css": ["@arachne-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
 
-    "@arachne/base-button": ["@arachne/base-button@workspace:components/button"],
+    "@arachne-component/button": ["@arachne-component/button@workspace:components/button"],
 
-    "@arachne/base-separator": ["@arachne/base-separator@workspace:components/separator"],
+    "@arachne-component/separator": ["@arachne-component/separator@workspace:components/separator"],
 
     "@arachne/build": ["@arachne/build@workspace:tools/build"],
 
     "@arachne/bun": ["@arachne/bun@workspace:tools/bun"],
 
-    "@arachne/button": ["@arachne/button@workspace:registry/button"],
+    "@arachne-registry/button": ["@arachne-registry/button@workspace:registry/button"],
 
     "@arachne/dotfiles": ["@arachne/dotfiles@workspace:tools/dotfiles"],
 
@@ -248,7 +248,7 @@
 
     "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
 
-    "@arachne/separator": ["@arachne/separator@workspace:registry/separator"],
+    "@arachne-registry/separator": ["@arachne-registry/separator@workspace:registry/separator"],
 
     "@arachne/store-runtime": ["@arachne/store-runtime@workspace:lib/store-runtime"],
 

@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/base-button",
+  "name": "@arachne-component/button",
   "version": "0.0.0",
   "private": true,
   "type": "module",
