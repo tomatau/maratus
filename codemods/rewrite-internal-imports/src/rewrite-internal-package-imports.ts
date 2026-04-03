@@ -1,5 +1,5 @@
 import type { RewriteInternalPackageImportsOptions } from './options'
-import type { Codemod } from '@arachne-codemod/cli-runner'
+import type { Codemod } from '@arachne/codemod-runner'
 import { Project } from 'ts-morph'
 import { resolveInternalImportTargets } from './resolve-targets'
 import { rewriteInternalImports } from './rewrite-internal-imports'

@@ -46,21 +46,19 @@ test-unit workspace='' package='':
     exit 1; \
   fi
 
-# workspace=artifacts|codemod
+# workspace=artifacts|codemods|packages
 [group('build')]
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _build-package tools build build:artifacts && \
-    just _run-workspace build '@arachne-codemod/*'; \
+    just _run-workspace build "$(just _workspace-filter packages)" && \
+    just _run-workspace build "$(just _workspace-filter codemods)"; \
   elif [ "{{workspace}}" = "artifacts" ]; then \
     just _build-package tools build build:artifacts; \
-  elif [ "{{workspace}}" != "codemod" ]; then \
-    echo "unsupported build workspace: {{workspace}}" >&2; \
-    exit 1; \
   elif [ -n "{{package}}" ]; then \
-    just _build-package codemods {{package}}; \
+    just _build-package {{workspace}} {{package}}; \
   else \
-    just _run-workspace build '@arachne-codemod/*'; \
+    just _run-workspace build "$(just _workspace-filter {{workspace}})"; \
   fi
 
 [group('tmp')]
@@ -84,6 +82,18 @@ cli-tmp command='' *args:
 
 _run-workspace command workspace='"*"':
   bunx bun-workspaces run {{command}} {{workspace}}
+
+@_workspace-scope workspace:
+  @if [ "{{workspace}}" = "codemods" ]; then \
+    echo "@arachne-codemod/"; \
+  elif [ "{{workspace}}" = "consumers" ]; then \
+    echo "@arachne-consumer/"; \
+  else \
+    echo "@arachne/"; \
+  fi
+
+@_workspace-filter workspace:
+  echo "$(just _workspace-scope {{workspace}})*"
 
 @_run-package command workspace package:
   just _run-workspace {{command}} "$(just _package-name {{workspace}} {{package}})"

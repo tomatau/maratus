@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { runCodemod } from '@arachne-codemod/cli-runner'
+import { runCodemod } from '@arachne/codemod-runner'
 import { rewriteInternalPackageImports } from './rewrite-internal-package-imports'
 
 describe(rewriteInternalPackageImports, () => {

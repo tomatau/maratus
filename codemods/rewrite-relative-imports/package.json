@@ -11,7 +11,7 @@
     "test:unit": "bun test"
   },
   "dependencies": {
-    "@arachne-codemod/cli-runner": "workspace:*"
+    "@arachne/codemod-runner": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.3.10"

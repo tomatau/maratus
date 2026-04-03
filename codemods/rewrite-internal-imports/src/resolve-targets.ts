@@ -1,7 +1,7 @@
 import type { FileNameKind, InternalImportTarget } from './options'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import { rewriteSourcePath } from '@arachne-codemod/cli-runner'
+import { rewriteSourcePath } from '@arachne/codemod-runner'
 import { Project } from 'ts-morph'
 
 export type ResolveInternalImportTargetsOptions = {

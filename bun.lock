@@ -14,8 +14,8 @@
         "oxlint": "^1.51.0",
       },
     },
-    "codemods/cli-runner": {
-      "name": "@arachne-codemod/cli-runner",
+    "packages/arachne-codemod-runner": {
+      "name": "@arachne/codemod-runner",
       "version": "0.0.0",
       "bin": {
         "arachne-codemod-runner": "./dist/cli.mjs",
@@ -28,7 +28,7 @@
       "name": "@arachne-codemod/rewrite-internal-imports",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne-codemod/cli-runner": "workspace:*",
+        "@arachne/codemod-runner": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "^1.3.10",
@@ -38,7 +38,7 @@
       "name": "@arachne-codemod/rewrite-relative-imports",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne-codemod/cli-runner": "workspace:*",
+        "@arachne/codemod-runner": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "^1.3.10",
@@ -220,7 +220,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@arachne-codemod/cli-runner": ["@arachne-codemod/cli-runner@workspace:codemods/cli-runner"],
+    "@arachne/codemod-runner": ["@arachne/codemod-runner@workspace:packages/arachne-codemod-runner"],
 
     "@arachne-codemod/rewrite-internal-imports": ["@arachne-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
 

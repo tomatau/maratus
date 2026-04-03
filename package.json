@@ -2,6 +2,7 @@
   "name": "arachne",
   "private": true,
   "workspaces": [
+    "packages/*",
     "components/*",
     "codemods/*",
     "lib/*",

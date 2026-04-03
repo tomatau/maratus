@@ -1,5 +1,5 @@
 {
-  "name": "@arachne-codemod/cli-runner",
+  "name": "@arachne/codemod-runner",
   "version": "0.0.0",
   "private": true,
   "bin": {
