@@ -7,3 +7,5 @@ registry/*
 !registry/*/
 registry/*/*
 !registry/*/package.json
+packages/arachne-cli-*/bin/*
+!packages/arachne-cli-*/bin/.gitkeep

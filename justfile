@@ -14,6 +14,10 @@ default:
 cli-test:
   go -C cli test ./...
 
+[group('release')]
+changeset command *args:
+  bun run changeset {{command}} {{args}}
+
 [group('cli')]
 [group('build')]
 cli-build output=CLI_BIN:

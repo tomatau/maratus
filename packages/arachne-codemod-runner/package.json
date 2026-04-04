@@ -1,7 +1,7 @@
 {
   "name": "@arachne/codemod-runner",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "bin": {
     "arachne-codemod-runner": "./dist/cli.mjs"
   },

@@ -1,0 +1,12 @@
+channels:
+  stable:
+    branch: main
+    distTag: latest
+
+  pr:
+    distTag: pr
+    versionFormat: "{baseVersion}-pr.{prNumber}.{branch}.{sha}"
+
+  rc:
+    distTag: rc
+    activeBranch:

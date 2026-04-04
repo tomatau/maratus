@@ -1,7 +1,7 @@
 {
   "name": "@arachne/cli",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "bin": {
     "arachne": "./bin/arachne.mjs"
   },

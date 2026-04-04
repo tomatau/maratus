@@ -1,0 +1,76 @@
+name: _NPM Publish
+
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    if: ${{ secrets.NPM_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_BOT_NAME: github-actions[bot]
+      RELEASE_BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up development tools
+        uses: ./.github/actions/setup-dev
+        with:
+          npm-auth: "true"
+
+      - name: Build codemod runner
+        run: just build packages arachne-codemod-runner
+
+      - name: Build codemods
+        run: just build codemods
+
+      - name: Stage platform CLI binaries
+        run: |
+          just cli-stage-platform arachne-cli-darwin-arm64 darwin arm64 arachne
+          just cli-stage-platform arachne-cli-darwin-x64 darwin amd64 arachne
+          just cli-stage-platform arachne-cli-linux-x64 linux amd64 arachne
+          just cli-stage-platform arachne-cli-win32-x64 windows amd64 arachne.exe
+
+      - name: Version packages
+        run: just changeset version
+
+      - name: Detect release changes
+        id: release_changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure git
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        run: |
+          git config user.name "$RELEASE_BOT_NAME"
+          git config user.email "$RELEASE_BOT_EMAIL"
+
+      - name: Commit version changes
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        run: |
+          git add -A
+          git commit -m "chore(release): publish stable packages [skip ci]"
+
+      - name: Publish packages
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: just changeset publish
+
+      - name: Push release commit
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        run: git push origin HEAD:main

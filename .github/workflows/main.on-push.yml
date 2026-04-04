@@ -1,0 +1,19 @@
+name: Main on Push
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: main-on-push
+  cancel-in-progress: false
+
+jobs:
+  cli-smoke:
+    uses: ./.github/workflows/_cli-smoke.yml
+
+  npm-publish:
+    needs: cli-smoke
+    uses: ./.github/workflows/_npm-publish.yml
+    secrets: inherit
