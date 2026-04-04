@@ -1,10 +1,10 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/registry"
-	"arachne/cli/internal/style"
-	"arachne/cli/internal/tui"
 	"fmt"
+	"maratus/cli/internal/registry"
+	"maratus/cli/internal/style"
+	"maratus/cli/internal/tui"
 	"slices"
 	"strings"
 

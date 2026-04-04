@@ -1,9 +1,9 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/codemods"
-	"arachne/cli/internal/project"
-	"arachne/cli/internal/source"
+	"maratus/cli/internal/codemods"
+	"maratus/cli/internal/project"
+	"maratus/cli/internal/source"
 	"path/filepath"
 )
 

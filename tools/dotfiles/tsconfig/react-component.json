@@ -6,6 +6,6 @@
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
-    "types": ["@arachne/dotfiles/css-modules"]
+    "types": ["@maratus/dotfiles/css-modules"]
   }
 }

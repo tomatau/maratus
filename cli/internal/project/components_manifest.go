@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/registry"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/registry"
 )
 
-const ComponentsManifestFileName = "arachne-components.json"
+const ComponentsManifestFileName = "maratus-components.json"
 
 type InstalledComponent struct {
 	Package         string                           `json:"package"`

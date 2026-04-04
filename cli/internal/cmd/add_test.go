@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	addcmd "arachne/cli/internal/cmd/add"
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/project"
 	"bytes"
+	addcmd "maratus/cli/internal/cmd/add"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/project"
 	"os"
 	"path/filepath"
 	"sort"
@@ -433,7 +433,7 @@ func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0", "react": "^19.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0", "react": "^19.0.0"},
 		cssFiles: map[string]string{
 			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
 		},
@@ -454,7 +454,7 @@ func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
   }
 }`)
 
-	proj, err := project.Open(wd, "arachne.json")
+	proj, err := project.Open(wd, "maratus.json")
 	if err != nil {
 		t.Fatalf("open project: %v", err)
 	}
@@ -476,15 +476,15 @@ func TestAddCopiesOneLevelInternalDependenciesToLibDir(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		cssModules: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		tailwindCSS: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 	})
 	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
@@ -531,32 +531,32 @@ func TestAddCopiesTransitiveInternalDependenciesToLibDir(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		cssModules: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		tailwindCSS: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 	})
 	writeFile(
 		t,
 		filepath.Join(wd, "lib", singleLevelLibDependencyName, "package.json"),
-		"{\n  \"name\": \"@arachne/"+singleLevelLibDependencyName+"\",\n  \"dependencies\": {\n    \"@arachne/"+transitiveLibDependencyName+"\": \"workspace:*\"\n  }\n}\n",
+		"{\n  \"name\": \"@maratus/"+singleLevelLibDependencyName+"\",\n  \"dependencies\": {\n    \"@maratus/"+transitiveLibDependencyName+"\": \"workspace:*\"\n  }\n}\n",
 	)
 	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
 	writeFile(
 		t,
 		filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "dependency.ts"),
-		"import { transitiveDependency } from '@arachne/"+transitiveLibDependencyName+"'\nexport function dependency() { return transitiveDependency() }\n",
+		"import { transitiveDependency } from '@maratus/"+transitiveLibDependencyName+"'\nexport function dependency() { return transitiveDependency() }\n",
 	)
 	writeFile(
 		t,
 		filepath.Join(wd, "lib", transitiveLibDependencyName, "package.json"),
-		"{\n  \"name\": \"@arachne/"+transitiveLibDependencyName+"\"\n}\n",
+		"{\n  \"name\": \"@maratus/"+transitiveLibDependencyName+"\"\n}\n",
 	)
 	writeFile(t, filepath.Join(wd, "lib", transitiveLibDependencyName, "src", "index.ts"), "export * from './transitiveDependency'\n")
 	writeFile(
@@ -603,7 +603,7 @@ func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentOnlyName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
 			componentTypeName(componentOnlyName) + ".tsx": "export function " + componentTypeName(componentOnlyName) + "() { return null }\n",
 		},
@@ -616,7 +616,7 @@ func TestAddDedupesInternalDependenciesWithinSingleInvocation(t *testing.T) {
 	})
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
 			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
 		},
@@ -666,15 +666,15 @@ func TestAddUsesMatchExportLibFilenamesWhenConfigured(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		cssModules: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		tailwindCSS: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 	})
 	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
@@ -725,15 +725,15 @@ func TestAddUsesKebabCaseLibFilenamesWhenConfigured(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		cssModules: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		tailwindCSS: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 	})
 	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './useDependencyHook'\n")
@@ -779,7 +779,7 @@ func TestAddRewritesRelativeImportsWithinLibSourcesWhenKebabCaseConfigured(t *te
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
 			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
 		},
@@ -845,15 +845,15 @@ func TestAddSkipsLibBarrelWhenBarrelsDisabled(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		cssModules: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 		tailwindCSS: map[string]string{
-			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@arachne/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
+			componentTypeName(componentWithHookName) + ".tsx": "import { dependency } from '@maratus/" + singleLevelLibDependencyName + "'\nexport function " + componentTypeName(componentWithHookName) + "() { dependency(); return null }\n",
 		},
 	})
 	writeFile(t, filepath.Join(wd, "lib", singleLevelLibDependencyName, "src", "index.ts"), "export * from './dependency'\n")
@@ -900,7 +900,7 @@ func TestAddKeepsLibBarrelWhenBarrelsEnabled(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, registryFixture{
 		name:         componentWithHookName,
-		dependencies: map[string]string{"@arachne/" + singleLevelLibDependencyName: "0.0.0"},
+		dependencies: map[string]string{"@maratus/" + singleLevelLibDependencyName: "0.0.0"},
 		cssFiles: map[string]string{
 			componentTypeName(componentWithHookName) + ".tsx": "export function " + componentTypeName(componentWithHookName) + "() { return null }\n",
 		},
@@ -1035,7 +1035,7 @@ func componentWithHookFixture(name string) registryFixture {
 
 func writeConfig(t *testing.T, wd string, config string) {
 	t.Helper()
-	path := filepath.Join(wd, "arachne.json")
+	path := filepath.Join(wd, "maratus.json")
 	if err := os.WriteFile(path, []byte(config+"\n"), 0o644); err != nil {
 		t.Fatalf("write config: %v", err)
 	}
@@ -1099,7 +1099,7 @@ func buildMetaJSON(fixture registryFixture) string {
 func buildPackageJSON(fixture registryFixture) string {
 	lines := []string{
 		"{",
-		"  \"name\": \"@arachne/" + fixture.name + "\",",
+		"  \"name\": \"@maratus/" + fixture.name + "\",",
 		"  \"version\": \"0.0.0\"",
 	}
 

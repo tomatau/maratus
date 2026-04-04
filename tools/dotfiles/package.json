@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/dotfiles",
+  "name": "@maratus/dotfiles",
   "private": true,
   "type": "module",
   "exports": {

@@ -1,8 +1,8 @@
 package tui
 
 import (
-	"arachne/cli/internal/style"
 	"fmt"
+	"maratus/cli/internal/style"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"

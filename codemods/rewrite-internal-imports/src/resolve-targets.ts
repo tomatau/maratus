@@ -1,7 +1,7 @@
 import type { FileNameKind, InternalImportTarget } from './options'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import { rewriteSourcePath } from '@arachne/codemod-runner'
+import { rewriteSourcePath } from '@maratus/codemod-runner'
 import { Project } from 'ts-morph'
 
 export type ResolveInternalImportTargetsOptions = {
@@ -23,7 +23,7 @@ export function resolveInternalImportTargets(
   const targets: ResolvedInternalImportTargets = {}
 
   for (const internalPackage of options.packages) {
-    const packageName = `@arachne/${internalPackage.packageName}`
+    const packageName = `@maratus/${internalPackage.packageName}`
 
     if (internalPackage.barrel) {
       targets[packageName] = {

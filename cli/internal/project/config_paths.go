@@ -1,7 +1,7 @@
 package project
 
 import (
-	"arachne/cli/internal/config"
+	"maratus/cli/internal/config"
 	"os"
 	"path/filepath"
 )

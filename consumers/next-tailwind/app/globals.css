@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './styles/arachne-theme';
+@import './styles/maratus-theme';
 
 :root {
   color-scheme: light;

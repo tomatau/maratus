@@ -1,5 +1,5 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig",
+  "extends": "@maratus/dotfiles/tsconfig",
   "include": ["src"],
   "exclude": ["src/**/*.func.ts", "src/**/*.func.tsx"]
 }

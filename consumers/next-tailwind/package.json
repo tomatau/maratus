@@ -1,5 +1,5 @@
 {
-  "name": "@arachne-consumer/next-tailwind",
+  "name": "@maratus-consumer/next-tailwind",
   "private": true,
   "scripts": {
     "dev": "next dev",

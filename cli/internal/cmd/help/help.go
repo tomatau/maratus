@@ -1,19 +1,19 @@
 package helpcmd
 
 import (
-	"arachne/cli/internal/style"
 	"fmt"
+	"maratus/cli/internal/style"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
-const RootShort = "Arachne CLI tool for installing accessible React components"
+const RootShort = "Maratus CLI tool for installing accessible React components"
 
-const rootHelpTemplate = `{{violet "Arachne"}} CLI tool for installing accessible React components
+const rootHelpTemplate = `{{violet "Maratus"}} CLI tool for installing accessible React components
 
-Usage: {{violet "arachne"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[...args]"}}
+Usage: {{violet "maratus"}} {{aqua "[command]"}} {{gray "[...flags]"}} {{gray "[...args]"}}
 
 {{section "Commands:"}}
 {{- range .Commands }}

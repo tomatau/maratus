@@ -1,15 +1,15 @@
 import type {
-  ArachneStoreListener,
-  ArachneStoreValue,
-  WritableArachneStore,
+  MaratusStoreListener,
+  MaratusStoreValue,
+  WritableMaratusStore,
 } from './types'
 
-export function createStore<TState extends Record<string, ArachneStoreValue>>(
+export function createStore<TState extends Record<string, MaratusStoreValue>>(
   initialState: TState,
-): WritableArachneStore<TState> {
+): WritableMaratusStore<TState> {
   let state = initialState
-  const anyListeners = new Set<ArachneStoreListener>()
-  const keyListeners = new Map<keyof TState, Set<ArachneStoreListener>>()
+  const anyListeners = new Set<MaratusStoreListener>()
+  const keyListeners = new Map<keyof TState, Set<MaratusStoreListener>>()
 
   return {
     get(key) {
@@ -50,7 +50,7 @@ export function createStore<TState extends Record<string, ArachneStoreValue>>(
     },
     subscribeKey(key, listener) {
       const listenersForKey =
-        keyListeners.get(key) ?? new Set<ArachneStoreListener>()
+        keyListeners.get(key) ?? new Set<MaratusStoreListener>()
       listenersForKey.add(listener)
       keyListeners.set(key, listenersForKey)
 
@@ -64,7 +64,7 @@ export function createStore<TState extends Record<string, ArachneStoreValue>>(
   }
 }
 
-function resolveNextValue<TValue extends ArachneStoreValue>(
+function resolveNextValue<TValue extends MaratusStoreValue>(
   previousValue: TValue,
   value: TValue | ((previousValue: TValue) => TValue),
 ): TValue {

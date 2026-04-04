@@ -14,12 +14,12 @@ const (
 var supportedCodemods = map[string]SupportedCodemod{
 	RewriteInternalImportsName: {
 		Name:        RewriteInternalImportsName,
-		PackageName: "@arachne-codemod/rewrite-internal-imports",
+		PackageName: "@maratus-codemod/rewrite-internal-imports",
 		ExportName:  "rewriteInternalPackageImports",
 	},
 	RewriteRelativeImportsName: {
 		Name:        RewriteRelativeImportsName,
-		PackageName: "@arachne-codemod/rewrite-relative-imports",
+		PackageName: "@maratus-codemod/rewrite-relative-imports",
 		ExportName:  "rewriteRelativeImports",
 	},
 }

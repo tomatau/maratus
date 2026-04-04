@@ -2,7 +2,7 @@
   "extends": "./react-component.json",
   "compilerOptions": {
     "types": [
-      "@arachne/dotfiles/css-modules",
+      "@maratus/dotfiles/css-modules",
       "@playwright/experimental-ct-react"
     ]
   }

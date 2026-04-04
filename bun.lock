@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "arachne",
+      "name": "maratus",
       "dependencies": {
         "bun-workspaces": "^1.1.0",
       },
@@ -16,36 +16,36 @@
       },
     },
     "codemods/rewrite-internal-imports": {
-      "name": "@arachne-codemod/rewrite-internal-imports",
+      "name": "@maratus-codemod/rewrite-internal-imports",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne/codemod-runner": "workspace:*",
+        "@maratus/codemod-runner": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "^1.3.10",
       },
     },
     "codemods/rewrite-relative-imports": {
-      "name": "@arachne-codemod/rewrite-relative-imports",
+      "name": "@maratus-codemod/rewrite-relative-imports",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne/codemod-runner": "workspace:*",
+        "@maratus/codemod-runner": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "^1.3.10",
       },
     },
     "components/button": {
-      "name": "@arachne-component/button",
+      "name": "@maratus-component/button",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne/focus-modality": "workspace:*",
+        "@maratus/focus-modality": "workspace:*",
       },
       "devDependencies": {
-        "@arachne/build": "workspace:*",
-        "@arachne/bun": "workspace:*",
-        "@arachne/dotfiles": "workspace:*",
-        "@arachne/playwright": "workspace:*",
+        "@maratus/build": "workspace:*",
+        "@maratus/bun": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@maratus/playwright": "workspace:*",
         "@axe-core/playwright": "^4.10.2",
         "@playwright/experimental-ct-react": "^1.55.0",
         "@playwright/test": "^1.55.0",
@@ -64,12 +64,12 @@
       },
     },
     "components/separator": {
-      "name": "@arachne-component/separator",
+      "name": "@maratus-component/separator",
       "version": "0.0.0",
       "devDependencies": {
-        "@arachne/build": "workspace:*",
-        "@arachne/dotfiles": "workspace:*",
-        "@arachne/playwright": "workspace:*",
+        "@maratus/build": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@maratus/playwright": "workspace:*",
         "@axe-core/playwright": "^4.10.2",
         "@playwright/experimental-ct-react": "^1.55.0",
         "@playwright/test": "^1.55.0",
@@ -87,7 +87,7 @@
       },
     },
     "consumers/next-tailwind": {
-      "name": "@arachne-consumer/next-tailwind",
+      "name": "@maratus-consumer/next-tailwind",
       "dependencies": {
         "next": "^15.5.5",
         "react": "^19.1.1",
@@ -100,7 +100,7 @@
       },
     },
     "consumers/vite-css-modules": {
-      "name": "@arachne-consumer/vite-css-modules",
+      "name": "@maratus-consumer/vite-css-modules",
       "dependencies": {
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
@@ -114,7 +114,7 @@
       },
     },
     "consumers/vite-raw-css": {
-      "name": "@arachne-consumer/vite-raw-css",
+      "name": "@maratus-consumer/vite-raw-css",
       "dependencies": {
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
@@ -128,14 +128,14 @@
       },
     },
     "lib/focus-modality": {
-      "name": "@arachne/focus-modality",
+      "name": "@maratus/focus-modality",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne/store-runtime": "workspace:*",
+        "@maratus/store-runtime": "workspace:*",
       },
       "devDependencies": {
-        "@arachne/dotfiles": "workspace:*",
-        "@arachne/playwright": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@maratus/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.1",
       },
       "peerDependencies": {
@@ -143,65 +143,65 @@
       },
     },
     "lib/store-runtime": {
-      "name": "@arachne/store-runtime",
+      "name": "@maratus/store-runtime",
       "version": "0.0.0",
       "devDependencies": {
-        "@arachne/bun": "workspace:*",
-        "@arachne/dotfiles": "workspace:*",
-        "@arachne/playwright": "workspace:*",
+        "@maratus/bun": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@maratus/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.1",
       },
       "peerDependencies": {
         "react": "^19.1.1",
       },
     },
-    "packages/arachne-cli": {
-      "name": "@arachne/cli",
+    "packages/maratus-cli": {
+      "name": "@maratus/cli",
       "version": "0.0.0",
       "bin": {
-        "arachne": "./bin/arachne.mjs",
+        "maratus": "./bin/maratus.mjs",
       },
       "dependencies": {
-        "@arachne/codemod-runner": "workspace:*",
+        "@maratus/codemod-runner": "workspace:*",
       },
       "optionalDependencies": {
-        "@arachne/cli-darwin-arm64": "workspace:*",
-        "@arachne/cli-darwin-x64": "workspace:*",
-        "@arachne/cli-linux-x64": "workspace:*",
-        "@arachne/cli-win32-x64": "workspace:*",
+        "@maratus/cli-darwin-arm64": "workspace:*",
+        "@maratus/cli-darwin-x64": "workspace:*",
+        "@maratus/cli-linux-x64": "workspace:*",
+        "@maratus/cli-win32-x64": "workspace:*",
       },
     },
-    "packages/arachne-cli-darwin-arm64": {
-      "name": "@arachne/cli-darwin-arm64",
+    "packages/maratus-cli-darwin-arm64": {
+      "name": "@maratus/cli-darwin-arm64",
       "version": "0.0.0",
     },
-    "packages/arachne-cli-darwin-x64": {
-      "name": "@arachne/cli-darwin-x64",
+    "packages/maratus-cli-darwin-x64": {
+      "name": "@maratus/cli-darwin-x64",
       "version": "0.0.0",
     },
-    "packages/arachne-cli-linux-x64": {
-      "name": "@arachne/cli-linux-x64",
+    "packages/maratus-cli-linux-x64": {
+      "name": "@maratus/cli-linux-x64",
       "version": "0.0.0",
     },
-    "packages/arachne-cli-win32-x64": {
-      "name": "@arachne/cli-win32-x64",
+    "packages/maratus-cli-win32-x64": {
+      "name": "@maratus/cli-win32-x64",
       "version": "0.0.0",
     },
-    "packages/arachne-codemod-runner": {
-      "name": "@arachne/codemod-runner",
+    "packages/maratus-codemod-runner": {
+      "name": "@maratus/codemod-runner",
       "version": "0.0.0",
       "bin": {
-        "arachne-codemod-runner": "./dist/cli.mjs",
+        "maratus-codemod-runner": "./dist/cli.mjs",
       },
       "dependencies": {
         "ts-morph": "^25.0.1",
       },
     },
     "registry/button": {
-      "name": "@arachne-registry/button",
+      "name": "@maratus-registry/button",
       "version": "0.0.0",
       "dependencies": {
-        "@arachne/focus-modality": "workspace:*",
+        "@maratus/focus-modality": "workspace:*",
       },
       "peerDependencies": {
         "clsx": "^2.1.1",
@@ -210,7 +210,7 @@
       },
     },
     "registry/separator": {
-      "name": "@arachne-registry/separator",
+      "name": "@maratus-registry/separator",
       "version": "0.0.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
@@ -219,7 +219,7 @@
       },
     },
     "tools/build": {
-      "name": "@arachne/build",
+      "name": "@maratus/build",
       "version": "0.0.0",
       "dependencies": {
         "lightningcss": "^1.31.1",
@@ -227,18 +227,18 @@
       },
     },
     "tools/bun": {
-      "name": "@arachne/bun",
+      "name": "@maratus/bun",
       "version": "0.0.0",
       "devDependencies": {
         "jsdom": "^26.1.0",
       },
     },
     "tools/dotfiles": {
-      "name": "@arachne/dotfiles",
+      "name": "@maratus/dotfiles",
       "version": "0.0.0",
     },
     "tools/playwright": {
-      "name": "@arachne/playwright",
+      "name": "@maratus/playwright",
       "version": "0.0.0",
       "devDependencies": {
         "@playwright/experimental-ct-react": "^1.55.0",
@@ -246,56 +246,56 @@
       },
     },
     "tools/utils": {
-      "name": "@arachne/utils",
+      "name": "@maratus/utils",
       "version": "0.0.0",
     },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@arachne-codemod/rewrite-internal-imports": ["@arachne-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
+    "@maratus-codemod/rewrite-internal-imports": ["@maratus-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
 
-    "@arachne-codemod/rewrite-relative-imports": ["@arachne-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
+    "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
 
-    "@arachne-component/button": ["@arachne-component/button@workspace:components/button"],
+    "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
 
-    "@arachne-component/separator": ["@arachne-component/separator@workspace:components/separator"],
+    "@maratus-component/separator": ["@maratus-component/separator@workspace:components/separator"],
 
-    "@arachne-consumer/next-tailwind": ["@arachne-consumer/next-tailwind@workspace:consumers/next-tailwind"],
+    "@maratus-consumer/next-tailwind": ["@maratus-consumer/next-tailwind@workspace:consumers/next-tailwind"],
 
-    "@arachne-consumer/vite-css-modules": ["@arachne-consumer/vite-css-modules@workspace:consumers/vite-css-modules"],
+    "@maratus-consumer/vite-css-modules": ["@maratus-consumer/vite-css-modules@workspace:consumers/vite-css-modules"],
 
-    "@arachne-consumer/vite-raw-css": ["@arachne-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
+    "@maratus-consumer/vite-raw-css": ["@maratus-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
 
-    "@arachne-registry/button": ["@arachne-registry/button@workspace:registry/button"],
+    "@maratus-registry/button": ["@maratus-registry/button@workspace:registry/button"],
 
-    "@arachne-registry/separator": ["@arachne-registry/separator@workspace:registry/separator"],
+    "@maratus-registry/separator": ["@maratus-registry/separator@workspace:registry/separator"],
 
-    "@arachne/build": ["@arachne/build@workspace:tools/build"],
+    "@maratus/build": ["@maratus/build@workspace:tools/build"],
 
-    "@arachne/bun": ["@arachne/bun@workspace:tools/bun"],
+    "@maratus/bun": ["@maratus/bun@workspace:tools/bun"],
 
-    "@arachne/cli": ["@arachne/cli@workspace:packages/arachne-cli"],
+    "@maratus/cli": ["@maratus/cli@workspace:packages/maratus-cli"],
 
-    "@arachne/cli-darwin-arm64": ["@arachne/cli-darwin-arm64@workspace:packages/arachne-cli-darwin-arm64"],
+    "@maratus/cli-darwin-arm64": ["@maratus/cli-darwin-arm64@workspace:packages/maratus-cli-darwin-arm64"],
 
-    "@arachne/cli-darwin-x64": ["@arachne/cli-darwin-x64@workspace:packages/arachne-cli-darwin-x64"],
+    "@maratus/cli-darwin-x64": ["@maratus/cli-darwin-x64@workspace:packages/maratus-cli-darwin-x64"],
 
-    "@arachne/cli-linux-x64": ["@arachne/cli-linux-x64@workspace:packages/arachne-cli-linux-x64"],
+    "@maratus/cli-linux-x64": ["@maratus/cli-linux-x64@workspace:packages/maratus-cli-linux-x64"],
 
-    "@arachne/cli-win32-x64": ["@arachne/cli-win32-x64@workspace:packages/arachne-cli-win32-x64"],
+    "@maratus/cli-win32-x64": ["@maratus/cli-win32-x64@workspace:packages/maratus-cli-win32-x64"],
 
-    "@arachne/codemod-runner": ["@arachne/codemod-runner@workspace:packages/arachne-codemod-runner"],
+    "@maratus/codemod-runner": ["@maratus/codemod-runner@workspace:packages/maratus-codemod-runner"],
 
-    "@arachne/dotfiles": ["@arachne/dotfiles@workspace:tools/dotfiles"],
+    "@maratus/dotfiles": ["@maratus/dotfiles@workspace:tools/dotfiles"],
 
-    "@arachne/focus-modality": ["@arachne/focus-modality@workspace:lib/focus-modality"],
+    "@maratus/focus-modality": ["@maratus/focus-modality@workspace:lib/focus-modality"],
 
-    "@arachne/playwright": ["@arachne/playwright@workspace:tools/playwright"],
+    "@maratus/playwright": ["@maratus/playwright@workspace:tools/playwright"],
 
-    "@arachne/store-runtime": ["@arachne/store-runtime@workspace:lib/store-runtime"],
+    "@maratus/store-runtime": ["@maratus/store-runtime@workspace:lib/store-runtime"],
 
-    "@arachne/utils": ["@arachne/utils@workspace:tools/utils"],
+    "@maratus/utils": ["@maratus/utils@workspace:tools/utils"],
 
     "@asamuzakjp/css-color": ["@asamuzakjp/css-color@3.2.0", "", { "dependencies": { "@csstools/css-calc": "^2.1.3", "@csstools/css-color-parser": "^3.0.9", "@csstools/css-parser-algorithms": "^3.0.4", "@csstools/css-tokenizer": "^3.0.3", "lru-cache": "^10.4.3" } }, "sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw=="],
 

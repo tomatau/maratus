@@ -1,8 +1,8 @@
 package project
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/registry"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/registry"
 )
 
 type Project struct {

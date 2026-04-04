@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/build",
+  "name": "@maratus/build",
   "private": true,
   "type": "module",
   "exports": {

@@ -1,5 +1,5 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig",
+  "extends": "@maratus/dotfiles/tsconfig",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,

@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/bun",
+  "name": "@maratus/bun",
   "private": true,
   "type": "module",
   "exports": {

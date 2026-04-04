@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/playwright",
+  "name": "@maratus/playwright",
   "private": true,
   "type": "module",
   "exports": {

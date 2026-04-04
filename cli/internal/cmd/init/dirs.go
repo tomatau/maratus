@@ -9,7 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"arachne/cli/internal/tui"
+	"maratus/cli/internal/tui"
+
 	"github.com/spf13/cobra"
 )
 

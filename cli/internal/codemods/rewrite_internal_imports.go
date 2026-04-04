@@ -71,7 +71,7 @@ func rewriteInternalImportsOutput(
 	}
 
 	manifestPath, err := WriteManifest(
-		"arachne-rewrite-internal-imports-*.json",
+		"maratus-rewrite-internal-imports-*.json",
 		manifest,
 	)
 	if err != nil {

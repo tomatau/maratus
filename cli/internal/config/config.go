@@ -41,7 +41,7 @@ func Load(path string) (Config, error) {
 	}
 
 	if cfg.ComponentsDir == "" {
-		return Config{}, errors.New("componentsDir is required in arachne.json")
+		return Config{}, errors.New("componentsDir is required in maratus.json")
 	}
 	if cfg.LibDir == "" {
 		cfg.LibDir = "lib"

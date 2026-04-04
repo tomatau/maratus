@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { runCodemod } from '@arachne/codemod-runner'
+import { runCodemod } from '@maratus/codemod-runner'
 import { rewriteRelativeImports } from './rewrite-relative-imports'
 
 describe(rewriteRelativeImports, () => {

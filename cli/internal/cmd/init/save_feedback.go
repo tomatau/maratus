@@ -1,11 +1,11 @@
 package initcmd
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/style"
-	"arachne/cli/internal/tui"
 	"encoding/json"
 	"fmt"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/style"
+	"maratus/cli/internal/tui"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -95,11 +95,11 @@ func (m *saveSpinnerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *saveSpinnerModel) View() string {
 	if m.done {
 		if m.err != nil {
-			return style.PromptHint("Failed writing arachne.json")
+			return style.PromptHint("Failed writing maratus.json")
 		}
-		return style.PromptHint("Saved arachne.json")
+		return style.PromptHint("Saved maratus.json")
 	}
-	return fmt.Sprintf("%s %s", m.spinner.View(), style.PromptHint("Writing arachne.json..."))
+	return fmt.Sprintf("%s %s", m.spinner.View(), style.PromptHint("Writing maratus.json..."))
 }
 
 func (m *saveSpinnerModel) saveConfigCmd() tea.Cmd {

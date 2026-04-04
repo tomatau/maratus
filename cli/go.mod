@@ -1,4 +1,4 @@
-module arachne/cli
+module maratus/cli
 
 go 1.26
 

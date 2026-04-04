@@ -1,6 +1,6 @@
 {
   "extends": "./react-component.json",
   "compilerOptions": {
-    "types": ["@arachne/dotfiles/css-modules", "bun"]
+    "types": ["@maratus/dotfiles/css-modules", "bun"]
   }
 }

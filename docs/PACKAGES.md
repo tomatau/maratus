@@ -2,22 +2,22 @@
 
 ## Purpose
 
-This document defines Arachne's package naming and visibility rules.
+This document defines Maratus's package naming and visibility rules.
 
 ## Rules
 
-- Publish core public Arachne packages under `@arachne/*`.
-- Publish specialised public package families under a dedicated scope such as `@arachne-registry/*` or `@arachne-codemod/*` when the scope should communicate package role.
-- Keep private multi-package workspaces under a dedicated scope such as `@arachne-component/*` or `@arachne-consumer/*`.
+- Publish core public Maratus packages under `@maratus/*`.
+- Publish specialised public package families under a dedicated scope such as `@maratus-registry/*` or `@maratus-codemod/*` when the scope should communicate package role.
+- Keep private multi-package workspaces under a dedicated scope such as `@maratus-component/*` or `@maratus-consumer/*`.
 
 ## Workspace Mapping
 
-- `packages/*` publishes directly consumable public packages under `@arachne/*`.
-- `lib/*` publishes directly consumable public packages under `@arachne/*` (but also indirect consumption through CLI).
-- `registry/*` publishes non-direct-consumption public packages under `@arachne-registry/*`.
-- `codemods/*` publishes non-direct-consumption public packages under `@arachne-codemod/*`.
-- `components/*` stays private under `@arachne-component/*`.
-- `consumers/*` stays private under `@arachne-consumer/*`.
+- `packages/*` publishes directly consumable public packages under `@maratus/*`.
+- `lib/*` publishes directly consumable public packages under `@maratus/*` (but also indirect consumption through CLI).
+- `registry/*` publishes non-direct-consumption public packages under `@maratus-registry/*`.
+- `codemods/*` publishes non-direct-consumption public packages under `@maratus-codemod/*`.
+- `components/*` stays private under `@maratus-component/*`.
+- `consumers/*` stays private under `@maratus-consumer/*`.
 
 ## Notes
 

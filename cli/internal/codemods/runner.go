@@ -51,10 +51,10 @@ func RunManifest(manifestPath string) (Output, error) {
 	command := exec.Command(
 		"bun",
 		"run",
-		"arachne-codemod-runner",
+		"maratus-codemod-runner",
 		manifestPath,
 	)
-	command.Dir = arachneRepoRoot()
+	command.Dir = maratusRepoRoot()
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -77,13 +77,13 @@ func RunManifest(manifestPath string) (Output, error) {
 	return output, nil
 }
 
-func arachneRepoRoot() string {
+func maratusRepoRoot() string {
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
 		return "."
 	}
 
-	root, err := findArachneRepoRoot(filepath.Dir(file))
+	root, err := findMaratusRepoRoot(filepath.Dir(file))
 	if err != nil {
 		return "."
 	}
@@ -91,7 +91,7 @@ func arachneRepoRoot() string {
 	return root
 }
 
-func findArachneRepoRoot(start string) (string, error) {
+func findMaratusRepoRoot(start string) (string, error) {
 	current := filepath.Clean(start)
 
 	for {
@@ -101,7 +101,7 @@ func findArachneRepoRoot(start string) (string, error) {
 			var pkg struct {
 				Name string `json:"name"`
 			}
-			if json.Unmarshal(data, &pkg) == nil && pkg.Name == "arachne" {
+			if json.Unmarshal(data, &pkg) == nil && pkg.Name == "maratus" {
 				return current, nil
 			}
 		}
@@ -114,5 +114,5 @@ func findArachneRepoRoot(start string) (string, error) {
 		current = parent
 	}
 
-	return "", errors.New("arachne repo root not found")
+	return "", errors.New("maratus repo root not found")
 }

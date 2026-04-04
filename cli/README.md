@@ -1,11 +1,11 @@
-# Arachne CLI
+# Maratus CLI
 
-Minimal Go CLI for Arachne.
+Minimal Go CLI for Maratus.
 
 ## Commands
 
 - `hello` - print hello output
-- `init` - create `arachne.json`
+- `init` - create `maratus.json`
 
 ## Flags
 
@@ -14,10 +14,10 @@ Minimal Go CLI for Arachne.
 
 ## Env Vars
 
-- `ARACHNE_CONFIG_FILE` - default value for `--config-file` when the flag is not provided
+- `MARATUS_CONFIG_FILE` - default value for `--config-file` when the flag is not provided
 
 ## Dev
 
 - Test: `go test ./...`
-- Build: `go build -o ../bin/arachne .`
-- Run: `../bin/arachne`
+- Build: `go build -o ../bin/maratus .`
+- Run: `../bin/maratus`

@@ -1,4 +1,4 @@
-# Arachne - Agents Instructions
+# Maratus - Agents Instructions
 
 ## Scope
 
@@ -8,9 +8,9 @@
 
 ## Docs
 
-- Architecture decisions: [`docs/ARCHITECTURE.md`](/Users/tomatao/Code/tomatao/arachne/docs/ARCHITECTURE.md)
-- Runtime/store decisions: [`docs/RUNTIME.md`](/Users/tomatao/Code/tomatao/arachne/docs/RUNTIME.md)
-- Component conventions: [`docs/COMPONENTS.md`](/Users/tomatao/Code/tomatao/arachne/docs/COMPONENTS.md)
+- Architecture decisions: [`docs/ARCHITECTURE.md`](/Users/tomatao/Code/tomatao/maratus/docs/ARCHITECTURE.md)
+- Runtime/store decisions: [`docs/RUNTIME.md`](/Users/tomatao/Code/tomatao/maratus/docs/RUNTIME.md)
+- Component conventions: [`docs/COMPONENTS.md`](/Users/tomatao/Code/tomatao/maratus/docs/COMPONENTS.md)
 
 ## Accessibility Baseline
 

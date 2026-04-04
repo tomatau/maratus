@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document records productionisation decisions for Arachne's distribution, update, and installation model.
+This document records productionisation decisions for Maratus's distribution, update, and installation model.
 
 Treat incrementally validated decisions as settled.
 Keep open questions explicit until we agree them.
@@ -11,7 +11,7 @@ Keep open questions explicit until we agree them.
 
 ### Registry and Discovery
 
-- npm is the canonical registry for Arachne.
+- npm is the canonical registry for Maratus.
 - The CLI must be able to discover newly published components and codemods without requiring the consumer to manually update the CLI first.
 - The CLI should remain lightweight and should not embed the full catalogue of components, lib packages, or codemods.
 - Discovery should not rely on npm package naming conventions alone.
@@ -22,19 +22,19 @@ Keep open questions explicit until we agree them.
 
 - Components and codemods are transient installation artefacts.
 - Commands such as `add` may install versioned component and codemod packages into the consumer project temporarily to copy source and run migrations.
-- Record installed component versions in `arachne-components.json`.
+- Record installed component versions in `maratus-components.json`.
 - Remove transient component and codemod packages automatically after a successful install flow.
 
 ## Working Model
 
 The intended model is:
 
-1. The consumer installs the Arachne CLI package.
+1. The consumer installs the Maratus CLI package.
 2. The consumer runs a command such as `init` or `add`.
 3. The same command surface should also remain compatible with ephemeral invocation.
 4. The CLI consults npm to discover available components and codemods.
 5. The CLI uses the consumer's package manager to install the required transient packages.
-6. The CLI copies component source into the consumer project, runs required codemods, and updates Arachne-managed metadata.
+6. The CLI copies component source into the consumer project, runs required codemods, and updates Maratus-managed metadata.
 7. The CLI removes the transient packages once the operation completes.
 
 ## Registry Index Package
@@ -52,7 +52,7 @@ Treat CLI self-update behaviour as a separate concern rather than conflating it 
 ## Codemod Compatibility Metadata
 
 Start the compatibility schema small and only grow it when a real use case requires it.
-It is not intended to be fully general up front, and it may change as Arachne evolves.
+It is not intended to be fully general up front, and it may change as Maratus evolves.
 
 The minimal shape to start with is:
 
@@ -97,7 +97,7 @@ The `components` section may include, per component:
 - `package`
 - `version`
 - `dependencies`: transient package dependencies required for install
-- `libraryDependencies`: Arachne lib packages that should also be installed
+- `libraryDependencies`: Maratus lib packages that should also be installed
 - `requirements`: optional runtime or package manager constraints
 
 The `libraries` section may include, per lib package:

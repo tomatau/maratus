@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"arachne/cli/internal/tui"
+	"maratus/cli/internal/tui"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

@@ -12,13 +12,13 @@ function platformPackageName() {
 
   switch (key) {
     case 'darwin-arm64':
-      return '@arachne/cli-darwin-arm64'
+      return '@maratus/cli-darwin-arm64'
     case 'darwin-x64':
-      return '@arachne/cli-darwin-x64'
+      return '@maratus/cli-darwin-x64'
     case 'linux-x64':
-      return '@arachne/cli-linux-x64'
+      return '@maratus/cli-linux-x64'
     case 'win32-x64':
-      return '@arachne/cli-win32-x64'
+      return '@maratus/cli-win32-x64'
     default:
       return null
   }
@@ -27,7 +27,7 @@ function platformPackageName() {
 const packageName = platformPackageName()
 if (!packageName) {
   console.error(
-    `Arachne CLI does not support ${process.platform}-${process.arch}.`,
+    `Maratus CLI does not support ${process.platform}-${process.arch}.`,
   )
   process.exit(1)
 }
@@ -36,12 +36,12 @@ let binaryPath
 
 try {
   const packageJsonPath = require.resolve(`${packageName}/package.json`)
-  const binaryName = process.platform === 'win32' ? 'arachne.exe' : 'arachne'
+  const binaryName = process.platform === 'win32' ? 'maratus.exe' : 'maratus'
   binaryPath = join(dirname(packageJsonPath), 'bin', binaryName)
 } catch {
   console.error(
     [
-      `Arachne CLI not installed for ${process.platform}-${process.arch}.`,
+      `Maratus CLI not installed for ${process.platform}-${process.arch}.`,
       `Expected package: ${packageName}`,
     ].join('\n'),
   )
@@ -55,7 +55,7 @@ try {
 } catch {
   console.error(
     [
-      'Arachne CLI binary is not packaged yet for this platform.',
+      'Maratus CLI binary is not packaged yet for this platform.',
       `Expected package: ${packageName}`,
       `Expected executable at: ${binaryPath}`,
     ].join('\n'),

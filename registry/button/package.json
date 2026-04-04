@@ -1,10 +1,10 @@
 {
-  "name": "@arachne-registry/button",
+  "name": "@maratus-registry/button",
   "version": "0.0.0",
   "private": false,
   "type": "module",
   "dependencies": {
-    "@arachne/focus-modality": "workspace:*"
+    "@maratus/focus-modality": "workspace:*"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",

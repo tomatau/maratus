@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/cli-win32-x64",
+  "name": "@maratus/cli-win32-x64",
   "version": "0.0.0",
   "private": false,
   "files": [

@@ -4,10 +4,10 @@
 
 - Source of truth: CSS Modules in component `src/`.
 - CLI aggregates installed component tokens into:
-  - `arachne-components.json`
-  - `arachne-theme.css`
-- `arachne-components.json` also records installed component versions for Arachne-managed upgrade and codemod decisions.
-- Arachne structurally owns the `arachne-theme.css` file.
+  - `maratus-components.json`
+  - `maratus-theme.css`
+- `maratus-components.json` also records installed component versions for Maratus-managed upgrade and codemod decisions.
+- Maratus structurally owns the `maratus-theme.css` file.
 - Consumers may edit token values, but should keep the single generated wrapper block intact.
 
 ### Build

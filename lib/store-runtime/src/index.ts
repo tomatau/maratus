@@ -1,9 +1,9 @@
 export type {
-  ArachneRuntime,
-  ArachneStore,
-  WritableArachneStore,
+  MaratusRuntime,
+  MaratusStore,
+  WritableMaratusStore,
 } from './types'
-export { createArachneRuntime } from './create-runtime'
-export { useArachneRuntime } from './use-arachne-runtime'
+export { createMaratusRuntime } from './create-runtime'
+export { useMaratusRuntime } from './use-maratus-runtime'
 export { useStoreSelector } from './use-store-selector'
 export { createStore } from './create-store'

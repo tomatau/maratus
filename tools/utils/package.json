@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/utils",
+  "name": "@maratus/utils",
   "private": true,
   "type": "module",
   "exports": {

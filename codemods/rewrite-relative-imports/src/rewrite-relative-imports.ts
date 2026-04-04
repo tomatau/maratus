@@ -1,11 +1,11 @@
 import type { FileNameKind, RewriteRelativeImportsOptions } from './options'
-import type { Codemod } from '@arachne/codemod-runner'
+import type { Codemod } from '@maratus/codemod-runner'
 import {
   dirname,
   moduleSpecifierBetween,
   normalizePath,
   rewriteSourcePath,
-} from '@arachne/codemod-runner'
+} from '@maratus/codemod-runner'
 import { collectSourceGraph, resolveRelativeModuleTarget } from './source-graph'
 
 const relativeImportPattern =

@@ -1,7 +1,7 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/project"
+	"maratus/cli/internal/project"
 	"os/exec"
 	"sort"
 	"strings"

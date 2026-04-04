@@ -1,11 +1,11 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/fsutil"
-	"arachne/cli/internal/project"
-	"arachne/cli/internal/registry"
-	"arachne/cli/internal/source"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/fsutil"
+	"maratus/cli/internal/project"
+	"maratus/cli/internal/registry"
+	"maratus/cli/internal/source"
 	"os"
 	"path/filepath"
 )

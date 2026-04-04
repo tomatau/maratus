@@ -1,21 +1,21 @@
 {
-  "name": "@arachne-component/button",
+  "name": "@maratus-component/button",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test:unit": "bun test --preload @arachne/bun/unit-test src/**",
+    "test:unit": "bun test --preload @maratus/bun/unit-test src/**",
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
-    "@arachne/focus-modality": "workspace:*"
+    "@maratus/focus-modality": "workspace:*"
   },
   "devDependencies": {
-    "@arachne/build": "workspace:*",
-    "@arachne/bun": "workspace:*",
-    "@arachne/dotfiles": "workspace:*",
-    "@arachne/playwright": "workspace:*",
     "@axe-core/playwright": "^4.10.2",
+    "@maratus/build": "workspace:*",
+    "@maratus/bun": "workspace:*",
+    "@maratus/dotfiles": "workspace:*",
+    "@maratus/playwright": "workspace:*",
     "@playwright/experimental-ct-react": "^1.55.0",
     "@playwright/test": "^1.55.0",
     "@testing-library/react": "^16.3.0",

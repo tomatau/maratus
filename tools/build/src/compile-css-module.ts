@@ -14,7 +14,7 @@ export async function compileCssModule(
     filename: cssModulePath.replace('.module', ''),
     code: source,
     cssModules: {
-      pattern: 'arachne__[name]__[local]',
+      pattern: 'maratus__[name]__[local]',
     },
     minify: false,
   })

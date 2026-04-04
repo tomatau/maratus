@@ -1,0 +1,21 @@
+{
+  "name": "@maratus/cli",
+  "version": "0.0.0",
+  "private": false,
+  "bin": {
+    "maratus": "./bin/maratus.mjs"
+  },
+  "files": [
+    "bin"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@maratus/codemod-runner": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@maratus/cli-darwin-arm64": "workspace:*",
+    "@maratus/cli-darwin-x64": "workspace:*",
+    "@maratus/cli-linux-x64": "workspace:*",
+    "@maratus/cli-win32-x64": "workspace:*"
+  }
+}

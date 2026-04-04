@@ -20,7 +20,7 @@ export function transformCssModuleSource(
   })
 
   const sourceFile = project.createSourceFile(
-    '/tmp/arachne-component.tsx',
+    '/tmp/maratus-component.tsx',
     sourceText,
     {
       overwrite: true,

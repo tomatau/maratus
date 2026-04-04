@@ -1,4 +1,4 @@
-export type ArachneStoreValue =
+export type MaratusStoreValue =
   | string
   | number
   | boolean
@@ -9,10 +9,10 @@ export type ArachneStoreValue =
   | readonly unknown[]
   | { readonly [key: string]: unknown }
 
-export type ArachneStoreListener = () => void
+export type MaratusStoreListener = () => void
 
-export type ArachneStore<
-  TState extends Record<string, ArachneStoreValue>,
+export type MaratusStore<
+  TState extends Record<string, MaratusStoreValue>,
   TKey extends keyof TState = keyof TState,
 > = {
   get<TKeyName extends TKey>(key: TKeyName): TState[TKeyName]
@@ -26,18 +26,18 @@ export type ArachneStore<
       | ((previousValue: TState[TKeyName]) => TState[TKeyName]),
   ): void
 
-  subscribeAny(listener: ArachneStoreListener): () => void
+  subscribeAny(listener: MaratusStoreListener): () => void
 
   subscribeKey<TKeyName extends TKey>(
     key: TKeyName,
-    listener: ArachneStoreListener,
+    listener: MaratusStoreListener,
   ): () => void
 }
 
-export type WritableArachneStore<
-  TState extends Record<string, ArachneStoreValue>,
-> = ArachneStore<TState>
+export type WritableMaratusStore<
+  TState extends Record<string, MaratusStoreValue>,
+> = MaratusStore<TState>
 
-export type ArachneRuntime = {
+export type MaratusRuntime = {
   getStore<TStore>(key: symbol, createStore: () => TStore): TStore
 }

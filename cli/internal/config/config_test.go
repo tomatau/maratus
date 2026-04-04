@@ -81,7 +81,7 @@ func writeConfigFixture(t *testing.T, contents string) string {
 	t.Helper()
 
 	dir := t.TempDir()
-	path := filepath.Join(dir, "arachne.json")
+	path := filepath.Join(dir, "maratus.json")
 	if err := os.WriteFile(path, []byte(contents), 0o644); err != nil {
 		t.Fatalf("write config fixture: %v", err)
 	}

@@ -26,20 +26,20 @@ jobs:
       - name: Set up development tools
         uses: ./.github/actions/setup-dev
         with:
-          npm-auth: "true"
+          npm-auth: 'true'
 
       - name: Build codemod runner
-        run: just build packages arachne-codemod-runner
+        run: just build packages maratus-codemod-runner
 
       - name: Build codemods
         run: just build codemods
 
       - name: Stage platform CLI binaries
         run: |
-          just cli-stage-platform arachne-cli-darwin-arm64 darwin arm64 arachne
-          just cli-stage-platform arachne-cli-darwin-x64 darwin amd64 arachne
-          just cli-stage-platform arachne-cli-linux-x64 linux amd64 arachne
-          just cli-stage-platform arachne-cli-win32-x64 windows amd64 arachne.exe
+          just cli-stage-platform maratus-cli-darwin-arm64 darwin arm64 maratus
+          just cli-stage-platform maratus-cli-darwin-x64 darwin amd64 maratus
+          just cli-stage-platform maratus-cli-linux-x64 linux amd64 maratus
+          just cli-stage-platform maratus-cli-win32-x64 windows amd64 maratus.exe
 
       - name: Version packages
         run: just changeset version

@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	addcmd "arachne/cli/internal/cmd/add"
-	helpcmd "arachne/cli/internal/cmd/help"
-	initcmd "arachne/cli/internal/cmd/init"
+	addcmd "maratus/cli/internal/cmd/add"
+	helpcmd "maratus/cli/internal/cmd/help"
+	initcmd "maratus/cli/internal/cmd/init"
 	"os"
 	"strings"
 
@@ -13,7 +13,7 @@ import (
 const (
 	configFileFlagName = "config-file"
 	configFileAlias    = "-cf"
-	configFileEnvVar   = "ARACHNE_CONFIG_FILE"
+	configFileEnvVar   = "MARATUS_CONFIG_FILE"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -27,7 +27,7 @@ func NewRootCmd() *cobra.Command {
 
 func newRootCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "arachne",
+		Use:   "maratus",
 		Short: helpcmd.RootShort,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
@@ -36,7 +36,7 @@ func newRootCommand() *cobra.Command {
 }
 
 func setupConfigFileFlag(root *cobra.Command) func() string {
-	defaultConfigFile := "arachne.json"
+	defaultConfigFile := "maratus.json"
 	if envValue := os.Getenv(configFileEnvVar); envValue != "" {
 		defaultConfigFile = envValue
 	}

@@ -1,5 +1,5 @@
 {
-  "name": "@arachne/focus-modality",
+  "name": "@maratus/focus-modality",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -10,11 +10,11 @@
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
-    "@arachne/store-runtime": "workspace:*"
+    "@maratus/store-runtime": "workspace:*"
   },
   "devDependencies": {
-    "@arachne/dotfiles": "workspace:*",
-    "@arachne/playwright": "workspace:*",
+    "@maratus/dotfiles": "workspace:*",
+    "@maratus/playwright": "workspace:*",
     "@playwright/experimental-ct-react": "^1.55.1"
   },
   "peerDependencies": {

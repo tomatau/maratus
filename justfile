@@ -3,8 +3,8 @@ set export := true
 TMP_DIR := "./tmp"
 TMP_SRC_DIR := TMP_DIR + "/src"
 TMP_BIN_DIR := TMP_DIR + "/bin"
-CLI_BIN := TMP_BIN_DIR + "/arachne"
-TMP_CONFIG_FILE := env("ARACHNE_CONFIG_FILE", TMP_DIR + "/arachne.json")
+CLI_BIN := TMP_BIN_DIR + "/maratus"
+TMP_CONFIG_FILE := env("MARATUS_CONFIG_FILE", TMP_DIR + "/maratus.json")
 
 default:
   @just --list
@@ -30,7 +30,7 @@ cli-build-prod output=CLI_BIN:
 
 [group('cli')]
 [group('build')]
-cli-stage-platform package goos goarch binary='arachne':
+cli-stage-platform package goos goarch binary='maratus':
   GOOS={{goos}} \
   GOARCH={{goarch}} \
   just cli-build-prod "$(just _platform-cli-bin-path {{package}} {{binary}})"
@@ -89,9 +89,9 @@ cli-tmp command='' *args:
   bun --print "require('./{{workspace}}/{{package}}/package.json').name"
 
 _consumer-config-file name:
-  echo "consumers/{{name}}/arachne.json"
+  echo "consumers/{{name}}/maratus.json"
 
-@_platform-cli-bin-path package binary='arachne':
+@_platform-cli-bin-path package binary='maratus':
   echo "packages/{{package}}/bin/{{binary}}"
 
 _run-workspace command workspace='"*"':
@@ -99,15 +99,15 @@ _run-workspace command workspace='"*"':
 
 _workspace-scope workspace:
   @if [ "{{workspace}}" = "codemods" ]; then \
-    echo "@arachne-codemod/"; \
+    echo "@maratus-codemod/"; \
   elif [ "{{workspace}}" = "registry" ]; then \
-    echo "@arachne-registry/"; \
+    echo "@maratus-registry/"; \
   elif [ "{{workspace}}" = "components" ]; then \
-    echo "@arachne-component/"; \
+    echo "@maratus-component/"; \
   elif [ "{{workspace}}" = "consumers" ]; then \
-    echo "@arachne-consumer/"; \
+    echo "@maratus-consumer/"; \
   else \
-    echo "@arachne/"; \
+    echo "@maratus/"; \
   fi
 
 @_workspace-filter workspace:

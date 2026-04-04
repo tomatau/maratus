@@ -15,25 +15,25 @@
 ## Contracts
 
 ```ts
-export type ArachneStore<TState> = {
+export type MaratusStore<TState> = {
   getState(): TState
   subscribe(listener: () => void): () => void
 }
 ```
 
 ```ts
-export type ArachneRuntime = {
+export type MaratusRuntime = {
   getStore<TStore>(key: symbol, createStore: () => TStore): TStore
 }
 ```
 
 ```ts
-export function useArachneRuntime(): ArachneRuntime
+export function useMaratusRuntime(): MaratusRuntime
 ```
 
 ```ts
 export function useStoreSelector<TState, TSelected>(
-  store: ArachneStore<TState>,
+  store: MaratusStore<TState>,
   selector: (state: TState) => TSelected,
   isEqual?: (a: TSelected, b: TSelected) => boolean,
 ): TSelected
@@ -45,7 +45,7 @@ export function useStoreSelector<TState, TSelected>(
 const focusModalityStoreKey = Symbol('focus-modality')
 
 function useFocusModalityStore() {
-  const runtime = useArachneRuntime()
+  const runtime = useMaratusRuntime()
 
   return runtime.getStore(focusModalityStoreKey, createFocusModalityStore)
 }

@@ -1,8 +1,8 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/project"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/project"
 	"path/filepath"
 	"regexp"
 )

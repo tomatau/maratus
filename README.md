@@ -1,4 +1,4 @@
-# arachne
+# Maratus
 
 ## Commands
 

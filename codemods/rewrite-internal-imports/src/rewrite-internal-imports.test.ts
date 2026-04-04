@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { runCodemod } from '@arachne/codemod-runner'
+import { runCodemod } from '@maratus/codemod-runner'
 import { rewriteInternalImports } from './rewrite-internal-imports'
 
 describe(rewriteInternalImports, () => {
@@ -9,12 +9,12 @@ describe(rewriteInternalImports, () => {
       [
         {
           path: '/consumer/components/component/component.tsx',
-          sourceText: "import { useTestHook } from '@arachne/lib-hook'\n",
+          sourceText: "import { useTestHook } from '@maratus/lib-hook'\n",
         },
       ],
       {
         targets: {
-          '@arachne/lib-hook': {
+          '@maratus/lib-hook': {
             barrelPath: '../../lib/lib-hook',
           },
         },
@@ -33,12 +33,12 @@ describe(rewriteInternalImports, () => {
         {
           path: '/consumer/components/component/component.tsx',
           sourceText:
-            "import { useLibHook, useTestHook } from '@arachne/lib-hook'\n",
+            "import { useLibHook, useTestHook } from '@maratus/lib-hook'\n",
         },
       ],
       {
         targets: {
-          '@arachne/lib-hook': {
+          '@maratus/lib-hook': {
             namedPaths: {
               useLibHook: '../../lib/lib-hook/useLibHook',
               useTestHook: '../../lib/lib-hook/useTestHook',
@@ -62,12 +62,12 @@ describe(rewriteInternalImports, () => {
       [
         {
           path: '/consumer/components/example/example.ts',
-          sourceText: "import { A, B } from '@arachne/example-lib'\n",
+          sourceText: "import { A, B } from '@maratus/example-lib'\n",
         },
       ],
       {
         targets: {
-          '@arachne/example-lib': {
+          '@maratus/example-lib': {
             namedPaths: {
               A: '../../lib/example-lib/a',
               B: '../../lib/example-lib/a',

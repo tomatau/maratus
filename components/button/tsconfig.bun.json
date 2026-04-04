@@ -1,4 +1,4 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig/bun",
+  "extends": "@maratus/dotfiles/tsconfig/bun",
   "include": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

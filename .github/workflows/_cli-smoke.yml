@@ -13,22 +13,22 @@ jobs:
         include:
           - name: macOS arm64
             runner: macos-14
-            package: arachne-cli-darwin-arm64
+            package: maratus-cli-darwin-arm64
             goos: darwin
             goarch: arm64
-            binary: arachne
+            binary: maratus
           - name: Linux x64
             runner: ubuntu-latest
-            package: arachne-cli-linux-x64
+            package: maratus-cli-linux-x64
             goos: linux
             goarch: amd64
-            binary: arachne
+            binary: maratus
           - name: Windows x64
             runner: windows-latest
-            package: arachne-cli-win32-x64
+            package: maratus-cli-win32-x64
             goos: windows
             goarch: amd64
-            binary: arachne.exe
+            binary: maratus.exe
 
     defaults:
       run:
@@ -50,4 +50,4 @@ jobs:
             ${{ matrix.binary }}
 
       - name: Run wrapper smoke test
-        run: node packages/arachne-cli/bin/arachne.mjs --help
+        run: node packages/maratus-cli/bin/maratus.mjs --help

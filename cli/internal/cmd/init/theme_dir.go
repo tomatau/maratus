@@ -12,7 +12,7 @@ func AskThemeDir(cmd *cobra.Command, configRoot string, srcDir string) (string, 
 		srcDir,
 		"styles",
 		"Theme directory",
-		"Directory under source for arachne-theme.css.",
+		"Directory under source for maratus-theme.css.",
 		func(defaultValue string, suggestions []string, existingDirs []string) tea.Model {
 			return newThemeDirModel(defaultValue, suggestions, existingDirs)
 		},

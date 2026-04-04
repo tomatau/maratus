@@ -7,6 +7,6 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@arachne-component/*"],
+  "ignore": ["@maratus-component/*"],
   "bumpVersionsWithWorkspaceProtocolOnly": true
 }

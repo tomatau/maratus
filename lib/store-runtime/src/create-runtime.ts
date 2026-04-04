@@ -1,6 +1,6 @@
-import type { ArachneRuntime } from './types'
+import type { MaratusRuntime } from './types'
 
-export function createArachneRuntime(): ArachneRuntime {
+export function createMaratusRuntime(): MaratusRuntime {
   const stores = new Map<symbol, unknown>()
 
   return {

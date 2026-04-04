@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const internalPackagePrefix = "@arachne/"
+const internalPackagePrefix = "@maratus/"
 
 func InternalDependencies(dependencies map[string]string) []string {
 	if len(dependencies) == 0 {

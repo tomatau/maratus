@@ -1,5 +1,5 @@
 {
-  "name": "@arachne-consumer/vite-css-modules",
+  "name": "@maratus-consumer/vite-css-modules",
   "private": true,
   "type": "module",
   "scripts": {

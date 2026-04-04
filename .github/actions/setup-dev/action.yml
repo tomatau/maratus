@@ -5,7 +5,7 @@ inputs:
   npm-auth:
     description: Whether to configure npm registry auth through setup-node
     required: false
-    default: "false"
+    default: 'false'
 
 runs:
   using: composite

@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/experimental-ct-react'
-import { ArachneRuntimeProbe } from './useArachneRuntime.story'
+import { MaratusRuntimeProbe } from './useMaratusRuntime.story'
 
 test('PRD-004 runtime resolves and reuses the same store instance for the same key', async ({
   mount,
   page,
 }) => {
-  await mount(<ArachneRuntimeProbe />)
+  await mount(<MaratusRuntimeProbe />)
 
   await expect(page.getByTestId('same-instance')).toHaveText('true')
   await expect(page.getByTestId('first-value')).toHaveText('0')

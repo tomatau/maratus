@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"arachne/cli/internal/cmd"
+	"maratus/cli/internal/cmd"
 )
 
 func main() {

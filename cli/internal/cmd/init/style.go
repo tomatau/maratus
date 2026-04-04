@@ -3,8 +3,8 @@ package initcmd
 import (
 	"fmt"
 
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/style"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/style"
 
 	"github.com/spf13/cobra"
 )

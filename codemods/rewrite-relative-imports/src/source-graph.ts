@@ -1,4 +1,4 @@
-import { joinPath, normalizePath } from '@arachne/codemod-runner'
+import { joinPath, normalizePath } from '@maratus/codemod-runner'
 
 export function collectSourceGraph(files: Array<{ path: string }>) {
   const graph = new Map<string, string>()

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { runCodemod } from '@arachne/codemod-runner'
+import { runCodemod } from '@maratus/codemod-runner'
 import { rewriteInternalPackageImports } from './rewrite-internal-package-imports'
 
 describe(rewriteInternalPackageImports, () => {
@@ -10,7 +10,7 @@ describe(rewriteInternalPackageImports, () => {
         {
           path: '/consumer/src/components/component/use-component.ts',
           sourceText:
-            "import { useDependencyFeature } from '@arachne/dependency-lib'\n",
+            "import { useDependencyFeature } from '@maratus/dependency-lib'\n",
         },
       ],
       {

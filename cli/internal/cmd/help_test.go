@@ -22,14 +22,14 @@ func TestHelpPrintsHelp(t *testing.T) {
 
 	actual := stripANSI(stdout.String())
 	expectedParts := []string{
-		"Arachne CLI tool for installing accessible React components",
-		"Usage: arachne [command] [...flags] [...args]",
+		"Maratus CLI tool for installing accessible React components",
+		"Usage: maratus [command] [...flags] [...args]",
 		"add                   Add a component",
-		"init                  Initialize Arachne config",
+		"init                  Initialize Maratus config",
 		"--config-file",
 		"Global Flags:",
 		"Config file path (alias: -cf)",
-		"(default \"arachne.json\")",
+		"(default \"maratus.json\")",
 	}
 
 	for _, part := range expectedParts {

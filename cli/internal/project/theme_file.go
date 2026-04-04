@@ -8,15 +8,15 @@ import (
 	"sort"
 	"strings"
 
-	"arachne/cli/internal/config"
+	"maratus/cli/internal/config"
 )
 
-const ThemeFileName = "arachne-theme.css"
+const ThemeFileName = "maratus-theme.css"
 
 var (
 	tailwindThemeBlockPattern = regexp.MustCompile(`(?s)^\s*(?:/\*.*?\*/\s*)?@theme\s+inline\s*\{\s*(.*?)\s*\}\s*$`)
 	cssThemeBlockPattern      = regexp.MustCompile(`(?s)^\s*(?:/\*.*?\*/\s*)?@layer\s+theme\s*\{\s*:root\s*\{\s*(.*?)\s*\}\s*\}\s*$`)
-	themeDeclarationPattern = regexp.MustCompile(`(?m)^\s*(--[A-Za-z0-9_-]+)\s*:\s*([^;]+);\s*$`)
+	themeDeclarationPattern   = regexp.MustCompile(`(?m)^\s*(--[A-Za-z0-9_-]+)\s*:\s*([^;]+);\s*$`)
 )
 
 func ThemeFilePath(configPath string, cfg config.Config) string {
@@ -114,7 +114,7 @@ func renderThemeFile(themeStyle config.Style, values map[string]string) string {
 
 	var builder strings.Builder
 	builder.WriteString("/*\n")
-	builder.WriteString("Arachne theme tokens for installed components.\n")
+	builder.WriteString("Maratus theme tokens for installed components.\n")
 	builder.WriteString("\n")
 	builder.WriteString("Import this file into your stylesheet entrypoint so the tokens are included in your build.\n")
 	builder.WriteString("\n")

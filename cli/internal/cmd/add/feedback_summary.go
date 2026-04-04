@@ -1,8 +1,8 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/style"
 	"fmt"
+	"maratus/cli/internal/style"
 
 	"github.com/spf13/cobra"
 )
@@ -76,7 +76,7 @@ func printInstallSummary(
 		if themeFileStatus == "created" {
 			_, _ = fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"\nAdd an @import for the `arachne-theme.css` file in your stylesheet entrypoint.\n",
+				"\nAdd an @import for the `maratus-theme.css` file in your stylesheet entrypoint.\n",
 			)
 		}
 	}

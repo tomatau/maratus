@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"arachne/cli/internal/style"
+	"maratus/cli/internal/style"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"

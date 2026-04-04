@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"arachne/cli/internal/style"
-	"arachne/cli/internal/tui"
+	"maratus/cli/internal/style"
+	"maratus/cli/internal/tui"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

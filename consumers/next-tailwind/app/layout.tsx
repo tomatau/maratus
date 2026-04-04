@@ -1,8 +1,8 @@
-import './globals.css'
 import type { ReactNode } from 'react'
+import './globals.css'
 
 export const metadata = {
-  title: 'Arachne Next Tailwind',
+  title: 'Maratus Next Tailwind',
 }
 
 type RootLayoutProps = {

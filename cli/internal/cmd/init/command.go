@@ -1,8 +1,8 @@
 package initcmd
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/project"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/project"
 	"os"
 	"path/filepath"
 
@@ -12,7 +12,7 @@ import (
 func New(configFilePath func() string) *cobra.Command {
 	return &cobra.Command{
 		Use:   "init",
-		Short: "Initialize Arachne config",
+		Short: "Initialize Maratus config",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cwd, err := os.Getwd()
 			if err != nil {

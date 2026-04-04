@@ -1,9 +1,9 @@
 {
-  "name": "@arachne/codemod-runner",
+  "name": "@maratus/codemod-runner",
   "version": "0.0.0",
   "private": false,
   "bin": {
-    "arachne-codemod-runner": "./dist/cli.mjs"
+    "maratus-codemod-runner": "./dist/cli.mjs"
   },
   "type": "module",
   "exports": {

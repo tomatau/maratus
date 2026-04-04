@@ -1,18 +1,18 @@
 package cmd
 
 import (
-	initcmd "arachne/cli/internal/cmd/init"
 	"bytes"
 	"encoding/json"
+	initcmd "maratus/cli/internal/cmd/init"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
 )
 
-func TestInitCreatesArachneConfig(t *testing.T) {
+func TestInitCreatesMaratusConfig(t *testing.T) {
 	wd := t.TempDir()
-	configPath := filepath.Join(wd, "arachne.json")
+	configPath := filepath.Join(wd, "maratus.json")
 
 	root := NewRootCmd()
 	root.SetArgs([]string{"init"})
@@ -36,13 +36,13 @@ func TestInitCreatesArachneConfig(t *testing.T) {
 	}
 
 	if _, err := os.Stat(configPath); err != nil {
-		t.Fatalf("expected arachne.json to exist: %v", err)
+		t.Fatalf("expected maratus.json to exist: %v", err)
 	}
 }
 
 func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	wd := t.TempDir()
-	configPath := filepath.Join(wd, "arachne.json")
+	configPath := filepath.Join(wd, "maratus.json")
 
 	root := NewRootCmd()
 	root.SetArgs([]string{"init"})
@@ -133,10 +133,10 @@ func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	if err := os.Mkdir(filepath.Join(wd, "tmp"), 0o755); err != nil {
 		t.Fatalf("mkdir tmp: %v", err)
 	}
-	configPath := filepath.Join(wd, "tmp", "arachne.json")
+	configPath := filepath.Join(wd, "tmp", "maratus.json")
 
 	root := NewRootCmd()
-	root.SetArgs([]string{"--config-file", "./tmp/arachne.json", "init"})
+	root.SetArgs([]string{"--config-file", "./tmp/maratus.json", "init"})
 	root.SetOut(&bytes.Buffer{})
 	root.SetErr(&bytes.Buffer{})
 

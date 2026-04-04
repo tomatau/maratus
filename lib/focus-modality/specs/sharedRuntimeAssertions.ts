@@ -32,9 +32,9 @@ export async function installDocumentListenerCountProbe(page: PageLike) {
 
     ;(
       window as typeof window & {
-        __arachneFocusModalityListenerCounts?: () => ListenerCounts
+        __maratusFocusModalityListenerCounts?: () => ListenerCounts
       }
-    ).__arachneFocusModalityListenerCounts = () => ({
+    ).__maratusFocusModalityListenerCounts = () => ({
       keydownCount,
       pointerdownCount,
     })
@@ -47,9 +47,9 @@ export async function expectOneSharedFocusModalityListenerSet(page: PageLike) {
       page.evaluate(() =>
         (
           window as typeof window & {
-            __arachneFocusModalityListenerCounts: () => ListenerCounts
+            __maratusFocusModalityListenerCounts: () => ListenerCounts
           }
-        ).__arachneFocusModalityListenerCounts(),
+        ).__maratusFocusModalityListenerCounts(),
       ),
     )
     .toEqual({

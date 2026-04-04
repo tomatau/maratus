@@ -1,4 +1,4 @@
 {
-  "extends": "@arachne/dotfiles/tsconfig",
+  "extends": "@maratus/dotfiles/tsconfig",
   "include": ["src"]
 }

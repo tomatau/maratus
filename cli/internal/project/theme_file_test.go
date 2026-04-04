@@ -6,15 +6,15 @@ import (
 	"strings"
 	"testing"
 
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/registry"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/registry"
 )
 
 func TestUpdateThemeFileCreatesTailwindThemeFile(t *testing.T) {
 	t.Parallel()
 
 	tempDir := t.TempDir()
-	configPath := filepath.Join(tempDir, "arachne.json")
+	configPath := filepath.Join(tempDir, "maratus.json")
 	cfg := config.Config{
 		SrcDir:        "app",
 		ThemeDir:      "styles",
@@ -55,7 +55,7 @@ func TestUpdateThemeFileCreatesTailwindThemeFile(t *testing.T) {
 	if !strings.Contains(content, "@theme inline {") {
 		t.Fatalf("expected @theme inline block, got:\n%s", content)
 	}
-	if !strings.Contains(content, "Arachne theme tokens for installed components.") {
+	if !strings.Contains(content, "Maratus theme tokens for installed components.") {
 		t.Fatalf("expected explanatory comment block, got:\n%s", content)
 	}
 	if !strings.Contains(content, "Import this file into your stylesheet entrypoint so the tokens are included in your build.") {
@@ -79,7 +79,7 @@ func TestUpdateThemeFilePreservesExistingValuesAndAddsMissingTokens(t *testing.T
 	t.Parallel()
 
 	tempDir := t.TempDir()
-	configPath := filepath.Join(tempDir, "arachne.json")
+	configPath := filepath.Join(tempDir, "maratus.json")
 	cfg := config.Config{
 		SrcDir:        "app",
 		ThemeDir:      "styles",
@@ -107,7 +107,7 @@ func TestUpdateThemeFilePreservesExistingValuesAndAddsMissingTokens(t *testing.T
 		t.Fatalf("MkdirAll returned error: %v", err)
 	}
 	initial := `/*
-Arachne theme tokens for installed components.
+Maratus theme tokens for installed components.
 
 Import this file into your stylesheet entrypoint so the tokens are included in your build.
 
@@ -157,7 +157,7 @@ func TestUpdateThemeFileCreatesCSSFilesThemeFile(t *testing.T) {
 	t.Parallel()
 
 	tempDir := t.TempDir()
-	configPath := filepath.Join(tempDir, "arachne.json")
+	configPath := filepath.Join(tempDir, "maratus.json")
 	cfg := config.Config{
 		SrcDir:        "src",
 		ThemeDir:      "styles",
@@ -212,7 +212,7 @@ func TestUpdateThemeFileCreatesCSSModulesThemeFile(t *testing.T) {
 	t.Parallel()
 
 	tempDir := t.TempDir()
-	configPath := filepath.Join(tempDir, "arachne.json")
+	configPath := filepath.Join(tempDir, "maratus.json")
 	cfg := config.Config{
 		SrcDir:        "src",
 		ThemeDir:      "styles",

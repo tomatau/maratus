@@ -1,5 +1,5 @@
-import type { ArachneStore } from '@arachne/store-runtime'
-import { createStore, useArachneRuntime } from '@arachne/store-runtime'
+import type { MaratusStore } from '@maratus/store-runtime'
+import { createStore, useMaratusRuntime } from '@maratus/store-runtime'
 import { useSyncExternalStore } from 'react'
 
 export type FocusModality = 'keyboard' | 'pointer' | null
@@ -10,7 +10,7 @@ type FocusModalityState = {
 
 const focusModalityStoreKey = Symbol('focus-modality')
 
-function createFocusModalityStore(): ArachneStore<FocusModalityState> {
+function createFocusModalityStore(): MaratusStore<FocusModalityState> {
   const store = createStore<FocusModalityState>({
     modality: null,
   })
@@ -27,7 +27,7 @@ function createFocusModalityStore(): ArachneStore<FocusModalityState> {
 }
 
 function useFocusModalityStore() {
-  return useArachneRuntime().getStore(
+  return useMaratusRuntime().getStore(
     focusModalityStoreKey,
     createFocusModalityStore,
   )

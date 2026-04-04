@@ -52,7 +52,7 @@ func RewriteRelativeImports(
 	})
 
 	manifestPath, err := WriteManifest(
-		"arachne-rewrite-relative-imports-*.json",
+		"maratus-rewrite-relative-imports-*.json",
 		manifest,
 	)
 	if err != nil {
@@ -99,7 +99,7 @@ func RewriteRelativeImportsBatch(
 	})
 
 	manifestPath, err := WriteManifest(
-		"arachne-rewrite-relative-imports-*.json",
+		"maratus-rewrite-relative-imports-*.json",
 		manifest,
 	)
 	if err != nil {

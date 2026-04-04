@@ -1,9 +1,9 @@
 package addcmd
 
 import (
-	"arachne/cli/internal/config"
-	"arachne/cli/internal/project"
-	"arachne/cli/internal/tui"
+	"maratus/cli/internal/config"
+	"maratus/cli/internal/project"
+	"maratus/cli/internal/tui"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
