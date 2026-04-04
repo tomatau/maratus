@@ -49,7 +49,9 @@ try {
 }
 
 try {
-  await access(binaryPath, fsConstants.X_OK)
+  const accessMode =
+    process.platform === 'win32' ? fsConstants.F_OK : fsConstants.X_OK
+  await access(binaryPath, accessMode)
 } catch {
   console.error(
     [

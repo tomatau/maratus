@@ -1,0 +1,68 @@
+name: CLI Smoke Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cli-smoke:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS arm64
+            runner: macos-14
+            package: arachne-cli-darwin-arm64
+            goos: darwin
+            goarch: arm64
+            binary: arachne
+          - name: Linux x64
+            runner: ubuntu-latest
+            package: arachne-cli-linux-x64
+            goos: linux
+            goarch: amd64
+            binary: arachne
+          - name: Windows x64
+            runner: windows-latest
+            package: arachne-cli-win32-x64
+            goos: windows
+            goarch: amd64
+            binary: arachne.exe
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: cli/go.mod
+
+      - name: Set up just
+        uses: taiki-e/install-action@just
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Stage native CLI binary
+        run: |
+          just cli-stage-platform \
+            ${{ matrix.package }} \
+            ${{ matrix.goos }} \
+            ${{ matrix.goarch }} \
+            ${{ matrix.binary }}
+
+      - name: Run wrapper smoke test
+        run: node packages/arachne-cli/bin/arachne.mjs --help

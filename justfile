@@ -16,13 +16,20 @@ cli-test:
 
 [group('cli')]
 [group('build')]
-cli-build:
-  go -C cli build -o ../{{CLI_BIN}} .
+cli-build output=CLI_BIN:
+  go -C cli build -o ../{{output}} .
 
 [group('cli')]
 [group('build')]
-cli-build-prod:
-  go -C cli build -o ../{{CLI_BIN}} -ldflags="-s -w" .
+cli-build-prod output=CLI_BIN:
+  go -C cli build -o ../{{output}} -ldflags="-s -w" .
+
+[group('cli')]
+[group('build')]
+cli-stage-platform package goos goarch binary='arachne':
+  GOOS={{goos}} \
+  GOARCH={{goarch}} \
+  just cli-build-prod "$(just _platform-cli-bin-path {{package}} {{binary}})"
 
 [group('test')]
 test workspace='' package='':
@@ -79,6 +86,9 @@ cli-tmp command='' *args:
 
 _consumer-config-file name:
   echo "consumers/{{name}}/arachne.json"
+
+@_platform-cli-bin-path package binary='arachne':
+  echo "packages/{{package}}/bin/{{binary}}"
 
 _run-workspace command workspace='"*"':
   bunx bun-workspaces run {{command}} {{workspace}}
