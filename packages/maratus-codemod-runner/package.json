@@ -1,6 +1,6 @@
 {
   "name": "@maratus/codemod-runner",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "bin": {
     "maratus-codemod-runner": "./dist/cli.mjs"

@@ -1,6 +1,6 @@
 {
   "name": "@maratus-registry/button",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "type": "module",
   "dependencies": {
