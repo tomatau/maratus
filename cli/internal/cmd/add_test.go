@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	addcmd "maratus/cli/internal/cmd/add"
 	"maratus/cli/internal/config"
 	"maratus/cli/internal/project"
@@ -1064,6 +1065,81 @@ func writeRegistryFixture(t *testing.T, wd string, fixture registryFixture) {
 	writeStyleFiles(t, cssFileDir, fixture.cssFiles)
 	writeStyleFiles(t, cssModulesDir, fixture.cssModules)
 	writeStyleFiles(t, tailwindDir, fixture.tailwindCSS)
+	writeFixtureRepoConfig(t, wd)
+	writeFixtureManifest(t, wd)
+}
+
+func writeFixtureRepoConfig(t *testing.T, wd string) {
+	t.Helper()
+
+	writeFile(t, filepath.Join(wd, "repo.yml"), `workspaces:
+  registry:
+    path: registry
+  packages:
+    path: packages
+`)
+}
+
+func writeFixtureManifest(t *testing.T, wd string) {
+	t.Helper()
+
+	entries, err := os.ReadDir(filepath.Join(wd, "registry"))
+	if err != nil {
+		t.Fatalf("read fixture registry: %v", err)
+	}
+
+	lines := []string{
+		"{",
+		"  \"version\": 1,",
+		"  \"components\": {",
+	}
+
+	componentNames := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		componentNames = append(componentNames, entry.Name())
+	}
+	sort.Strings(componentNames)
+
+	for index, componentName := range componentNames {
+		manifestPath := filepath.Join(wd, "registry", componentName, "package.json")
+		data, err := os.ReadFile(manifestPath)
+		if err != nil {
+			t.Fatalf("read fixture package manifest: %v", err)
+		}
+
+		var manifest struct {
+			Name    string `json:"name"`
+			Version string `json:"version"`
+		}
+		if err := json.Unmarshal(data, &manifest); err != nil {
+			t.Fatalf("unmarshal fixture package manifest: %v", err)
+		}
+
+		suffix := ","
+		if index == len(componentNames)-1 {
+			suffix = ""
+		}
+
+		lines = append(
+			lines,
+			"    \""+componentName+"\": {",
+			"      \"name\": \""+componentName+"\",",
+			"      \"package\": \""+manifest.Name+"\",",
+			"      \"version\": \""+manifest.Version+"\"",
+			"    }"+suffix,
+		)
+	}
+
+	lines = append(lines, "  }", "}")
+
+	writeFile(
+		t,
+		filepath.Join(wd, "packages", "maratus-manifest", "dist", "index.json"),
+		strings.Join(lines, "\n")+"\n",
+	)
 }
 
 func buildMetaJSON(fixture registryFixture) string {

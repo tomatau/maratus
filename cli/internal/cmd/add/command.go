@@ -26,6 +26,12 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if proj.IsMaratusRepo {
+				fmt.Fprintln(
+					cmd.ErrOrStderr(),
+					"Detected Maratus repo mode via repo.yml; using local manifest and registry workspaces.",
+				)
+			}
 
 			selectedStyle := proj.Config.Style
 			if styleFlag != "" {
@@ -42,7 +48,7 @@ func New(configFilePath func() string) *cobra.Command {
 
 			components := args
 			if len(components) == 0 {
-				components, err = PromptComponents(cmd, proj.RegistryRoot)
+				components, err = PromptComponents(cmd, proj)
 				if err != nil {
 					return err
 				}

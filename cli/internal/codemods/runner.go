@@ -3,7 +3,6 @@ package codemods
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -95,15 +94,9 @@ func findMaratusRepoRoot(start string) (string, error) {
 	current := filepath.Clean(start)
 
 	for {
-		packageJSONPath := filepath.Join(current, "package.json")
-		data, err := os.ReadFile(packageJSONPath)
-		if err == nil {
-			var pkg struct {
-				Name string `json:"name"`
-			}
-			if json.Unmarshal(data, &pkg) == nil && pkg.Name == "maratus" {
-				return current, nil
-			}
+		repoConfigPath := filepath.Join(current, "repo.yml")
+		if _, err := os.Stat(repoConfigPath); err == nil {
+			return current, nil
 		}
 
 		parent := filepath.Dir(current)
@@ -114,5 +107,5 @@ func findMaratusRepoRoot(start string) (string, error) {
 		current = parent
 	}
 
-	return "", errors.New("maratus repo root not found")
+	return "", fmt.Errorf("maratus repo root not found")
 }

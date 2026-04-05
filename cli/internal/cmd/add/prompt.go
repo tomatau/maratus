@@ -2,6 +2,7 @@ package addcmd
 
 import (
 	"fmt"
+	"maratus/cli/internal/project"
 	"maratus/cli/internal/registry"
 	"maratus/cli/internal/style"
 	"maratus/cli/internal/tui"
@@ -12,8 +13,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func PromptComponents(cmd *cobra.Command, registryRoot string) ([]string, error) {
-	available, err := registry.AvailableComponents(registryRoot)
+func PromptComponents(cmd *cobra.Command, proj project.Project) ([]string, error) {
+	available, err := registry.AvailableComponents(proj.RegistryManifestPath)
 	if err != nil {
 		return nil, err
 	}

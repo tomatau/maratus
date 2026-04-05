@@ -11,7 +11,7 @@ import (
 )
 
 type componentInstallSetup struct {
-	Result       InstallResult
+	Result        InstallResult
 	SourceBaseDir string
 	InstallPaths  InstallPaths
 }
@@ -30,7 +30,7 @@ func resolveComponentInstall(
 
 	sourceBaseDir := filepath.Join(proj.RegistryRoot, componentName, sourceStyleDir)
 	if _, err := os.Stat(sourceBaseDir); err != nil {
-		available, listErr := registry.AvailableComponents(proj.RegistryRoot)
+		available, listErr := registry.AvailableComponents(proj.RegistryManifestPath)
 		if listErr != nil {
 			return componentInstallSetup{}, fmt.Errorf(
 				"component %q not found (failed to list available components: %w)",
