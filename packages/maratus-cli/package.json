@@ -10,12 +10,12 @@
   ],
   "type": "module",
   "dependencies": {
-    "@maratus/codemod-runner": "workspace:*"
+    "@maratus/codemod-runner": "0.1.0"
   },
   "optionalDependencies": {
-    "@maratus/cli-darwin-arm64": "workspace:*",
-    "@maratus/cli-darwin-x64": "workspace:*",
-    "@maratus/cli-linux-x64": "workspace:*",
-    "@maratus/cli-win32-x64": "workspace:*"
+    "@maratus/cli-darwin-arm64": "0.2.0",
+    "@maratus/cli-darwin-x64": "0.2.0",
+    "@maratus/cli-linux-x64": "0.2.0",
+    "@maratus/cli-win32-x64": "0.2.0"
   }
 }
