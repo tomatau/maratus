@@ -22,19 +22,19 @@ runs:
         bun-version: ${{ steps.tool_versions.outputs.bun }}
 
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version-file: cli/go.mod
 
     - name: Set up Node
       if: ${{ inputs.npm-auth != 'true' }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: .node-version
 
     - name: Set up Node with npm registry
       if: ${{ inputs.npm-auth == 'true' }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: .node-version
         registry-url: https://registry.npmjs.org
