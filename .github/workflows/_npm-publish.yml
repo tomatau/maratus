@@ -8,7 +8,6 @@ on:
 
 jobs:
   publish:
-    if: ${{ secrets.NPM_TOKEN != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
