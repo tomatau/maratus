@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/experimental-ct-react'
 import {
-  FocusVisibleProbe,
-  MultipleFocusVisibleProbes,
-} from './useIsFocusVisible.story'
-import {
   expectOneSharedFocusModalityListenerSet,
   installDocumentListenerCountProbe,
 } from './sharedRuntimeAssertions'
+import {
+  FocusVisibleProbe,
+  MultipleFocusVisibleProbes,
+} from './useIsFocusVisible.story'
 
 test('PRD-002 exposes useIsFocusVisible() for reading the current global focus-visible state', async ({
   mount,

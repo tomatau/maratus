@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/experimental-ct-react'
 import {
-  FocusModalityProbe,
-  MultipleFocusModalityProbes,
-} from './useFocusModality.story'
-import {
   expectOneSharedFocusModalityListenerSet,
   installDocumentListenerCountProbe,
 } from './sharedRuntimeAssertions'
+import {
+  FocusModalityProbe,
+  MultipleFocusModalityProbes,
+} from './useFocusModality.story'
 
 test('PRD-001 exposes useFocusModality() for reading the current global modality', async ({
   mount,

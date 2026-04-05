@@ -1,10 +1,10 @@
 import { useRef } from 'react'
-import { createStore, useMaratusRuntime, useStoreSelector } from '../src'
+import { createStore, useStoreRuntime, useStoreSelector } from '../src'
 
 const runtimeStoreKey = Symbol('runtime-store')
 
-export function MaratusRuntimeProbe() {
-  const runtime = useMaratusRuntime()
+export function StoreRuntimeProbe() {
+  const runtime = useStoreRuntime()
   const { current: firstStore } = useRef(
     runtime.getStore(runtimeStoreKey, () => createStore({ value: 0 })),
   )

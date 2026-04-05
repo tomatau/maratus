@@ -5,7 +5,7 @@ channels:
 
   pr:
     distTag: pr
-    versionFormat: "{baseVersion}-pr.{prNumber}.{branch}.{sha}"
+    versionFormat: '{baseVersion}-pr.{prNumber}.{branch}.{sha}'
 
   rc:
     distTag: rc

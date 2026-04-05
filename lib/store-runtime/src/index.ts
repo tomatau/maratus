@@ -1,9 +1,9 @@
 export type {
-  MaratusRuntime,
+  MaratusStoreRuntime,
   MaratusStore,
   WritableMaratusStore,
 } from './types'
-export { createMaratusRuntime } from './create-runtime'
-export { useMaratusRuntime } from './use-maratus-runtime'
+export { createStoreRuntime } from './create-store-runtime'
+export { useStoreRuntime } from './use-store-runtime'
 export { useStoreSelector } from './use-store-selector'
 export { createStore } from './create-store'

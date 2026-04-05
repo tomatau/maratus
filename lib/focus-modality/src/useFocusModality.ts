@@ -1,6 +1,9 @@
 import type { MaratusStore } from '@maratus/store-runtime'
-import { createStore, useMaratusRuntime } from '@maratus/store-runtime'
-import { useSyncExternalStore } from 'react'
+import {
+  createStore,
+  useStoreRuntime,
+  useStoreSelector,
+} from '@maratus/store-runtime'
 
 export type FocusModality = 'keyboard' | 'pointer' | null
 
@@ -27,7 +30,7 @@ function createFocusModalityStore(): MaratusStore<FocusModalityState> {
 }
 
 function useFocusModalityStore() {
-  return useMaratusRuntime().getStore(
+  return useStoreRuntime().getStore(
     focusModalityStoreKey,
     createFocusModalityStore,
   )
@@ -35,10 +38,5 @@ function useFocusModalityStore() {
 
 export function useFocusModality(): FocusModality {
   const store = useFocusModalityStore()
-
-  return useSyncExternalStore(
-    (listener) => store.subscribeKey('modality', listener),
-    () => store.get('modality'),
-    () => store.get('modality'),
-  )
+  return useStoreSelector(store, 'modality')
 }

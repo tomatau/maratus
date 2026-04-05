@@ -38,6 +38,6 @@ export type WritableMaratusStore<
   TState extends Record<string, MaratusStoreValue>,
 > = MaratusStore<TState>
 
-export type MaratusRuntime = {
+export type MaratusStoreRuntime = {
   getStore<TStore>(key: symbol, createStore: () => TStore): TStore
 }

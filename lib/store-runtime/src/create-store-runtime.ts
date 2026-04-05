@@ -1,6 +1,6 @@
-import type { MaratusRuntime } from './types'
+import type { MaratusStoreRuntime } from './types'
 
-export function createMaratusRuntime(): MaratusRuntime {
+export function createStoreRuntime(): MaratusStoreRuntime {
   const stores = new Map<symbol, unknown>()
 
   return {
