@@ -1,5 +1,16 @@
 # @maratus/cli
 
+## 0.3.0
+
+### Minor Changes
+
+- 19eb5ee: Synchronises versions of @maratus/cli and deps
+
+### Patch Changes
+
+- Updated dependencies [19eb5ee]
+  - @maratus/codemod-runner@0.1.1
+
 ## 0.2.0
 
 ### Minor Changes

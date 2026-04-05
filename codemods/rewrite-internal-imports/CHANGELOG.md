@@ -1,5 +1,12 @@
 # @maratus-codemod/rewrite-internal-imports
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [19eb5ee]
+  - @maratus/codemod-runner@0.1.1
+
 ## 0.1.1
 
 ### Patch Changes
