@@ -2,6 +2,9 @@
   "name": "@maratus/utils",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
   "exports": {
     ".": "./src/index.ts"
   }

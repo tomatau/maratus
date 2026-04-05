@@ -1,0 +1,43 @@
+workspaces:
+  components:
+    path: components
+    description: Source-first component packages used for development and registry generation.
+    artifactTypes:
+      - source
+    published: false
+    consumption: none
+
+  registry:
+    path: registry
+    description: Install artefacts for components copied into consumers by CLI.
+    artifactTypes:
+      - source
+      - built
+    published: true
+    consumption: indirect
+
+  lib:
+    path: lib
+    description: Internal source-first library packages copied into consumers by CLI.
+    artifactTypes:
+      - source
+    published: false
+    consumption: indirect
+
+  codemods:
+    path: codemods
+    description: Codemod packages that ship runnable built artefacts.
+    artifactTypes:
+      - built
+    published: true
+    consumption: indirect
+
+  packages:
+    path: packages
+    description: Infrastructure such as the CLI, manifest, and codemod runner.
+    artifactTypes:
+      - source
+      - binary
+      - built
+    published: true
+    consumption: direct

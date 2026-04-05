@@ -17,7 +17,7 @@
     },
     "codemods/rewrite-internal-imports": {
       "name": "@maratus-codemod/rewrite-internal-imports",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -27,7 +27,7 @@
     },
     "codemods/rewrite-relative-imports": {
       "name": "@maratus-codemod/rewrite-relative-imports",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -129,7 +129,7 @@
     },
     "lib/focus-modality": {
       "name": "@maratus-lib/focus-modality",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@maratus-lib/store-runtime": "workspace:*",
       },
@@ -144,7 +144,7 @@
     },
     "lib/store-runtime": {
       "name": "@maratus-lib/store-runtime",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@maratus/bun": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
@@ -197,9 +197,16 @@
         "ts-morph": "^25.0.1",
       },
     },
+    "packages/maratus-manifest": {
+      "name": "@maratus/manifest",
+      "version": "0.0.0",
+      "dependencies": {
+        "@maratus/utils": "workspace:*",
+      },
+    },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@maratus-lib/focus-modality": "workspace:*",
       },
@@ -211,7 +218,7 @@
     },
     "registry/separator": {
       "name": "@maratus-registry/separator",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -243,6 +250,9 @@
     },
     "tools/utils": {
       "name": "@maratus/utils",
+      "dependencies": {
+        "yaml": "^2.8.1",
+      },
     },
   },
   "packages": {
@@ -495,6 +505,8 @@
     "@maratus/codemod-runner": ["@maratus/codemod-runner@workspace:packages/maratus-codemod-runner"],
 
     "@maratus/dotfiles": ["@maratus/dotfiles@workspace:tools/dotfiles"],
+
+    "@maratus/manifest": ["@maratus/manifest@workspace:packages/maratus-manifest"],
 
     "@maratus/playwright": ["@maratus/playwright@workspace:tools/playwright"],
 
@@ -1071,6 +1083,8 @@
     "xmlchars": ["xmlchars@2.2.0", "", {}, "sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
+
+    "yaml": ["yaml@2.8.3", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg=="],
 
     "@asamuzakjp/css-color/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
 
