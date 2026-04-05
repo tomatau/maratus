@@ -1,4 +1,4 @@
-# @maratus/store-runtime
+# @maratus-lib/store-runtime
 
 ## 0.1.0
 

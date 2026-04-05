@@ -55,6 +55,7 @@ export async function buildArtifacts(
     const packageManifest = await buildRegistryPackageManifest(
       componentName,
       componentPackagePath,
+      registryDir,
     )
 
     const componentSrcDir = join(componentsDir, componentName, 'src')

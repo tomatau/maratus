@@ -1,9 +1,9 @@
-import type { MaratusStore } from '@maratus/store-runtime'
+import type { MaratusStore } from '@maratus-lib/store-runtime'
 import {
   createStore,
   useStoreRuntime,
   useStoreSelector,
-} from '@maratus/store-runtime'
+} from '@maratus-lib/store-runtime'
 
 export type FocusModality = 'keyboard' | 'pointer' | null
 

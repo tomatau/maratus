@@ -17,7 +17,7 @@
     },
     "codemods/rewrite-internal-imports": {
       "name": "@maratus-codemod/rewrite-internal-imports",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -27,7 +27,7 @@
     },
     "codemods/rewrite-relative-imports": {
       "name": "@maratus-codemod/rewrite-relative-imports",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -39,14 +39,14 @@
       "name": "@maratus-component/button",
       "version": "0.0.0",
       "dependencies": {
-        "@maratus/focus-modality": "workspace:*",
+        "@maratus-lib/focus-modality": "workspace:*",
       },
       "devDependencies": {
+        "@axe-core/playwright": "^4.10.2",
         "@maratus/build": "workspace:*",
         "@maratus/bun": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
-        "@axe-core/playwright": "^4.10.2",
         "@playwright/experimental-ct-react": "^1.55.0",
         "@playwright/test": "^1.55.0",
         "@testing-library/react": "^16.3.0",
@@ -67,10 +67,10 @@
       "name": "@maratus-component/separator",
       "version": "0.0.0",
       "devDependencies": {
+        "@axe-core/playwright": "^4.10.2",
         "@maratus/build": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
-        "@axe-core/playwright": "^4.10.2",
         "@playwright/experimental-ct-react": "^1.55.0",
         "@playwright/test": "^1.55.0",
         "@types/react": "^19.2.14",
@@ -128,10 +128,10 @@
       },
     },
     "lib/focus-modality": {
-      "name": "@maratus/focus-modality",
-      "version": "0.0.0",
+      "name": "@maratus-lib/focus-modality",
+      "version": "0.1.0",
       "dependencies": {
-        "@maratus/store-runtime": "workspace:*",
+        "@maratus-lib/store-runtime": "workspace:*",
       },
       "devDependencies": {
         "@maratus/dotfiles": "workspace:*",
@@ -143,8 +143,8 @@
       },
     },
     "lib/store-runtime": {
-      "name": "@maratus/store-runtime",
-      "version": "0.0.0",
+      "name": "@maratus-lib/store-runtime",
+      "version": "0.1.0",
       "devDependencies": {
         "@maratus/bun": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
@@ -157,7 +157,7 @@
     },
     "packages/maratus-cli": {
       "name": "@maratus/cli",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "bin": {
         "maratus": "./bin/maratus.mjs",
       },
@@ -173,23 +173,23 @@
     },
     "packages/maratus-cli-darwin-arm64": {
       "name": "@maratus/cli-darwin-arm64",
-      "version": "0.0.0",
+      "version": "0.1.0",
     },
     "packages/maratus-cli-darwin-x64": {
       "name": "@maratus/cli-darwin-x64",
-      "version": "0.0.0",
+      "version": "0.1.0",
     },
     "packages/maratus-cli-linux-x64": {
       "name": "@maratus/cli-linux-x64",
-      "version": "0.0.0",
+      "version": "0.1.0",
     },
     "packages/maratus-cli-win32-x64": {
       "name": "@maratus/cli-win32-x64",
-      "version": "0.0.0",
+      "version": "0.1.0",
     },
     "packages/maratus-codemod-runner": {
       "name": "@maratus/codemod-runner",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "bin": {
         "maratus-codemod-runner": "./dist/cli.mjs",
       },
@@ -199,9 +199,9 @@
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "dependencies": {
-        "@maratus/focus-modality": "workspace:*",
+        "@maratus-lib/focus-modality": "workspace:*",
       },
       "peerDependencies": {
         "clsx": "^2.1.1",
@@ -211,7 +211,7 @@
     },
     "registry/separator": {
       "name": "@maratus-registry/separator",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -220,7 +220,6 @@
     },
     "tools/build": {
       "name": "@maratus/build",
-      "version": "0.0.0",
       "dependencies": {
         "lightningcss": "^1.31.1",
         "ts-morph": "^25.0.1",
@@ -228,18 +227,15 @@
     },
     "tools/bun": {
       "name": "@maratus/bun",
-      "version": "0.0.0",
       "devDependencies": {
         "jsdom": "^26.1.0",
       },
     },
     "tools/dotfiles": {
       "name": "@maratus/dotfiles",
-      "version": "0.0.0",
     },
     "tools/playwright": {
       "name": "@maratus/playwright",
-      "version": "0.0.0",
       "devDependencies": {
         "@playwright/experimental-ct-react": "^1.55.0",
         "@vitejs/plugin-react": "^5.0.2",
@@ -247,55 +243,10 @@
     },
     "tools/utils": {
       "name": "@maratus/utils",
-      "version": "0.0.0",
     },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
-
-    "@maratus-codemod/rewrite-internal-imports": ["@maratus-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
-
-    "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
-
-    "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
-
-    "@maratus-component/separator": ["@maratus-component/separator@workspace:components/separator"],
-
-    "@maratus-consumer/next-tailwind": ["@maratus-consumer/next-tailwind@workspace:consumers/next-tailwind"],
-
-    "@maratus-consumer/vite-css-modules": ["@maratus-consumer/vite-css-modules@workspace:consumers/vite-css-modules"],
-
-    "@maratus-consumer/vite-raw-css": ["@maratus-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
-
-    "@maratus-registry/button": ["@maratus-registry/button@workspace:registry/button"],
-
-    "@maratus-registry/separator": ["@maratus-registry/separator@workspace:registry/separator"],
-
-    "@maratus/build": ["@maratus/build@workspace:tools/build"],
-
-    "@maratus/bun": ["@maratus/bun@workspace:tools/bun"],
-
-    "@maratus/cli": ["@maratus/cli@workspace:packages/maratus-cli"],
-
-    "@maratus/cli-darwin-arm64": ["@maratus/cli-darwin-arm64@workspace:packages/maratus-cli-darwin-arm64"],
-
-    "@maratus/cli-darwin-x64": ["@maratus/cli-darwin-x64@workspace:packages/maratus-cli-darwin-x64"],
-
-    "@maratus/cli-linux-x64": ["@maratus/cli-linux-x64@workspace:packages/maratus-cli-linux-x64"],
-
-    "@maratus/cli-win32-x64": ["@maratus/cli-win32-x64@workspace:packages/maratus-cli-win32-x64"],
-
-    "@maratus/codemod-runner": ["@maratus/codemod-runner@workspace:packages/maratus-codemod-runner"],
-
-    "@maratus/dotfiles": ["@maratus/dotfiles@workspace:tools/dotfiles"],
-
-    "@maratus/focus-modality": ["@maratus/focus-modality@workspace:lib/focus-modality"],
-
-    "@maratus/playwright": ["@maratus/playwright@workspace:tools/playwright"],
-
-    "@maratus/store-runtime": ["@maratus/store-runtime@workspace:lib/store-runtime"],
-
-    "@maratus/utils": ["@maratus/utils@workspace:tools/utils"],
 
     "@asamuzakjp/css-color": ["@asamuzakjp/css-color@3.2.0", "", { "dependencies": { "@csstools/css-calc": "^2.1.3", "@csstools/css-color-parser": "^3.0.9", "@csstools/css-parser-algorithms": "^3.0.4", "@csstools/css-tokenizer": "^3.0.3", "lru-cache": "^10.4.3" } }, "sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw=="],
 
@@ -504,6 +455,50 @@
     "@manypkg/find-root": ["@manypkg/find-root@1.1.0", "", { "dependencies": { "@babel/runtime": "^7.5.5", "@types/node": "^12.7.1", "find-up": "^4.1.0", "fs-extra": "^8.1.0" } }, "sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA=="],
 
     "@manypkg/get-packages": ["@manypkg/get-packages@1.1.3", "", { "dependencies": { "@babel/runtime": "^7.5.5", "@changesets/types": "^4.0.1", "@manypkg/find-root": "^1.1.0", "fs-extra": "^8.1.0", "globby": "^11.0.0", "read-yaml-file": "^1.1.0" } }, "sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A=="],
+
+    "@maratus-codemod/rewrite-internal-imports": ["@maratus-codemod/rewrite-internal-imports@workspace:codemods/rewrite-internal-imports"],
+
+    "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
+
+    "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
+
+    "@maratus-component/separator": ["@maratus-component/separator@workspace:components/separator"],
+
+    "@maratus-consumer/next-tailwind": ["@maratus-consumer/next-tailwind@workspace:consumers/next-tailwind"],
+
+    "@maratus-consumer/vite-css-modules": ["@maratus-consumer/vite-css-modules@workspace:consumers/vite-css-modules"],
+
+    "@maratus-consumer/vite-raw-css": ["@maratus-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
+
+    "@maratus-lib/focus-modality": ["@maratus-lib/focus-modality@workspace:lib/focus-modality"],
+
+    "@maratus-lib/store-runtime": ["@maratus-lib/store-runtime@workspace:lib/store-runtime"],
+
+    "@maratus-registry/button": ["@maratus-registry/button@workspace:registry/button"],
+
+    "@maratus-registry/separator": ["@maratus-registry/separator@workspace:registry/separator"],
+
+    "@maratus/build": ["@maratus/build@workspace:tools/build"],
+
+    "@maratus/bun": ["@maratus/bun@workspace:tools/bun"],
+
+    "@maratus/cli": ["@maratus/cli@workspace:packages/maratus-cli"],
+
+    "@maratus/cli-darwin-arm64": ["@maratus/cli-darwin-arm64@workspace:packages/maratus-cli-darwin-arm64"],
+
+    "@maratus/cli-darwin-x64": ["@maratus/cli-darwin-x64@workspace:packages/maratus-cli-darwin-x64"],
+
+    "@maratus/cli-linux-x64": ["@maratus/cli-linux-x64@workspace:packages/maratus-cli-linux-x64"],
+
+    "@maratus/cli-win32-x64": ["@maratus/cli-win32-x64@workspace:packages/maratus-cli-win32-x64"],
+
+    "@maratus/codemod-runner": ["@maratus/codemod-runner@workspace:packages/maratus-codemod-runner"],
+
+    "@maratus/dotfiles": ["@maratus/dotfiles@workspace:tools/dotfiles"],
+
+    "@maratus/playwright": ["@maratus/playwright@workspace:tools/playwright"],
+
+    "@maratus/utils": ["@maratus/utils@workspace:tools/utils"],
 
     "@next/env": ["@next/env@15.5.12", "", {}, "sha512-pUvdJN1on574wQHjaBfNGDt9Mz5utDSZFsIIQkMzPgNS8ZvT4H2mwOrOIClwsQOb6EGx5M76/CZr6G8i6pSpLg=="],
 

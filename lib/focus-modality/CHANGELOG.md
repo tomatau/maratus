@@ -1,4 +1,4 @@
-# @maratus/focus-modality
+# @maratus-lib/focus-modality
 
 ## 0.1.0
 

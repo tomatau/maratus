@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, KeyboardEventHandler } from 'react'
-import { useIsFocusVisible } from '@maratus/focus-modality'
+import { useIsFocusVisible } from '@maratus-lib/focus-modality'
 import clsx from 'clsx'
 import { useCallback } from 'react'
 import styles from './button.module.css'

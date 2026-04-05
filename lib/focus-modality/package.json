@@ -1,5 +1,5 @@
 {
-  "name": "@maratus/focus-modality",
+  "name": "@maratus-lib/focus-modality",
   "version": "0.1.0",
   "private": false,
   "type": "module",
@@ -10,7 +10,7 @@
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
-    "@maratus/store-runtime": "workspace:*"
+    "@maratus-lib/store-runtime": "workspace:*"
   },
   "devDependencies": {
     "@maratus/dotfiles": "workspace:*",

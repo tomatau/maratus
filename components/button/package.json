@@ -8,7 +8,7 @@
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
-    "@maratus/focus-modality": "workspace:*"
+    "@maratus-lib/focus-modality": "workspace:*"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

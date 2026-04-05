@@ -10,7 +10,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@maratus/focus-modality": "workspace:*"
+    "@maratus-lib/focus-modality": "workspace:*"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",
