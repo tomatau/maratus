@@ -30,6 +30,9 @@ jobs:
         with:
           npm-auth: 'true'
 
+      - name: Build registry artefacts
+        run: just build artifacts
+
       - name: Build codemod runner
         run: just build packages maratus-codemod-runner
 

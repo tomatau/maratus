@@ -2,6 +2,9 @@
   "name": "@maratus-codemod/rewrite-relative-imports",
   "version": "0.1.0",
   "private": false,
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "exports": {
     ".": "./dist/index.mjs"

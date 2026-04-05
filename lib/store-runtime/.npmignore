@@ -1,0 +1,7 @@
+playwright-ct.config.ts
+requirements.md
+specs/
+test-results/
+tsconfig*.json
+src/*.test.ts
+.DS_Store

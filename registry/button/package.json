@@ -2,6 +2,12 @@
   "name": "@maratus-registry/button",
   "version": "0.1.0",
   "private": false,
+  "files": [
+    "css-files",
+    "css-modules",
+    "tailwind-css",
+    "meta.json"
+  ],
   "type": "module",
   "dependencies": {
     "@maratus/focus-modality": "workspace:*"

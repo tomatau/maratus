@@ -2,6 +2,12 @@
   "name": "@maratus-registry/separator",
   "version": "0.1.0",
   "private": false,
+  "files": [
+    "css-files",
+    "css-modules",
+    "tailwind-css",
+    "meta.json"
+  ],
   "type": "module",
   "peerDependencies": {
     "clsx": "^2.1.1",
