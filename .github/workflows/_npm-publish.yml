@@ -33,6 +33,9 @@ jobs:
       - name: Build registry artefacts
         run: just build artifacts
 
+      - name: Build manifest package
+        run: just build packages maratus-manifest
+
       - name: Build codemod runner
         run: just build packages maratus-codemod-runner
 
