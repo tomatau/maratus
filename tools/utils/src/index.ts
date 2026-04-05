@@ -25,9 +25,11 @@ type RepoConfig = {
 
 type WorkspaceConfig = {
   path: string
+  scope: string
   description: string
   artifactTypes: string[]
-  releaseMode: string
+  published: boolean
+  consumption: 'direct' | 'indirect' | 'none'
 }
 
 export type RepoContext = {

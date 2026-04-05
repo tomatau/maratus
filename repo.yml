@@ -1,6 +1,7 @@
 workspaces:
   components:
     path: components
+    scope: "@maratus-component/"
     description: Source-first component packages used for development and registry generation.
     artifactTypes:
       - source
@@ -9,6 +10,7 @@ workspaces:
 
   registry:
     path: registry
+    scope: "@maratus-registry/"
     description: Install artefacts for components copied into consumers by CLI.
     artifactTypes:
       - source
@@ -18,6 +20,7 @@ workspaces:
 
   lib:
     path: lib
+    scope: "@maratus-lib/"
     description: Internal source-first library packages copied into consumers by CLI.
     artifactTypes:
       - source
@@ -26,6 +29,7 @@ workspaces:
 
   codemods:
     path: codemods
+    scope: "@maratus-codemod/"
     description: Codemod packages that ship runnable built artefacts.
     artifactTypes:
       - built
@@ -34,6 +38,7 @@ workspaces:
 
   packages:
     path: packages
+    scope: "@maratus/"
     description: Infrastructure such as the CLI, manifest, and codemod runner.
     artifactTypes:
       - source

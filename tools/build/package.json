@@ -9,6 +9,7 @@
     "build:artifacts": "bun run scripts/build-artifacts.ts"
   },
   "dependencies": {
+    "@maratus/utils": "workspace:*",
     "lightningcss": "^1.31.1",
     "ts-morph": "^25.0.1"
   }
