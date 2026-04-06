@@ -2,8 +2,8 @@ package addcmd
 
 import (
 	"fmt"
+	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
-	"maratus/cli/internal/registry"
 	"maratus/cli/internal/style"
 	"maratus/cli/internal/tui"
 	"slices"
@@ -14,7 +14,7 @@ import (
 )
 
 func PromptComponents(cmd *cobra.Command, proj project.Project) ([]string, error) {
-	available, err := registry.AvailableComponents(proj.RegistryManifestPath)
+	available, err := manifest.AvailableComponents(proj.RegistryManifestPath)
 	if err != nil {
 		return nil, err
 	}

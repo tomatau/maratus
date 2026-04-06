@@ -29,6 +29,8 @@ const (
 	componentWithHookName        = "componentwithhook"
 	singleLevelLibDependencyName = "single-level-lib-dependency"
 	transitiveLibDependencyName  = "transitive-lib-dependency"
+	rewriteInternalImportsExport = "rewriteInternalPackageImports"
+	rewriteRelativeImportsExport = "rewriteRelativeImports"
 )
 
 func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
@@ -1208,7 +1210,25 @@ func writeFixtureManifest(t *testing.T, wd string) {
 		)
 	}
 
-	lines = append(lines, "  }", "}")
+	lines = append(
+		lines,
+		"  },",
+		"  \"codemods\": {",
+		"    \"rewrite-internal-imports\": {",
+		"      \"category\": \"modify-package-imports\",",
+		"      \"exportName\": \""+rewriteInternalImportsExport+"\",",
+		"      \"package\": \"@maratus-codemod/rewrite-internal-imports\",",
+		"      \"version\": \"0.1.0\"",
+		"    },",
+		"    \"rewrite-relative-imports\": {",
+		"      \"category\": \"modify-file-imports\",",
+		"      \"exportName\": \""+rewriteRelativeImportsExport+"\",",
+		"      \"package\": \"@maratus-codemod/rewrite-relative-imports\",",
+		"      \"version\": \"0.1.0\"",
+		"    }",
+		"  }",
+		"}",
+	)
 
 	writeFile(
 		t,
@@ -1237,6 +1257,20 @@ func writeInstalledManifest(
 			"      \"name\": \"" + componentName + "\",",
 			"      \"package\": \"" + packageName + "\",",
 			"      \"version\": \"" + version + "\"",
+			"    }",
+			"  },",
+			"  \"codemods\": {",
+			"    \"rewrite-internal-imports\": {",
+			"      \"category\": \"modify-package-imports\",",
+			"      \"exportName\": \"" + rewriteInternalImportsExport + "\",",
+			"      \"package\": \"@maratus-codemod/rewrite-internal-imports\",",
+			"      \"version\": \"0.1.0\"",
+			"    },",
+			"    \"rewrite-relative-imports\": {",
+			"      \"category\": \"modify-file-imports\",",
+			"      \"exportName\": \"" + rewriteRelativeImportsExport + "\",",
+			"      \"package\": \"@maratus-codemod/rewrite-relative-imports\",",
+			"      \"version\": \"0.1.0\"",
 			"    }",
 			"  }",
 			"}",

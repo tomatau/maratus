@@ -17,16 +17,17 @@ type RewriteRelativeImportsFileOption struct {
 }
 
 func RewriteRelativeImports(
+	codemodPackageName string,
+	codemodExportName string,
 	sourcePath string,
 	destinationPath string,
 	source string,
 	sourceGraph map[string]string,
 	options RewriteRelativeImportsOptions,
 ) (string, error) {
-	supported := MustGet(RewriteRelativeImportsName)
 	manifest := Manifest[RewriteRelativeImportsOptions]{
-		CodemodPackageName: supported.PackageName,
-		CodemodExportName:  supported.ExportName,
+		CodemodPackageName: codemodPackageName,
+		CodemodExportName:  codemodExportName,
 		Files:              make([]File, 0, len(sourceGraph)),
 		Options:            options,
 	}
@@ -51,16 +52,16 @@ func RewriteRelativeImports(
 		return manifest.Options.Files[i].Path < manifest.Options.Files[j].Path
 	})
 
-	manifestPath, err := WriteManifest(
+	manifestFilePath, err := WriteManifest(
 		"maratus-rewrite-relative-imports-*.json",
 		manifest,
 	)
 	if err != nil {
 		return "", err
 	}
-	defer os.Remove(manifestPath)
+	defer os.Remove(manifestFilePath)
 
-	output, err := RunManifest(manifestPath)
+	output, err := RunManifest(manifestFilePath)
 	if err != nil {
 		return "", err
 	}
@@ -75,6 +76,8 @@ func RewriteRelativeImports(
 }
 
 func RewriteRelativeImportsBatch(
+	codemodPackageName string,
+	codemodExportName string,
 	files []File,
 	sourceGraph map[string]string,
 	options RewriteRelativeImportsOptions,
@@ -83,10 +86,9 @@ func RewriteRelativeImportsBatch(
 		return nil, nil
 	}
 
-	supported := MustGet(RewriteRelativeImportsName)
 	manifest := Manifest[RewriteRelativeImportsOptions]{
-		CodemodPackageName: supported.PackageName,
-		CodemodExportName:  supported.ExportName,
+		CodemodPackageName: codemodPackageName,
+		CodemodExportName:  codemodExportName,
 		Files:              files,
 		Options:            options,
 	}
@@ -98,16 +100,16 @@ func RewriteRelativeImportsBatch(
 		return manifest.Options.Files[i].Path < manifest.Options.Files[j].Path
 	})
 
-	manifestPath, err := WriteManifest(
+	manifestFilePath, err := WriteManifest(
 		"maratus-rewrite-relative-imports-*.json",
 		manifest,
 	)
 	if err != nil {
 		return nil, err
 	}
-	defer os.Remove(manifestPath)
+	defer os.Remove(manifestFilePath)
 
-	output, err := RunManifest(manifestPath)
+	output, err := RunManifest(manifestFilePath)
 	if err != nil {
 		return nil, err
 	}

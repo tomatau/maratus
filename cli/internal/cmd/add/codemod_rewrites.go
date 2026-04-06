@@ -2,6 +2,7 @@ package addcmd
 
 import (
 	"maratus/cli/internal/codemods"
+	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
 	"path/filepath"
 )
@@ -33,10 +34,22 @@ func rewriteInternalDependencyImports(
 		)
 	}
 
-	return codemods.RewriteInternalImports(destinationPath, source, options)
+	codemod, err := resolveCodemod(proj, codemods.RewriteInternalImportsName)
+	if err != nil {
+		return "", err
+	}
+
+	return codemods.RewriteInternalImports(
+		codemod.Package,
+		codemod.ExportName,
+		destinationPath,
+		source,
+		options,
+	)
 }
 
 func rewriteRelativeImports(
+	proj project.Project,
 	sourcePath string,
 	destinationPath string,
 	source string,
@@ -60,11 +73,25 @@ func rewriteRelativeImports(
 		)
 	}
 
+	codemod, err := resolveCodemod(proj, codemods.RewriteRelativeImportsName)
+	if err != nil {
+		return "", err
+	}
+
 	return codemods.RewriteRelativeImports(
+		codemod.Package,
+		codemod.ExportName,
 		sourcePath,
 		destinationPath,
 		source,
 		sourceGraph,
 		options,
 	)
+}
+
+func resolveCodemod(
+	proj project.Project,
+	codemodName string,
+) (manifest.Codemod, error) {
+	return manifest.ResolveCodemod(proj.RegistryManifestPath, codemodName)
 }

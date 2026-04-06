@@ -15,6 +15,8 @@ type RewriteInternalImportsPackage struct {
 }
 
 func RewriteInternalImports(
+	codemodPackageName string,
+	codemodExportName string,
 	destinationPath string,
 	source []byte,
 	options RewriteInternalImportsOptions,
@@ -24,6 +26,8 @@ func RewriteInternalImports(
 	}
 
 	output, err := rewriteInternalImportsOutput(
+		codemodPackageName,
+		codemodExportName,
 		[]File{
 			{
 				Path:       destinationPath,
@@ -43,6 +47,8 @@ func RewriteInternalImports(
 }
 
 func RewriteInternalImportsBatch(
+	codemodPackageName string,
+	codemodExportName string,
 	files []File,
 	options RewriteInternalImportsOptions,
 ) ([]File, error) {
@@ -50,7 +56,12 @@ func RewriteInternalImportsBatch(
 		return files, nil
 	}
 
-	output, err := rewriteInternalImportsOutput(files, options)
+	output, err := rewriteInternalImportsOutput(
+		codemodPackageName,
+		codemodExportName,
+		files,
+		options,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -59,25 +70,26 @@ func RewriteInternalImportsBatch(
 }
 
 func rewriteInternalImportsOutput(
+	codemodPackageName string,
+	codemodExportName string,
 	files []File,
 	options RewriteInternalImportsOptions,
 ) (Output, error) {
-	supported := MustGet(RewriteInternalImportsName)
 	manifest := Manifest[RewriteInternalImportsOptions]{
-		CodemodPackageName: supported.PackageName,
-		CodemodExportName:  supported.ExportName,
+		CodemodPackageName: codemodPackageName,
+		CodemodExportName:  codemodExportName,
 		Files:              files,
 		Options:            options,
 	}
 
-	manifestPath, err := WriteManifest(
+	manifestFilePath, err := WriteManifest(
 		"maratus-rewrite-internal-imports-*.json",
 		manifest,
 	)
 	if err != nil {
 		return Output{}, err
 	}
-	defer os.Remove(manifestPath)
+	defer os.Remove(manifestFilePath)
 
-	return RunManifest(manifestPath)
+	return RunManifest(manifestFilePath)
 }

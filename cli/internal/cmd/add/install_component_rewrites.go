@@ -50,7 +50,19 @@ func rewriteComponentSources(
 		})
 	}
 	if len(internalRewriteOptions.Packages) > 0 {
-		internalRewriteOutput, err := codemods.RewriteInternalImportsBatch(internalRewriteFiles, internalRewriteOptions)
+		internalCodemod, err := resolveCodemod(
+			proj,
+			codemods.RewriteInternalImportsName,
+		)
+		if err != nil {
+			return nil, err
+		}
+		internalRewriteOutput, err := codemods.RewriteInternalImportsBatch(
+			internalCodemod.Package,
+			internalCodemod.ExportName,
+			internalRewriteFiles,
+			internalRewriteOptions,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +111,21 @@ func rewriteComponentSources(
 		})
 	}
 
-	relativeRewriteOutput, err := codemods.RewriteRelativeImportsBatch(relativeRewriteFiles, sourceGraph, relativeRewriteOptions)
+	relativeCodemod, err := resolveCodemod(
+		proj,
+		codemods.RewriteRelativeImportsName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	relativeRewriteOutput, err := codemods.RewriteRelativeImportsBatch(
+		relativeCodemod.Package,
+		relativeCodemod.ExportName,
+		relativeRewriteFiles,
+		sourceGraph,
+		relativeRewriteOptions,
+	)
 	if err != nil {
 		return nil, err
 	}

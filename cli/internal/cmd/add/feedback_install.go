@@ -3,8 +3,8 @@ package addcmd
 import (
 	"fmt"
 	"maratus/cli/internal/config"
+	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
-	"maratus/cli/internal/registry"
 	"maratus/cli/internal/tui"
 	"time"
 
@@ -79,7 +79,7 @@ func installConsumerRegistryPackages(
 		return nil
 	}
 
-	packageSpecs, err := registry.ResolveComponentPackageSpecs(
+	packageSpecs, err := manifest.ResolveComponentPackageSpecs(
 		proj.RegistryManifestPath,
 		components,
 	)

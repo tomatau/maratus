@@ -3,6 +3,7 @@ package addcmd
 import (
 	"fmt"
 	"maratus/cli/internal/config"
+	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
 	"maratus/cli/internal/registry"
 	"os"
@@ -34,7 +35,7 @@ func resolveComponentInstall(
 		sourceStyleDir,
 	)
 	if _, err := os.Stat(sourceBaseDir); err != nil {
-		available, listErr := registry.AvailableComponents(proj.RegistryManifestPath)
+		available, listErr := manifest.AvailableComponents(proj.RegistryManifestPath)
 		if listErr != nil {
 			return componentInstallSetup{}, fmt.Errorf(
 				"component %q not found (failed to list available components: %w)",
