@@ -1,0 +1,4 @@
+{
+  "sourceType": "codemod",
+  "codemodOptionsCategory": "modify-file-imports"
+}

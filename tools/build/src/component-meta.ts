@@ -8,6 +8,7 @@ export type ComponentTokenMapping = {
 }
 
 export type ComponentMeta = {
+  sourceType: 'registry-component'
   themeTokens: string[]
   componentTokens: ComponentTokenMapping[]
 }
@@ -48,6 +49,7 @@ export async function extractComponentMeta(
   const themeTokens = [...new Set(componentTokens.map((token) => token.theme))]
 
   return {
+    sourceType: 'registry-component',
     themeTokens,
     componentTokens,
   }
