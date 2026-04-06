@@ -26,6 +26,9 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if err := project.EnsureConsumerManifest(proj); err != nil {
+				return err
+			}
 			if proj.IsMaratusRepo {
 				fmt.Fprintln(
 					cmd.ErrOrStderr(),
