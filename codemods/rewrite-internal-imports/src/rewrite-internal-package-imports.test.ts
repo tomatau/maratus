@@ -10,7 +10,7 @@ describe(rewriteInternalPackageImports, () => {
         {
           path: '/consumer/src/components/component/use-component.ts',
           sourceText:
-            "import { useDependencyFeature } from '@maratus/dependency-lib'\n",
+            "import { useDependencyFeature } from '@maratus-lib/dependency-lib'\n",
         },
       ],
       {
