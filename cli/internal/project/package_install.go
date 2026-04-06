@@ -1,6 +1,9 @@
 package project
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+)
 
 func ResolvePackageInstallCommand(
 	packageManager PackageManager,
@@ -40,4 +43,21 @@ func ResolvePackageInstallCommand(
 	default:
 		return nil, fmt.Errorf("unsupported package manager: %s", packageManager)
 	}
+}
+
+func InstallPackages(rootDir string, packageManager PackageManager, packages []string) error {
+	commandArgs, err := ResolvePackageInstallCommand(packageManager, packages)
+	if err != nil {
+		return err
+	}
+
+	command := exec.Command(commandArgs[0], commandArgs[1:]...)
+	command.Dir = rootDir
+
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("install packages: %w: %s", err, output)
+	}
+
+	return nil
 }

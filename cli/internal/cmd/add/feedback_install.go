@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maratus/cli/internal/config"
 	"maratus/cli/internal/project"
+	"maratus/cli/internal/registry"
 	"maratus/cli/internal/tui"
 	"time"
 
@@ -39,6 +40,10 @@ func installWithFeedback(
 	components []string,
 	selectedStyle config.Style,
 ) ([]InstallResult, []DependencyInstallResult, error) {
+	if err := installConsumerRegistryPackages(proj, components); err != nil {
+		return nil, nil, err
+	}
+
 	if !tui.IsInteractiveSession(cmd) {
 		results := make([]InstallResult, 0, len(components))
 		for _, component := range components {
@@ -64,6 +69,29 @@ func installWithFeedback(
 		return nil, nil, resultModel.steps.Err()
 	}
 	return resultModel.results, resultModel.dependencyResults, nil
+}
+
+func installConsumerRegistryPackages(
+	proj project.Project,
+	components []string,
+) error {
+	if proj.IsMaratusRepo || len(components) == 0 {
+		return nil
+	}
+
+	packageSpecs, err := registry.ResolveComponentPackageSpecs(
+		proj.RegistryManifestPath,
+		components,
+	)
+	if err != nil {
+		return err
+	}
+
+	return project.InstallPackages(
+		proj.RootDir,
+		proj.PackageManager,
+		packageSpecs,
+	)
 }
 
 type installDoneMsg struct {

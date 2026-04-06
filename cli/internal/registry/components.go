@@ -61,3 +61,24 @@ func AvailableComponents(path string) ([]string, error) {
 	sort.Strings(out)
 	return out, nil
 }
+
+func ResolveComponentPackageSpecs(
+	path string,
+	componentNames []string,
+) ([]string, error) {
+	manifest, err := LoadManifest(path)
+	if err != nil {
+		return nil, err
+	}
+
+	specs := make([]string, 0, len(componentNames))
+	for _, componentName := range componentNames {
+		component, ok := manifest.Components[componentName]
+		if !ok {
+			return nil, os.ErrNotExist
+		}
+		specs = append(specs, component.Package+"@"+component.Version)
+	}
+
+	return specs, nil
+}
