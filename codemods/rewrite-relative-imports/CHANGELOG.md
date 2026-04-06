@@ -1,5 +1,11 @@
 # @maratus-codemod/rewrite-relative-imports
 
+## 0.1.4
+
+### Patch Changes
+
+- aa7d53d: Fixes broken cli lib dependency install after scope rename to @maratus-lib/
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.1
+
+### Patch Changes
+
+- aa7d53d: Fixes broken cli lib dependency install after scope rename to @maratus-lib/
+
 ## 0.3.0
 
 ### Minor Changes
