@@ -98,3 +98,24 @@ func ResolveCodemod(path string, codemodName string) (Codemod, error) {
 
 	return codemod, nil
 }
+
+func ResolveCodemodPackageSpecs(
+	path string,
+	codemodNames []string,
+) ([]string, error) {
+	document, err := Load(path)
+	if err != nil {
+		return nil, err
+	}
+
+	specs := make([]string, 0, len(codemodNames))
+	for _, codemodName := range codemodNames {
+		codemod, ok := document.Codemods[codemodName]
+		if !ok {
+			return nil, os.ErrNotExist
+		}
+		specs = append(specs, codemod.Package+"@"+codemod.Version)
+	}
+
+	return specs, nil
+}

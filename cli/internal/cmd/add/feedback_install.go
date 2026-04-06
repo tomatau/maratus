@@ -2,6 +2,7 @@ package addcmd
 
 import (
 	"fmt"
+	"maratus/cli/internal/codemods"
 	"maratus/cli/internal/config"
 	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
@@ -40,7 +41,7 @@ func installWithFeedback(
 	components []string,
 	selectedStyle config.Style,
 ) ([]InstallResult, []DependencyInstallResult, error) {
-	if err := installConsumerRegistryPackages(proj, components); err != nil {
+	if err := installConsumerPackages(proj, components); err != nil {
 		return nil, nil, err
 	}
 
@@ -71,7 +72,7 @@ func installWithFeedback(
 	return resultModel.results, resultModel.dependencyResults, nil
 }
 
-func installConsumerRegistryPackages(
+func installConsumerPackages(
 	proj project.Project,
 	components []string,
 ) error {
@@ -79,9 +80,20 @@ func installConsumerRegistryPackages(
 		return nil
 	}
 
-	packageSpecs, err := manifest.ResolveComponentPackageSpecs(
+	componentPackageSpecs, err := manifest.ResolveComponentPackageSpecs(
 		proj.RegistryManifestPath,
 		components,
+	)
+	if err != nil {
+		return err
+	}
+
+	codemodPackageSpecs, err := manifest.ResolveCodemodPackageSpecs(
+		proj.RegistryManifestPath,
+		[]string{
+			codemods.RewriteInternalImportsName,
+			codemods.RewriteRelativeImportsName,
+		},
 	)
 	if err != nil {
 		return err
@@ -90,7 +102,7 @@ func installConsumerRegistryPackages(
 	return project.InstallPackages(
 		proj.RootDir,
 		proj.PackageManager,
-		packageSpecs,
+		append(componentPackageSpecs, codemodPackageSpecs...),
 	)
 }
 

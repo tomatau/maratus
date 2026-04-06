@@ -227,7 +227,7 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
 }
 
-func TestAddInConsumerModeInstallsRegistryPackageAndCopiesComponent(t *testing.T) {
+func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.T) {
 	wd := t.TempDir()
 	writeInstalledRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
 	writeInstalledManifest(
@@ -292,6 +292,8 @@ func TestAddInConsumerModeInstallsRegistryPackageAndCopiesComponent(t *testing.T
 		"--no-save",
 		"--no-package-lock",
 		"@maratus-registry/componentonly@0.3.0",
+		"@maratus-codemod/rewrite-internal-imports@0.1.0",
+		"@maratus-codemod/rewrite-relative-imports@0.1.0",
 	}
 	if !reflect.DeepEqual(actualCommand, expectedCommand) {
 		t.Fatalf("install command = %#v, want %#v", actualCommand, expectedCommand)
