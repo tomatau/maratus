@@ -69,6 +69,20 @@ jobs:
             sleep 15
           done
 
+      - name: Inspect installed Maratus packages
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+        run: |
+          cd "$APP_DIR"
+          for scope in @maratus @maratus-codemod @maratus-lib @maratus-registry; do
+            scope_dir="node_modules/$scope"
+            if [ -d "$scope_dir" ]; then
+              echo "::group::$scope"
+              ls -la "$scope_dir"
+              echo "::endgroup::"
+            fi
+          done
+
       - name: Run add command
         env:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
