@@ -26,8 +26,8 @@ type PackageManifest struct {
 	PeerDependencies map[string]string `json:"peerDependencies"`
 }
 
-func LoadComponentMeta(registryRoot string, componentName string) (ComponentMeta, error) {
-	data, err := os.ReadFile(filepath.Join(registryRoot, componentName, MetaFileName))
+func LoadComponentMeta(componentPackageRoot string) (ComponentMeta, error) {
+	data, err := os.ReadFile(filepath.Join(componentPackageRoot, MetaFileName))
 	if err != nil {
 		return ComponentMeta{}, err
 	}
@@ -40,8 +40,8 @@ func LoadComponentMeta(registryRoot string, componentName string) (ComponentMeta
 	return meta, nil
 }
 
-func LoadPackageManifest(registryRoot string, componentName string) (PackageManifest, error) {
-	data, err := os.ReadFile(filepath.Join(registryRoot, componentName, PackageFileName))
+func LoadPackageManifest(packageRoot string) (PackageManifest, error) {
+	data, err := os.ReadFile(filepath.Join(packageRoot, PackageFileName))
 	if err != nil {
 		return PackageManifest{}, err
 	}

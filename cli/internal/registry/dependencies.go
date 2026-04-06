@@ -63,8 +63,8 @@ func LoadInternalDependencies(packageRoot string) ([]string, error) {
 	return InternalDependencies(manifest.Dependencies), nil
 }
 
-func LoadComponentInternalDependencies(registryRoot string, componentName string) ([]string, error) {
-	manifest, err := LoadPackageManifest(registryRoot, componentName)
+func LoadComponentInternalDependencies(componentPackageRoot string) ([]string, error) {
+	manifest, err := LoadPackageManifest(componentPackageRoot)
 	if err != nil {
 		return nil, err
 	}

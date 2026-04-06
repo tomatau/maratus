@@ -103,11 +103,15 @@ func updateComponentsManifest(
 	}
 
 	for _, result := range results {
-		meta, err := registry.LoadComponentMeta(proj.RegistryRoot, result.Component)
+		componentPackageRoot := project.ResolveRegistryComponentPackageRoot(
+			proj,
+			result.Component,
+		)
+		meta, err := registry.LoadComponentMeta(componentPackageRoot)
 		if err != nil {
 			return err
 		}
-		pkg, err := registry.LoadPackageManifest(proj.RegistryRoot, result.Component)
+		pkg, err := registry.LoadPackageManifest(componentPackageRoot)
 		if err != nil {
 			return err
 		}

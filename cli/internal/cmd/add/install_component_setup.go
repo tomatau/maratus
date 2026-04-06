@@ -28,7 +28,11 @@ func resolveComponentInstall(
 		return componentInstallSetup{}, err
 	}
 
-	sourceBaseDir := filepath.Join(proj.RegistryRoot, componentName, sourceStyleDir)
+	sourceBaseDir := project.ResolveRegistryComponentSourceBaseDir(
+		proj,
+		componentName,
+		sourceStyleDir,
+	)
 	if _, err := os.Stat(sourceBaseDir); err != nil {
 		available, listErr := registry.AvailableComponents(proj.RegistryManifestPath)
 		if listErr != nil {
@@ -60,8 +64,7 @@ func resolveComponentInstall(
 	}
 
 	result.Dependencies, err = registry.LoadComponentInternalDependencies(
-		proj.RegistryRoot,
-		componentName,
+		project.ResolveRegistryComponentPackageRoot(proj, componentName),
 	)
 	if err != nil {
 		return componentInstallSetup{}, err

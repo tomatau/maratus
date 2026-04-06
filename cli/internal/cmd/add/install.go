@@ -124,7 +124,7 @@ func InstallDependencies(
 		}
 
 		sourceBaseDir, err := source.ResolveExistingPackageSourceDir(
-			filepath.Join(proj.RootDir, "lib"),
+			project.ResolveInstalledLibSourceRoot(proj),
 			packageName,
 		)
 		if err != nil {
@@ -145,7 +145,7 @@ func InstallDependencies(
 			return nil, err
 		}
 		internalDeps, err := registry.LoadInternalDependencies(
-			filepath.Join(proj.RootDir, "lib", packageName),
+			project.ResolveInstalledLibPackageRoot(proj, packageName),
 		)
 		if err != nil {
 			return nil, err
@@ -178,7 +178,7 @@ func installDependencySourceGraph(
 	}
 	packageName := filepath.Base(filepath.Dir(sourceBaseDir))
 	internalDeps, err := registry.LoadInternalDependencies(
-		filepath.Join(proj.RootDir, "lib", packageName),
+		project.ResolveInstalledLibPackageRoot(proj, packageName),
 	)
 	if err != nil {
 		return nil, err

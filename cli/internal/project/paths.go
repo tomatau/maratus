@@ -19,6 +19,55 @@ func ResolveLibPackageDir(proj Project, packageName string) string {
 	return filepath.Join(proj.LibDir, packageName)
 }
 
+func ResolveRegistryComponentPackageRoot(proj Project, componentName string) string {
+	if proj.IsMaratusRepo {
+		return filepath.Join(proj.RegistryRoot, componentName)
+	}
+
+	return filepath.Join(
+		proj.RootDir,
+		nodeModulesDirName,
+		registryScopeDirName,
+		componentName,
+	)
+}
+
+func ResolveRegistryComponentSourceBaseDir(
+	proj Project,
+	componentName string,
+	styleDir string,
+) string {
+	return filepath.Join(
+		ResolveRegistryComponentPackageRoot(proj, componentName),
+		styleDir,
+	)
+}
+
+func ResolveInstalledLibPackageRoot(proj Project, packageName string) string {
+	if proj.IsMaratusRepo {
+		return filepath.Join(proj.RootDir, "lib", packageName)
+	}
+
+	return filepath.Join(
+		proj.RootDir,
+		nodeModulesDirName,
+		libScopeDirName,
+		packageName,
+	)
+}
+
+func ResolveInstalledLibSourceRoot(proj Project) string {
+	if proj.IsMaratusRepo {
+		return filepath.Join(proj.RootDir, "lib")
+	}
+
+	return filepath.Join(
+		proj.RootDir,
+		nodeModulesDirName,
+		libScopeDirName,
+	)
+}
+
 func RewriteComponentRelativePath(relativePath string, componentName string, naming config.FileNameKind) string {
 	if naming == config.FileNameKindKebabCase {
 		return RewriteSourceRelativePath(relativePath)
