@@ -5,6 +5,24 @@ import (
 	"os/exec"
 )
 
+type PackageInstallExecutor func(
+	rootDir string,
+	commandArgs []string,
+) error
+
+var packageInstallExecutor PackageInstallExecutor = runPackageInstallCommand
+
+func SetPackageInstallExecutorForTesting(
+	executor PackageInstallExecutor,
+) func() {
+	previous := packageInstallExecutor
+	packageInstallExecutor = executor
+
+	return func() {
+		packageInstallExecutor = previous
+	}
+}
+
 func ResolvePackageInstallCommand(
 	packageManager PackageManager,
 	packages []string,
@@ -51,6 +69,10 @@ func InstallPackages(rootDir string, packageManager PackageManager, packages []s
 		return err
 	}
 
+	return packageInstallExecutor(rootDir, commandArgs)
+}
+
+func runPackageInstallCommand(rootDir string, commandArgs []string) error {
 	command := exec.Command(commandArgs[0], commandArgs[1:]...)
 	command.Dir = rootDir
 

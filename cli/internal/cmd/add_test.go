@@ -8,6 +8,7 @@ import (
 	"maratus/cli/internal/project"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"testing"
@@ -222,6 +223,80 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+}
+
+func TestAddInConsumerModeInstallsRegistryPackageAndCopiesComponent(t *testing.T) {
+	wd := t.TempDir()
+	writeInstalledRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
+	writeInstalledManifest(
+		t,
+		wd,
+		componentOnlyName,
+		"@maratus-registry/"+componentOnlyName,
+		"0.3.0",
+	)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "flat"
+  }
+}`)
+
+	var actualRootDir string
+	var actualCommand []string
+	restore := project.SetPackageInstallExecutorForTesting(
+		func(rootDir string, commandArgs []string) error {
+			actualRootDir = rootDir
+			actualCommand = append([]string(nil), commandArgs...)
+			return nil
+		},
+	)
+	t.Cleanup(restore)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add in consumer mode: %v", err)
+	}
+
+	actualRootDirEval, err := filepath.EvalSymlinks(actualRootDir)
+	if err != nil {
+		t.Fatalf("eval install rootDir: %v", err)
+	}
+	wdEval, err := filepath.EvalSymlinks(wd)
+	if err != nil {
+		t.Fatalf("eval temp dir: %v", err)
+	}
+	if actualRootDirEval != wdEval {
+		t.Fatalf("install rootDir = %q, want %q", actualRootDirEval, wdEval)
+	}
+	expectedCommand := []string{
+		"npm",
+		"install",
+		"--no-save",
+		"--no-package-lock",
+		"@maratus-registry/componentonly@0.3.0",
+	}
+	if !reflect.DeepEqual(actualCommand, expectedCommand) {
+		t.Fatalf("install command = %#v, want %#v", actualCommand, expectedCommand)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".tsx"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
 }
 
 func TestAddUsesKebabCaseComponentFilenameWhenConfigured(t *testing.T) {
@@ -1142,6 +1217,33 @@ func writeFixtureManifest(t *testing.T, wd string) {
 	)
 }
 
+func writeInstalledManifest(
+	t *testing.T,
+	wd string,
+	componentName string,
+	packageName string,
+	version string,
+) {
+	t.Helper()
+
+	writeFile(
+		t,
+		filepath.Join(wd, "node_modules", "@maratus", "manifest", "dist", "index.json"),
+		strings.Join([]string{
+			"{",
+			"  \"version\": 1,",
+			"  \"components\": {",
+			"    \"" + componentName + "\": {",
+			"      \"name\": \"" + componentName + "\",",
+			"      \"package\": \"" + packageName + "\",",
+			"      \"version\": \"" + version + "\"",
+			"    }",
+			"  }",
+			"}",
+		}, "\n")+"\n",
+	)
+}
+
 func buildMetaJSON(fixture registryFixture) string {
 	lines := []string{
 		"{",
@@ -1177,6 +1279,67 @@ func buildPackageJSON(fixture registryFixture) string {
 		"{",
 		"  \"name\": \"@maratus/" + fixture.name + "\",",
 		"  \"version\": \"0.0.0\"",
+	}
+
+	if len(fixture.dependencies) > 0 {
+		lines[len(lines)-1] += ","
+		lines = append(lines, "  \"dependencies\": {")
+
+		keys := make([]string, 0, len(fixture.dependencies))
+		for key := range fixture.dependencies {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+
+		for index, key := range keys {
+			suffix := ","
+			if index == len(keys)-1 {
+				suffix = ""
+			}
+			lines = append(lines, `    "`+key+`": "`+fixture.dependencies[key]+`"`+suffix)
+		}
+		lines = append(lines, "  }")
+	}
+
+	lines = append(lines, "}")
+	return strings.Join(lines, "\n") + "\n"
+}
+
+func writeInstalledRegistryFixture(t *testing.T, wd string, fixture registryFixture) {
+	t.Helper()
+
+	componentRootDir := filepath.Join(
+		wd,
+		"node_modules",
+		"@maratus-registry",
+		fixture.name,
+	)
+	cssFileDir := filepath.Join(componentRootDir, "css-files")
+	cssModulesDir := filepath.Join(componentRootDir, "css-modules")
+	tailwindDir := filepath.Join(componentRootDir, "tailwind-css")
+
+	for _, dir := range []string{componentRootDir, cssFileDir, cssModulesDir, tailwindDir} {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatalf("mkdir %s: %v", dir, err)
+		}
+	}
+
+	writeFile(t, filepath.Join(componentRootDir, "meta.json"), buildMetaJSON(fixture))
+	writeFile(
+		t,
+		filepath.Join(componentRootDir, "package.json"),
+		buildInstalledRegistryPackageJSON(fixture),
+	)
+	writeStyleFiles(t, cssFileDir, fixture.cssFiles)
+	writeStyleFiles(t, cssModulesDir, fixture.cssModules)
+	writeStyleFiles(t, tailwindDir, fixture.tailwindCSS)
+}
+
+func buildInstalledRegistryPackageJSON(fixture registryFixture) string {
+	lines := []string{
+		"{",
+		"  \"name\": \"@maratus-registry/" + fixture.name + "\",",
+		"  \"version\": \"0.3.0\"",
 	}
 
 	if len(fixture.dependencies) > 0 {

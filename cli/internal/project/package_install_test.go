@@ -100,3 +100,44 @@ func TestResolvePackageInstallCommandRequiresPackages(t *testing.T) {
 		t.Fatal("expected error for empty package list")
 	}
 }
+
+func TestInstallPackagesUsesExecutor(t *testing.T) {
+	t.Parallel()
+
+	previous := packageInstallExecutor
+	t.Cleanup(func() {
+		packageInstallExecutor = previous
+	})
+
+	var actualRootDir string
+	var actualCommand []string
+	packageInstallExecutor = func(rootDir string, commandArgs []string) error {
+		actualRootDir = rootDir
+		actualCommand = append([]string(nil), commandArgs...)
+		return nil
+	}
+
+	err := InstallPackages(
+		"/tmp/project",
+		PackageManagerNpm,
+		[]string{"@maratus-registry/button@0.2.0"},
+	)
+	if err != nil {
+		t.Fatalf("InstallPackages() error = %v", err)
+	}
+
+	if actualRootDir != "/tmp/project" {
+		t.Fatalf("InstallPackages() rootDir = %q, want %q", actualRootDir, "/tmp/project")
+	}
+
+	expectedCommand := []string{
+		"npm",
+		"install",
+		"--no-save",
+		"--no-package-lock",
+		"@maratus-registry/button@0.2.0",
+	}
+	if !reflect.DeepEqual(actualCommand, expectedCommand) {
+		t.Fatalf("InstallPackages() command = %#v, want %#v", actualCommand, expectedCommand)
+	}
+}
