@@ -88,7 +88,17 @@ jobs:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
         run: |
           cd "$APP_DIR"
-          npx maratus add button
+          for attempt in 1 2 3 4 5; do
+            if npx maratus add button; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 5 ]; then
+              exit 1
+            fi
+
+            sleep 15
+          done
 
       - name: Assert generated files
         env:
