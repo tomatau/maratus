@@ -20,3 +20,9 @@ jobs:
     needs: cli-smoke
     uses: ./.github/workflows/_npm-publish.yml
     secrets: inherit
+
+  consumer-smoke:
+    needs: npm-publish
+    uses: ./.github/workflows/_consumer-smoke.yml
+    with:
+      cli-version: ${{ needs.npm-publish.outputs.cli-version }}

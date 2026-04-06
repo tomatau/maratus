@@ -1,0 +1,98 @@
+name: _Consumer Smoke
+
+on:
+  workflow_call:
+    inputs:
+      cli-version:
+        required: false
+        type: string
+        default: latest
+
+jobs:
+  consumer-smoke:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Create consumer fixture
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+        run: |
+          rm -rf "$APP_DIR"
+          mkdir -p "$APP_DIR/src/components" "$APP_DIR/src/lib" "$APP_DIR/src/styles"
+          cd "$APP_DIR"
+          npm init -y
+          cat > maratus.json <<'EOF'
+          {
+            "srcDir": "src",
+            "componentsDir": "components",
+            "libDir": "lib",
+            "themeDir": "styles",
+            "formatCommand": ":",
+            "layout": {
+              "kind": "nested",
+              "barrel": true
+            },
+            "filenames": {
+              "lib": "kebab-case",
+              "hooks": "kebab-case",
+              "components": "match-export"
+            },
+            "style": "css-files"
+          }
+          EOF
+
+      - name: Install published CLI
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+          CLI_VERSION: ${{ inputs.cli-version }}
+        run: |
+          cd "$APP_DIR"
+          for attempt in 1 2 3 4 5; do
+            if npm install "@maratus/cli@$CLI_VERSION"; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 5 ]; then
+              exit 1
+            fi
+
+            sleep 15
+          done
+
+      - name: Run add command
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+        run: |
+          cd "$APP_DIR"
+          npx maratus add button
+
+      - name: Assert generated files
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+        run: |
+          test -f "$APP_DIR/src/components/button/Button.tsx"
+          test -f "$APP_DIR/src/components/button/button.css"
+          test -f "$APP_DIR/src/components/button/index.ts"
+          test -f "$APP_DIR/src/components/button/use-button.ts"
+          test -f "$APP_DIR/src/styles/maratus-theme.css"
+          test -f "$APP_DIR/src/lib/focus-modality/index.ts"
+          test -f "$APP_DIR/src/lib/focus-modality/use-focus-modality.ts"
+          test -f "$APP_DIR/src/lib/focus-modality/use-is-focus-visible.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/create-store-runtime.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/create-store.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/index.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/types.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/use-store-runtime.ts"
+          test -f "$APP_DIR/src/lib/store-runtime/use-store-selector.ts"
+          test -f "$APP_DIR/maratus-components.json"
+          grep -q '"button"' "$APP_DIR/maratus-components.json"
