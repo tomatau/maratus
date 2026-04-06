@@ -61,7 +61,7 @@ jobs:
       - name: Read CLI version
         id: cli_version
         run: |
-          echo "value=$(node -p \"require('./packages/maratus-cli/package.json').version\")" >> "$GITHUB_OUTPUT"
+          echo "value=$(node -p 'require(\"./packages/maratus-cli/package.json\").version')" >> "$GITHUB_OUTPUT"
 
       - name: Detect release changes
         id: release_changes
