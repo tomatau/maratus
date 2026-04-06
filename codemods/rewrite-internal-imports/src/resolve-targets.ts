@@ -23,7 +23,7 @@ export function resolveInternalImportTargets(
   const targets: ResolvedInternalImportTargets = {}
 
   for (const internalPackage of options.packages) {
-    const packageName = `@maratus/${internalPackage.packageName}`
+    const packageName = `@maratus-lib/${internalPackage.packageName}`
 
     if (internalPackage.barrel) {
       targets[packageName] = {
