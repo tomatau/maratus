@@ -1,4 +1,5 @@
 {
   "sourceType": "codemod",
-  "codemodOptionsCategory": "modify-file-imports"
+  "codemodOptionsCategory": "modify-file-imports",
+  "exportName": "rewriteRelativeImports"
 }

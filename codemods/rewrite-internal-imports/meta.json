@@ -1,4 +1,5 @@
 {
   "sourceType": "codemod",
-  "codemodOptionsCategory": "modify-package-imports"
+  "codemodOptionsCategory": "modify-package-imports",
+  "exportName": "rewriteInternalPackageImports"
 }
