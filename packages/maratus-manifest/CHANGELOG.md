@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.2.0
+
+### Minor Changes
+
+- 9c78941: Manifest builds include codemods leveraging meta.json
+
 ## 0.1.0
 
 ### Minor Changes

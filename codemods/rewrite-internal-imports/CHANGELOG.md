@@ -1,5 +1,11 @@
 # @maratus-codemod/rewrite-internal-imports
 
+## 0.1.3
+
+### Patch Changes
+
+- 9c78941: Manifest builds include codemods leveraging meta.json
+
 ## 0.1.2
 
 ### Patch Changes
