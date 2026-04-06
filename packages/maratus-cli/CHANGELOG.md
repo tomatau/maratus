@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.2
+
+### Patch Changes
+
+- cf0aaf2: CLI ensures manifest is downloaded during add command
+
 ## 0.3.1
 
 ### Patch Changes
