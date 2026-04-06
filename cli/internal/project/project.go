@@ -9,6 +9,7 @@ type Project struct {
 	RootDir              string
 	ConfigPath           string
 	Config               config.Config
+	PackageManager       PackageManager
 	RegistryRoot         string
 	RegistryManifestPath string
 	IsMaratusRepo        bool
@@ -52,6 +53,7 @@ func Open(rootDir string, configFilePath string) (Project, error) {
 		RootDir:              rootDir,
 		ConfigPath:           resolvedConfigPath,
 		Config:               cfg,
+		PackageManager:       DetectPackageManager(rootDir),
 		RegistryRoot:         registryRoot,
 		RegistryManifestPath: registryManifestPath,
 		IsMaratusRepo:        isMaratusRepo,
