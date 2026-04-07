@@ -86,7 +86,7 @@ jobs:
         run: |
           files=(
             "$APP_DIR/src/components/button/Button.tsx"
-            "$APP_DIR/src/components/button/button.css"
+            "$APP_DIR/src/components/button/Button.css"
             "$APP_DIR/src/components/button/index.ts"
             "$APP_DIR/src/components/button/use-button.ts"
             "$APP_DIR/src/styles/maratus-theme.css"
