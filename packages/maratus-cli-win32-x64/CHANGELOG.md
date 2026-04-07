@@ -1,5 +1,11 @@
 # @maratus/cli-win32-x64
 
+## 0.2.5
+
+### Patch Changes
+
+- a3a164e: Prevents CLI from wiping ephemeral installs on subsequent installs
+
 ## 0.2.4
 
 ### Patch Changes

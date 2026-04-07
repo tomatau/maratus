@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.5
+
+### Patch Changes
+
+- a3a164e: Prevents CLI from wiping ephemeral installs on subsequent installs
+
 ## 0.3.4
 
 ### Patch Changes
