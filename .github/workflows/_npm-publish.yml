@@ -73,6 +73,53 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Set up yq
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Collect released package specs
+        id: released_packages
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        run: |
+          mapfile -t relevant_dirs < <(
+            yq -r '
+              .workspaces
+              | to_entries[]
+              | select(.value.consumption == "direct" or .value.consumption == "indirect")
+              | .value.path
+            ' repo.yml
+          )
+
+          {
+            echo "specs<<EOF"
+            while IFS= read -r path; do
+              [ -n "$path" ] || continue
+
+              if git diff --quiet -- "$path"; then
+                continue
+              fi
+
+              private=$(sed -n 's/^  "private": \(true\|false\),$/\1/p' "$path" | head -n1)
+              if [ "$private" != "false" ]; then
+                continue
+              fi
+
+              name=$(sed -n 's/^  "name": "\(.*\)",$/\1/p' "$path" | head -n1)
+              version=$(sed -n 's/^  "version": "\(.*\)",$/\1/p' "$path" | head -n1)
+
+              if [ -n "$name" ] && [ -n "$version" ]; then
+                echo "$name@$version"
+              fi
+            done < <(
+              for dir in "${relevant_dirs[@]}"; do
+                find "$dir" -mindepth 2 -maxdepth 2 -name package.json
+              done | sort -u
+            )
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Configure git
         if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
         run: |
@@ -90,6 +137,33 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: just changeset publish
+
+      - name: Wait for npm package availability
+        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASED_PACKAGE_SPECS: ${{ steps.released_packages.outputs.specs }}
+        run: |
+          while IFS= read -r spec; do
+            [ -n "$spec" ] || continue
+
+            success=false
+            for attempt in 1 2 3 4 5 6 7 8 9 10; do
+              if npm view "$spec" version >/dev/null 2>&1; then
+                success=true
+                break
+              fi
+
+              sleep 15
+            done
+
+            if [ "$success" != "true" ]; then
+              echo "Timed out waiting for $spec to become visible on npm" >&2
+              exit 1
+            fi
+          done <<'EOF'
+          ${{ steps.released_packages.outputs.specs }}
+          EOF
 
       - name: Push release commit
         if: ${{ steps.release_changes.outputs.has_changes == 'true' }}

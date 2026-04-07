@@ -57,17 +57,7 @@ jobs:
           CLI_VERSION: ${{ inputs.cli-version }}
         run: |
           cd "$APP_DIR"
-          for attempt in 1 2 3 4 5; do
-            if npm install "@maratus/cli@$CLI_VERSION"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -eq 5 ]; then
-              exit 1
-            fi
-
-            sleep 15
-          done
+          npm install "@maratus/cli@$CLI_VERSION"
 
       - name: Inspect installed Maratus packages
         env:
@@ -88,24 +78,7 @@ jobs:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
         run: |
           cd "$APP_DIR"
-          latest_npm_log=""
-          for attempt in 1 2 3 4 5; do
-            if npx -- maratus --debug add button; then
-              exit 0
-            fi
-
-            latest_npm_log=$(ls -t /home/runner/.npm/_logs/*-debug-0.log 2>/dev/null | head -n1 || true)
-            if [ "$attempt" -eq 5 ]; then
-              if [ -n "$latest_npm_log" ] && [ -f "$latest_npm_log" ]; then
-                echo "::group::latest npm debug log"
-                cat "$latest_npm_log"
-                echo "::endgroup::"
-              fi
-              exit 1
-            fi
-
-            sleep 15
-          done
+          npx -- maratus --debug add button
 
       - name: Assert generated files
         env:
