@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.2.1
+
+### Patch Changes
+
+- e7c0708: Fix broken workspace dep for manifest and improve cli logging
+
 ## 0.2.0
 
 ### Minor Changes

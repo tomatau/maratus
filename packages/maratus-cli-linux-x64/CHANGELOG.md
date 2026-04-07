@@ -1,5 +1,11 @@
 # @maratus/cli-linux-x64
 
+## 0.2.4
+
+### Patch Changes
+
+- e7c0708: Fix broken workspace dep for manifest and improve cli logging
+
 ## 0.2.3
 
 ### Patch Changes
