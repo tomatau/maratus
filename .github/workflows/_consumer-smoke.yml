@@ -84,19 +84,33 @@ jobs:
         env:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
         run: |
-          test -f "$APP_DIR/src/components/button/Button.tsx"
-          test -f "$APP_DIR/src/components/button/button.css"
-          test -f "$APP_DIR/src/components/button/index.ts"
-          test -f "$APP_DIR/src/components/button/use-button.ts"
-          test -f "$APP_DIR/src/styles/maratus-theme.css"
-          test -f "$APP_DIR/src/lib/focus-modality/index.ts"
-          test -f "$APP_DIR/src/lib/focus-modality/use-focus-modality.ts"
-          test -f "$APP_DIR/src/lib/focus-modality/use-is-focus-visible.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/create-store-runtime.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/create-store.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/index.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/types.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/use-store-runtime.ts"
-          test -f "$APP_DIR/src/lib/store-runtime/use-store-selector.ts"
-          test -f "$APP_DIR/maratus-components.json"
-          grep -q '"button"' "$APP_DIR/maratus-components.json"
+          files=(
+            "$APP_DIR/src/components/button/Button.tsx"
+            "$APP_DIR/src/components/button/button.css"
+            "$APP_DIR/src/components/button/index.ts"
+            "$APP_DIR/src/components/button/use-button.ts"
+            "$APP_DIR/src/styles/maratus-theme.css"
+            "$APP_DIR/src/lib/focus-modality/index.ts"
+            "$APP_DIR/src/lib/focus-modality/use-focus-modality.ts"
+            "$APP_DIR/src/lib/focus-modality/use-is-focus-visible.ts"
+            "$APP_DIR/src/lib/store-runtime/create-store-runtime.ts"
+            "$APP_DIR/src/lib/store-runtime/create-store.ts"
+            "$APP_DIR/src/lib/store-runtime/index.ts"
+            "$APP_DIR/src/lib/store-runtime/types.ts"
+            "$APP_DIR/src/lib/store-runtime/use-store-runtime.ts"
+            "$APP_DIR/src/lib/store-runtime/use-store-selector.ts"
+            "$APP_DIR/maratus-components.json"
+          )
+
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Missing expected file: $file" >&2
+              exit 1
+            fi
+          done
+
+          if ! grep -q '"button"' "$APP_DIR/maratus-components.json"; then
+            echo 'Expected "button" entry in maratus-components.json' >&2
+            cat "$APP_DIR/maratus-components.json" >&2
+            exit 1
+          fi
