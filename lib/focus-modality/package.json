@@ -10,7 +10,7 @@
     "test": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
-    "@maratus-lib/store-runtime": "workspace:*"
+    "@maratus-lib/store-runtime": "0.2.0"
   },
   "devDependencies": {
     "@maratus/dotfiles": "workspace:*",
