@@ -36,26 +36,26 @@ func ResolvePackageInstallCommand(
 	switch packageManager {
 	case PackageManagerBun:
 		return append(
-			[]string{"bun", "add", "--no-save"},
+			[]string{"bun", "add"},
 			packages...,
 		), nil
 	case PackageManagerPnpm:
 		return append(
-			[]string{"pnpm", "add", "--no-lockfile"},
+			[]string{"pnpm", "add"},
 			packages...,
 		), nil
 	case PackageManagerNpm:
 		return append(
-			[]string{"npm", "install", "--no-save", "--no-package-lock"},
+			[]string{"npm", "install"},
 			packages...,
 		), nil
 	case PackageManagerYarn:
 		return append(
-			[]string{"yarn", "add", "--no-lockfile"},
+			[]string{"yarn", "add"},
 			packages...,
 		), nil
 	case PackageManagerDeno:
-		command := []string{"deno", "add", "--no-lock"}
+		command := []string{"deno", "add"}
 		for _, packageName := range packages {
 			command = append(command, "npm:"+packageName)
 		}

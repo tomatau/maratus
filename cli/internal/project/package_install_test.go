@@ -21,7 +21,6 @@ func TestResolvePackageInstallCommand(t *testing.T) {
 			expected: []string{
 				"bun",
 				"add",
-				"--no-save",
 				"@maratus-registry/button@0.2.0",
 			},
 		},
@@ -32,7 +31,6 @@ func TestResolvePackageInstallCommand(t *testing.T) {
 			expected: []string{
 				"pnpm",
 				"add",
-				"--no-lockfile",
 				"@maratus-registry/button@0.2.0",
 			},
 		},
@@ -43,8 +41,6 @@ func TestResolvePackageInstallCommand(t *testing.T) {
 			expected: []string{
 				"npm",
 				"install",
-				"--no-save",
-				"--no-package-lock",
 				"@maratus-registry/button@0.2.0",
 			},
 		},
@@ -55,7 +51,6 @@ func TestResolvePackageInstallCommand(t *testing.T) {
 			expected: []string{
 				"yarn",
 				"add",
-				"--no-lockfile",
 				"@maratus-registry/button@0.2.0",
 			},
 		},
@@ -66,7 +61,6 @@ func TestResolvePackageInstallCommand(t *testing.T) {
 			expected: []string{
 				"deno",
 				"add",
-				"--no-lock",
 				"npm:@maratus-registry/button@0.2.0",
 			},
 		},
@@ -133,8 +127,6 @@ func TestInstallPackagesUsesExecutor(t *testing.T) {
 	expectedCommand := []string{
 		"npm",
 		"install",
-		"--no-save",
-		"--no-package-lock",
 		"@maratus-registry/button@0.2.0",
 	}
 	if !reflect.DeepEqual(actualCommand, expectedCommand) {
