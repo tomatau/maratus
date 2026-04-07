@@ -90,7 +90,7 @@ jobs:
           cd "$APP_DIR"
           latest_npm_log=""
           for attempt in 1 2 3 4 5; do
-            if npx maratus add button --debug; then
+            if npx -- maratus --debug add button; then
               exit 0
             fi
 
