@@ -1,6 +1,6 @@
 {
   "name": "@maratus/cli",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "private": false,
   "bin": {
     "maratus": "./bin/maratus.mjs"
@@ -13,9 +13,9 @@
     "@maratus/codemod-runner": "0.1.1"
   },
   "optionalDependencies": {
-    "@maratus/cli-darwin-arm64": "0.2.5",
-    "@maratus/cli-darwin-x64": "0.2.5",
-    "@maratus/cli-linux-x64": "0.2.5",
-    "@maratus/cli-win32-x64": "0.2.5"
+    "@maratus/cli-darwin-arm64": "0.2.6",
+    "@maratus/cli-darwin-x64": "0.2.6",
+    "@maratus/cli-linux-x64": "0.2.6",
+    "@maratus/cli-win32-x64": "0.2.6"
   }
 }

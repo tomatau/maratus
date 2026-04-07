@@ -1,6 +1,6 @@
 {
   "name": "@maratus/cli-darwin-x64",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": false,
   "files": [
     "bin"

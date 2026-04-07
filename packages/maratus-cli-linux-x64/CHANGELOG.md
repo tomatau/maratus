@@ -1,5 +1,11 @@
 # @maratus/cli-linux-x64
 
+## 0.2.6
+
+### Patch Changes
+
+- c572cb5: Fixes CLI hardcoded bun command for codemod runs
+
 ## 0.2.5
 
 ### Patch Changes
