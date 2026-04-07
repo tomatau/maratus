@@ -1,5 +1,11 @@
 # @maratus-lib/focus-modality
 
+## 0.2.1
+
+### Patch Changes
+
+- 75b7343: Fix focus-modality workspace dependency on store-runtime
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @maratus-codemod/rewrite-relative-imports
 
+## 0.1.5
+
+### Patch Changes
+
+- 75b7343: Fix codemods dependency on codemod-runner
+
 ## 0.1.4
 
 ### Patch Changes
