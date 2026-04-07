@@ -6,6 +6,7 @@ package manifest
 
 import (
 	"encoding/json"
+	"maratus/cli/internal/debug"
 	"os"
 	"sort"
 )
@@ -46,6 +47,14 @@ func Load(path string) (Document, error) {
 	if document.Codemods == nil {
 		document.Codemods = map[string]Codemod{}
 	}
+
+	debug.Logf(
+		"loaded manifest %s (version=%d, components=%d, codemods=%d)",
+		path,
+		document.Version,
+		len(document.Components),
+		len(document.Codemods),
+	)
 
 	return document, nil
 }

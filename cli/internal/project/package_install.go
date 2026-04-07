@@ -2,7 +2,9 @@ package project
 
 import (
 	"fmt"
+	"maratus/cli/internal/debug"
 	"os/exec"
+	"strings"
 )
 
 type PackageInstallExecutor func(
@@ -73,6 +75,12 @@ func InstallPackages(rootDir string, packageManager PackageManager, packages []s
 }
 
 func runPackageInstallCommand(rootDir string, commandArgs []string) error {
+	debug.Logf(
+		"install packages in %s: %s",
+		rootDir,
+		strings.Join(commandArgs, " "),
+	)
+
 	command := exec.Command(commandArgs[0], commandArgs[1:]...)
 	command.Dir = rootDir
 
@@ -80,6 +88,8 @@ func runPackageInstallCommand(rootDir string, commandArgs []string) error {
 	if err != nil {
 		return fmt.Errorf("install packages: %w: %s", err, output)
 	}
+
+	debug.Logf("install packages succeeded")
 
 	return nil
 }

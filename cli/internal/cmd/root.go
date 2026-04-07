@@ -4,6 +4,7 @@ import (
 	addcmd "maratus/cli/internal/cmd/add"
 	helpcmd "maratus/cli/internal/cmd/help"
 	initcmd "maratus/cli/internal/cmd/init"
+	"maratus/cli/internal/debug"
 	"os"
 	"strings"
 
@@ -19,6 +20,7 @@ const (
 func NewRootCmd() *cobra.Command {
 	root := newRootCommand()
 	configFilePath := setupConfigFileFlag(root)
+	setupDebugFlag(root)
 	helpcmd.ConfigureRoot(root)
 	root.AddCommand(initcmd.New(configFilePath))
 	root.AddCommand(addcmd.New(configFilePath))
@@ -50,6 +52,20 @@ func setupConfigFileFlag(root *cobra.Command) func() string {
 	)
 	return func() string {
 		return configFile
+	}
+}
+
+func setupDebugFlag(root *cobra.Command) {
+	var debugEnabled bool
+	root.PersistentFlags().BoolVar(
+		&debugEnabled,
+		"debug",
+		false,
+		"Enable debug logging",
+	)
+
+	root.PersistentPreRun = func(cmd *cobra.Command, args []string) {
+		debug.SetEnabled(debugEnabled)
 	}
 }
 
