@@ -1,5 +1,11 @@
 # @maratus/cli-win32-x64
 
+## 0.2.3
+
+### Patch Changes
+
+- 3619547: CLI add command supports --debug flag
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.3
+
+### Patch Changes
+
+- 3619547: CLI add command supports --debug flag
+
 ## 0.3.2
 
 ### Patch Changes
