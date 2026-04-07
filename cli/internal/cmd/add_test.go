@@ -237,6 +237,7 @@ func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.
 		"@maratus-registry/"+componentOnlyName,
 		"0.3.0",
 	)
+	writeInstalledCodemodRunnerFixture(t, wd)
 	writeConfig(t, wd, `{
   "srcDir": "./tmp/src",
   "componentsDir": "components",
@@ -289,8 +290,6 @@ func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.
 	expectedCommand := []string{
 		"npm",
 		"install",
-		"--no-save",
-		"--no-package-lock",
 		"@maratus-registry/componentonly@0.3.0",
 		"@maratus-codemod/rewrite-internal-imports@0.1.0",
 		"@maratus-codemod/rewrite-relative-imports@0.1.0",
@@ -1369,6 +1368,27 @@ func writeInstalledRegistryFixture(t *testing.T, wd string, fixture registryFixt
 	writeStyleFiles(t, cssFileDir, fixture.cssFiles)
 	writeStyleFiles(t, cssModulesDir, fixture.cssModules)
 	writeStyleFiles(t, tailwindDir, fixture.tailwindCSS)
+}
+
+func writeInstalledCodemodRunnerFixture(t *testing.T, wd string) {
+	t.Helper()
+
+	runnerPath := filepath.Join(wd, "node_modules", ".bin", "maratus-codemod-runner")
+	writeFile(
+		t,
+		runnerPath,
+		strings.Join([]string{
+			"#!/usr/bin/env node",
+			"const fs = require('node:fs')",
+			"const manifestPath = process.argv[2]",
+			"const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))",
+			"process.stdout.write(JSON.stringify({ files: manifest.files }))",
+		}, "\n")+"\n",
+	)
+
+	if err := os.Chmod(runnerPath, 0o755); err != nil {
+		t.Fatalf("chmod %s: %v", runnerPath, err)
+	}
 }
 
 func buildInstalledRegistryPackageJSON(fixture registryFixture) string {

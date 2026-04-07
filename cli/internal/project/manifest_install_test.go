@@ -37,8 +37,6 @@ func TestEnsureConsumerManifestInstallsManifestWhenMissing(t *testing.T) {
 	expectedCommand := []string{
 		"npm",
 		"install",
-		"--no-save",
-		"--no-package-lock",
 		"@maratus/manifest",
 	}
 	if !reflect.DeepEqual(actualCommand, expectedCommand) {

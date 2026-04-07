@@ -49,7 +49,12 @@ func rewriteLibSources(
 		if err != nil {
 			return nil, err
 		}
+		runnerCommand, err := resolveCodemodRunnerCommand(proj)
+		if err != nil {
+			return nil, err
+		}
 		internalRewriteOutput, err := codemods.RewriteInternalImportsBatch(
+			runnerCommand,
 			internalCodemod.Package,
 			internalCodemod.ExportName,
 			internalRewriteFiles,
@@ -97,8 +102,13 @@ func rewriteLibSources(
 	if err != nil {
 		return nil, err
 	}
+	runnerCommand, err := resolveCodemodRunnerCommand(proj)
+	if err != nil {
+		return nil, err
+	}
 
 	relativeRewriteOutput, err := codemods.RewriteRelativeImportsBatch(
+		runnerCommand,
 		relativeCodemod.Package,
 		relativeCodemod.ExportName,
 		relativeRewriteFiles,

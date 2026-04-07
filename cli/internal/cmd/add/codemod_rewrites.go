@@ -39,7 +39,13 @@ func rewriteInternalDependencyImports(
 		return "", err
 	}
 
+	runnerCommand, err := resolveCodemodRunnerCommand(proj)
+	if err != nil {
+		return "", err
+	}
+
 	return codemods.RewriteInternalImports(
+		runnerCommand,
 		codemod.Package,
 		codemod.ExportName,
 		destinationPath,
@@ -78,7 +84,13 @@ func rewriteRelativeImports(
 		return "", err
 	}
 
+	runnerCommand, err := resolveCodemodRunnerCommand(proj)
+	if err != nil {
+		return "", err
+	}
+
 	return codemods.RewriteRelativeImports(
+		runnerCommand,
 		codemod.Package,
 		codemod.ExportName,
 		sourcePath,
@@ -94,4 +106,21 @@ func resolveCodemod(
 	codemodName string,
 ) (manifest.Codemod, error) {
 	return manifest.ResolveCodemod(proj.RegistryManifestPath, codemodName)
+}
+
+func resolveCodemodRunnerCommand(proj project.Project) (codemods.RunnerCommand, error) {
+	command, err := project.ResolveProjectPackageRunCommand(
+		proj,
+		codemods.RunnerPackageName,
+		codemods.RunnerBinaryName,
+		nil,
+	)
+	if err != nil {
+		return codemods.RunnerCommand{}, err
+	}
+
+	return codemods.RunnerCommand{
+		Args: command.Args,
+		Dir:  command.Dir,
+	}, nil
 }

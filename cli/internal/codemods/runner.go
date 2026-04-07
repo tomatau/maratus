@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -25,6 +23,11 @@ type File struct {
 
 type Output struct {
 	Files []File `json:"files"`
+}
+
+type RunnerCommand struct {
+	Args []string
+	Dir  string
 }
 
 func WriteManifest(pattern string, manifest any) (string, error) {
@@ -46,21 +49,16 @@ func WriteManifest(pattern string, manifest any) (string, error) {
 	return file.Name(), nil
 }
 
-func RunManifest(manifestPath string) (Output, error) {
-	command := exec.Command(
-		"bun",
-		"run",
-		"maratus-codemod-runner",
-		manifestPath,
-	)
-	command.Dir = maratusRepoRoot()
+func RunManifest(command RunnerCommand) (Output, error) {
+	execCommand := exec.Command(command.Args[0], command.Args[1:]...)
+	execCommand.Dir = command.Dir
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	command.Stdout = &stdout
-	command.Stderr = &stderr
+	execCommand.Stdout = &stdout
+	execCommand.Stderr = &stderr
 
-	if err := command.Run(); err != nil {
+	if err := execCommand.Run(); err != nil {
 		return Output{}, fmt.Errorf(
 			"run codemod: %w: %s",
 			err,
@@ -74,38 +72,4 @@ func RunManifest(manifestPath string) (Output, error) {
 	}
 
 	return output, nil
-}
-
-func maratusRepoRoot() string {
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return "."
-	}
-
-	root, err := findMaratusRepoRoot(filepath.Dir(file))
-	if err != nil {
-		return "."
-	}
-
-	return root
-}
-
-func findMaratusRepoRoot(start string) (string, error) {
-	current := filepath.Clean(start)
-
-	for {
-		repoConfigPath := filepath.Join(current, "repo.yml")
-		if _, err := os.Stat(repoConfigPath); err == nil {
-			return current, nil
-		}
-
-		parent := filepath.Dir(current)
-		if parent == current {
-			break
-		}
-
-		current = parent
-	}
-
-	return "", fmt.Errorf("maratus repo root not found")
 }

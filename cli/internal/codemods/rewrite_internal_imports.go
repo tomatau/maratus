@@ -15,6 +15,7 @@ type RewriteInternalImportsPackage struct {
 }
 
 func RewriteInternalImports(
+	runnerCommand RunnerCommand,
 	codemodPackageName string,
 	codemodExportName string,
 	destinationPath string,
@@ -26,6 +27,7 @@ func RewriteInternalImports(
 	}
 
 	output, err := rewriteInternalImportsOutput(
+		runnerCommand,
 		codemodPackageName,
 		codemodExportName,
 		[]File{
@@ -47,6 +49,7 @@ func RewriteInternalImports(
 }
 
 func RewriteInternalImportsBatch(
+	runnerCommand RunnerCommand,
 	codemodPackageName string,
 	codemodExportName string,
 	files []File,
@@ -57,6 +60,7 @@ func RewriteInternalImportsBatch(
 	}
 
 	output, err := rewriteInternalImportsOutput(
+		runnerCommand,
 		codemodPackageName,
 		codemodExportName,
 		files,
@@ -70,6 +74,7 @@ func RewriteInternalImportsBatch(
 }
 
 func rewriteInternalImportsOutput(
+	runnerCommand RunnerCommand,
 	codemodPackageName string,
 	codemodExportName string,
 	files []File,
@@ -91,5 +96,9 @@ func rewriteInternalImportsOutput(
 	}
 	defer os.Remove(manifestFilePath)
 
-	return RunManifest(manifestFilePath)
+	command := RunnerCommand{
+		Args: append(append([]string(nil), runnerCommand.Args...), manifestFilePath),
+		Dir:  runnerCommand.Dir,
+	}
+	return RunManifest(command)
 }

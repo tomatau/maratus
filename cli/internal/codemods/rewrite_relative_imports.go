@@ -17,6 +17,7 @@ type RewriteRelativeImportsFileOption struct {
 }
 
 func RewriteRelativeImports(
+	runnerCommand RunnerCommand,
 	codemodPackageName string,
 	codemodExportName string,
 	sourcePath string,
@@ -61,7 +62,11 @@ func RewriteRelativeImports(
 	}
 	defer os.Remove(manifestFilePath)
 
-	output, err := RunManifest(manifestFilePath)
+	command := RunnerCommand{
+		Args: append(append([]string(nil), runnerCommand.Args...), manifestFilePath),
+		Dir:  runnerCommand.Dir,
+	}
+	output, err := RunManifest(command)
 	if err != nil {
 		return "", err
 	}
@@ -76,6 +81,7 @@ func RewriteRelativeImports(
 }
 
 func RewriteRelativeImportsBatch(
+	runnerCommand RunnerCommand,
 	codemodPackageName string,
 	codemodExportName string,
 	files []File,
@@ -109,7 +115,11 @@ func RewriteRelativeImportsBatch(
 	}
 	defer os.Remove(manifestFilePath)
 
-	output, err := RunManifest(manifestFilePath)
+	command := RunnerCommand{
+		Args: append(append([]string(nil), runnerCommand.Args...), manifestFilePath),
+		Dir:  runnerCommand.Dir,
+	}
+	output, err := RunManifest(command)
 	if err != nil {
 		return nil, err
 	}
