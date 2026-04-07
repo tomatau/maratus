@@ -86,7 +86,18 @@ func runPackageInstallCommand(rootDir string, commandArgs []string) error {
 
 	output, err := command.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("install packages: %w: %s", err, output)
+		trimmedOutput := strings.TrimSpace(string(output))
+		if trimmedOutput == "" {
+			return fmt.Errorf("install packages: %w", err)
+		}
+
+		return fmt.Errorf(
+			"install packages failed for %s in %s: %w\n%s",
+			strings.Join(commandArgs, " "),
+			rootDir,
+			err,
+			trimmedOutput,
+		)
 	}
 
 	debug.Logf("install packages succeeded")

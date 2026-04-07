@@ -12,7 +12,7 @@
   "scripts": {
     "build": "node ./build.mjs"
   },
-  "dependencies": {
+  "devDependencies": {
     "@maratus/utils": "workspace:*"
   }
 }
