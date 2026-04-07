@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.2.2
+
+### Patch Changes
+
+- 3fb9cc6: Updates manifest with latest component, lib and codemod versions
+
 ## 0.2.1
 
 ### Patch Changes
