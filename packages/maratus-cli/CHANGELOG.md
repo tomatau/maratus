@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.7
+
+### Patch Changes
+
+- 69bbf5b: CLI add command cleans up lockfiles and package.json
+
 ## 0.3.6
 
 ### Patch Changes

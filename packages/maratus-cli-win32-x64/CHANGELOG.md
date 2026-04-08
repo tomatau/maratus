@@ -1,5 +1,11 @@
 # @maratus/cli-win32-x64
 
+## 0.2.7
+
+### Patch Changes
+
+- 69bbf5b: CLI add command cleans up lockfiles and package.json
+
 ## 0.2.6
 
 ### Patch Changes
