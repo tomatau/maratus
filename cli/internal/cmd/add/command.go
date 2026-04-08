@@ -17,7 +17,7 @@ func New(configFilePath func() string) *cobra.Command {
 		Use:   "add [components...]",
 		Short: "Add a component",
 		Args:  cobra.ArbitraryArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
@@ -26,6 +26,16 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			cleanup, err := project.BeginConsumerPackageCleanup(proj)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				restoreErr := cleanup.Restore()
+				if err == nil && restoreErr != nil {
+					err = restoreErr
+				}
+			}()
 			if err := project.EnsureConsumerManifest(proj); err != nil {
 				return err
 			}

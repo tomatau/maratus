@@ -302,6 +302,92 @@ func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
 }
 
+func TestAddInConsumerModeRestoresPackageManagerFiles(t *testing.T) {
+	wd := t.TempDir()
+	writeInstalledRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
+	writeInstalledManifest(
+		t,
+		wd,
+		componentOnlyName,
+		"@maratus-registry/"+componentOnlyName,
+		"0.3.0",
+	)
+	writeInstalledCodemodRunnerFixture(t, wd)
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "layout": {
+    "kind": "flat"
+  }
+}`)
+
+	packageJSONPath := filepath.Join(wd, "package.json")
+	packageJSONBefore := "{\n  \"name\": \"consumer-fixture\"\n}\n"
+	writeFile(t, packageJSONPath, packageJSONBefore)
+
+	lockfilePath := filepath.Join(wd, "package-lock.json")
+	lockfileBefore := "{\n  \"lockfileVersion\": 3\n}\n"
+	writeFile(t, lockfilePath, lockfileBefore)
+
+	restore := project.SetPackageInstallExecutorForTesting(
+		func(rootDir string, commandArgs []string) error {
+			if err := os.WriteFile(
+				filepath.Join(rootDir, "package.json"),
+				[]byte("{\n  \"name\": \"mutated\"\n}\n"),
+				0o644,
+			); err != nil {
+				return err
+			}
+
+			if err := os.WriteFile(
+				filepath.Join(rootDir, "package-lock.json"),
+				[]byte("{\n  \"lockfileVersion\": 999\n}\n"),
+				0o644,
+			); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	)
+	t.Cleanup(restore)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", componentOnlyName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with cleanup: %v", err)
+	}
+
+	packageJSONAfter, err := os.ReadFile(packageJSONPath)
+	if err != nil {
+		t.Fatalf("read package.json: %v", err)
+	}
+	if string(packageJSONAfter) != packageJSONBefore {
+		t.Fatalf("package.json = %q, want %q", string(packageJSONAfter), packageJSONBefore)
+	}
+
+	lockfileAfter, err := os.ReadFile(lockfilePath)
+	if err != nil {
+		t.Fatalf("read package-lock.json: %v", err)
+	}
+	if string(lockfileAfter) != lockfileBefore {
+		t.Fatalf("package-lock.json = %q, want %q", string(lockfileAfter), lockfileBefore)
+	}
+}
+
 func TestAddUsesKebabCaseComponentFilenameWhenConfigured(t *testing.T) {
 	wd := t.TempDir()
 	writeRegistryFixture(t, wd, componentOnlyFixture(componentOnlyName))
