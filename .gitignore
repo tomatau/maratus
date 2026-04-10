@@ -2,6 +2,7 @@ node_modules
 tmp
 dist
 .cache
+.moon/cache
 test-results
 registry/*
 !registry/*/

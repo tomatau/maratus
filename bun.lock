@@ -17,7 +17,7 @@
     },
     "codemods/rewrite-internal-imports": {
       "name": "@maratus-codemod/rewrite-internal-imports",
-      "version": "0.1.1",
+      "version": "0.1.5",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -27,7 +27,7 @@
     },
     "codemods/rewrite-relative-imports": {
       "name": "@maratus-codemod/rewrite-relative-imports",
-      "version": "0.1.1",
+      "version": "0.1.5",
       "dependencies": {
         "@maratus/codemod-runner": "workspace:*",
       },
@@ -129,7 +129,7 @@
     },
     "lib/focus-modality": {
       "name": "@maratus-lib/focus-modality",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "dependencies": {
         "@maratus-lib/store-runtime": "workspace:*",
       },
@@ -157,7 +157,7 @@
     },
     "packages/maratus-cli": {
       "name": "@maratus/cli",
-      "version": "0.1.0",
+      "version": "0.3.6",
       "bin": {
         "maratus": "./bin/maratus.mjs",
       },
@@ -173,40 +173,40 @@
     },
     "packages/maratus-cli-darwin-arm64": {
       "name": "@maratus/cli-darwin-arm64",
-      "version": "0.1.0",
+      "version": "0.2.6",
     },
     "packages/maratus-cli-darwin-x64": {
       "name": "@maratus/cli-darwin-x64",
-      "version": "0.1.0",
+      "version": "0.2.6",
     },
     "packages/maratus-cli-linux-x64": {
       "name": "@maratus/cli-linux-x64",
-      "version": "0.1.0",
+      "version": "0.2.6",
     },
     "packages/maratus-cli-win32-x64": {
       "name": "@maratus/cli-win32-x64",
-      "version": "0.1.0",
+      "version": "0.2.6",
     },
     "packages/maratus-codemod-runner": {
       "name": "@maratus/codemod-runner",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "bin": {
         "maratus-codemod-runner": "./dist/cli.mjs",
       },
-      "dependencies": {
+      "devDependencies": {
         "ts-morph": "^25.0.1",
       },
     },
     "packages/maratus-manifest": {
       "name": "@maratus/manifest",
-      "version": "0.0.0",
-      "dependencies": {
+      "version": "0.2.2",
+      "devDependencies": {
         "@maratus/utils": "workspace:*",
       },
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.2.0",
+      "version": "0.3.1",
       "dependencies": {
         "@maratus-lib/focus-modality": "workspace:*",
       },

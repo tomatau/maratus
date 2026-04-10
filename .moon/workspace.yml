@@ -1,0 +1,20 @@
+projects:
+  globFormat: 'source-path'
+
+  globs:
+    - 'components/*'
+    - 'lib/*'
+    - 'codemods/*'
+    - 'registry/*'
+    - 'packages/maratus-cli-*'
+
+  sources:
+    cli-go: 'cli'
+    tools-build: 'tools/build'
+    tools-utils: 'tools/utils'
+    tools-dotfiles: 'tools/dotfiles'
+    tools-bun: 'tools/bun'
+    tools-playwright: 'tools/playwright'
+    codemod-runner: 'packages/maratus-codemod-runner'
+    manifest: 'packages/maratus-manifest'
+    cli-wrapper: 'packages/maratus-cli'

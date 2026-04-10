@@ -1,0 +1,10 @@
+tasks:
+  build:
+    command: 'bun'
+    args:
+      - 'run'
+      - 'build'
+    inputs:
+      - '@group(repo-config)'
+      - '@group(registry-workspace)'
+      - '@group(codemod-workspace)'

@@ -1,0 +1,5 @@
+javascript:
+  packageManager: 'bun'
+  inferTasksFromScripts: true
+
+bun: {}

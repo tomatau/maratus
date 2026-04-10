@@ -1,0 +1,11 @@
+inheritedBy:
+  files:
+    - 'go.mod'
+
+tasks:
+  platform-cli-path:
+    env:
+      GOOS: 'darwin'
+      GOARCH: 'arm64'
+    outputs:
+      - '/packages/maratus-cli-${GOOS}-${GOARCH}/bin/maratus'

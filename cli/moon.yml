@@ -1,0 +1,16 @@
+tasks:
+  build:
+    extends: 'platform-cli-path'
+    command: 'go'
+    args:
+      - 'build'
+      - '-o'
+      - '@out(0)'
+      - '-ldflags=-s -w'
+      - '.'
+
+  test:
+    command: 'go'
+    args:
+      - 'test'
+      - './...'

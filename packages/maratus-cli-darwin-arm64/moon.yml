@@ -1,0 +1,2 @@
+dependsOn:
+  - 'cli-go'

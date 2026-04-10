@@ -1,0 +1,7 @@
+fileGroups:
+  repo-config:
+    - '/repo.yml'
+  registry-workspace:
+    - '/registry/**'
+  codemod-workspace:
+    - '/codemods/**'
