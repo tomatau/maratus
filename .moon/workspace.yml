@@ -10,7 +10,7 @@ projects:
 
   sources:
     cli-go: 'cli'
-    tools-build: 'tools/build'
+    tools-build-registry: 'tools/build-registry'
     tools-utils: 'tools/utils'
     tools-dotfiles: 'tools/dotfiles'
     tools-bun: 'tools/bun'

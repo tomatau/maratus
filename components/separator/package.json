@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
-    "@maratus/build": "workspace:*",
     "@maratus/dotfiles": "workspace:*",
     "@maratus/playwright": "workspace:*",
     "@playwright/experimental-ct-react": "^1.55.0",

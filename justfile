@@ -57,15 +57,15 @@ test-unit workspace='' package='':
     exit 1; \
   fi
 
-# workspace=artifacts|codemods|packages
+# workspace=registry|codemods|packages
 [group('build')]
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
-    just _build-package tools build build:artifacts && \
+    just _build-package tools build-registry build && \
     just _run-workspace build "$(just _workspace-filter packages)" && \
     just _run-workspace build "$(just _workspace-filter codemods)"; \
-  elif [ "{{workspace}}" = "artifacts" ]; then \
-    just _build-package tools build build:artifacts; \
+  elif [ "{{workspace}}" = "registry" ]; then \
+    just _build-package tools build-registry build; \
   elif [ -n "{{package}}" ]; then \
     just _build-package {{workspace}} {{package}}; \
   else \

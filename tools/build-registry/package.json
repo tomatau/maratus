@@ -1,12 +1,12 @@
 {
-  "name": "@maratus/build",
+  "name": "@maratus/build-registry",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build:artifacts": "bun run scripts/build-artifacts.ts"
+    "build": "bun run scripts/build-artifacts.ts"
   },
   "dependencies": {
     "@maratus/utils": "workspace:*",

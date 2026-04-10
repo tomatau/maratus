@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
-    "@maratus/build": "workspace:*",
     "@maratus/bun": "workspace:*",
     "@maratus/dotfiles": "workspace:*",
     "@maratus/playwright": "workspace:*",

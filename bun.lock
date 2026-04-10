@@ -43,7 +43,6 @@
       },
       "devDependencies": {
         "@axe-core/playwright": "^4.10.2",
-        "@maratus/build": "workspace:*",
         "@maratus/bun": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
@@ -68,7 +67,6 @@
       "version": "0.0.0",
       "devDependencies": {
         "@axe-core/playwright": "^4.10.2",
-        "@maratus/build": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.0",
@@ -131,7 +129,7 @@
       "name": "@maratus-lib/focus-modality",
       "version": "0.2.1",
       "dependencies": {
-        "@maratus-lib/store-runtime": "workspace:*",
+        "@maratus-lib/store-runtime": "0.2.0",
       },
       "devDependencies": {
         "@maratus/dotfiles": "workspace:*",
@@ -225,8 +223,8 @@
         "react-dom": "^19.0.0",
       },
     },
-    "tools/build": {
-      "name": "@maratus/build",
+    "tools/build-registry": {
+      "name": "@maratus/build-registry",
       "dependencies": {
         "@maratus/utils": "workspace:*",
         "lightningcss": "^1.31.1",
@@ -490,7 +488,7 @@
 
     "@maratus-registry/separator": ["@maratus-registry/separator@workspace:registry/separator"],
 
-    "@maratus/build": ["@maratus/build@workspace:tools/build"],
+    "@maratus/build-registry": ["@maratus/build-registry@workspace:tools/build-registry"],
 
     "@maratus/bun": ["@maratus/bun@workspace:tools/bun"],
 
