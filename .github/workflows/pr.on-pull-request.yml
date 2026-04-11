@@ -33,16 +33,28 @@ jobs:
     with:
       cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
 
+  test-integration:
+    needs:
+      - ci-context
+      - build-cli
+    if: ${{ needs.ci-context.outputs.test_integration_affected == 'true' }}
+    uses: ./.github/workflows/_test-integration.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
   cli-smoke:
     needs:
       - ci-context
       - build-cli
+      - test-integration
       - test-unit
       - test-functional
     if: >-
       ${{
         always() &&
         needs.ci-context.outputs.cli_affected == 'true' &&
+        contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-functional.result)
       }}
