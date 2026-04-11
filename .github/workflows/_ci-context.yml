@@ -19,6 +19,9 @@ on:
       test_unit_affected:
         description: Whether any unit test tasks are affected
         value: ${{ jobs.ci-context.outputs.test_unit_affected }}
+      test_integration_affected:
+        description: Whether any integration test tasks are affected
+        value: ${{ jobs.ci-context.outputs.test_integration_affected }}
       cli_platform_matrix:
         description: CLI platform matrix JSON
         value: ${{ jobs.ci-context.outputs.cli_platform_matrix }}
@@ -30,6 +33,7 @@ jobs:
       cli_affected: ${{ steps.cli_affected.outputs.value }}
       test_affected: ${{ steps.test_affected.outputs.value }}
       test_unit_affected: ${{ steps.test_unit_affected.outputs.value }}
+      test_integration_affected: ${{ steps.test_integration_affected.outputs.value }}
       cli_platform_matrix: ${{ steps.cli_matrix.outputs.value }}
 
     defaults:
@@ -87,6 +91,21 @@ jobs:
           affected=$(moon query tasks --affected --id test-unit)
 
           if jq -e '[.tasks[] | select(has("test-unit"))] | length > 0' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect affected integration tests
+        id: test_integration_affected
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query tasks --affected --id test-integration)
+
+          if jq -e '[.tasks[] | select(has("test-integration"))] | length > 0' <<<"$affected" >/dev/null
           then
             echo "value=true" >> "$GITHUB_OUTPUT"
           else
