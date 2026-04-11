@@ -4,5 +4,38 @@ on:
   pull_request:
 
 jobs:
+  ci-context:
+    uses: ./.github/workflows/_ci-context.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
+  test-unit:
+    uses: ./.github/workflows/_test-unit.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
+  test-functional:
+    uses: ./.github/workflows/_test-functional.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
+  build-cli:
+    needs: ci-context
+    if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
+    uses: ./.github/workflows/_build-cli.yml
+    with:
+      cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
+
   cli-smoke:
+    needs:
+      - ci-context
+      - build-cli
+      - test-unit
+      - test-functional
+    if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
     uses: ./.github/workflows/_cli-smoke.yml
+    with:
+      cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
