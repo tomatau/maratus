@@ -1,6 +1,9 @@
 fileGroups:
   repo-config:
     - '/repo.yml'
+  components-source:
+    - '/components/*/src/**/*'
+    - '/components/*/package.json'
   registry-meta:
     - '/registry/*/package.json'
     - '/registry/*/meta.json'
