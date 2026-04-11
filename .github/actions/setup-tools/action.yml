@@ -1,0 +1,46 @@
+name: Setup Tools
+description: Set up cached jq, yq and just binaries
+
+runs:
+  using: composite
+  steps:
+    - name: Restore cached tools
+      uses: actions/cache@v4
+      with:
+        path: .cache/tools
+        key: setup-tools-v1-linux-x64
+
+    - name: Install jq
+      shell: bash
+      run: |
+        mkdir -p .cache/tools/bin
+
+        if [ ! -x .cache/tools/bin/jq ]; then
+          sudo apt-get update
+          sudo apt-get install --yes jq
+          cp "$(command -v jq)" .cache/tools/bin/jq
+        fi
+
+    - name: Install yq
+      shell: bash
+      run: |
+        mkdir -p .cache/tools/bin
+
+        if [ ! -x .cache/tools/bin/yq ]; then
+          wget -qO .cache/tools/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          chmod +x .cache/tools/bin/yq
+        fi
+
+    - name: Install just
+      shell: bash
+      run: |
+        mkdir -p .cache/tools/bin
+
+        if [ ! -x .cache/tools/bin/just ]; then
+          wget -qO .cache/tools/just.tar.gz https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-x86_64-unknown-linux-musl.tar.gz
+          tar -xzf .cache/tools/just.tar.gz -C .cache/tools/bin just
+        fi
+
+    - name: Add cached tools to PATH
+      shell: bash
+      run: echo "$PWD/.cache/tools/bin" >> "$GITHUB_PATH"

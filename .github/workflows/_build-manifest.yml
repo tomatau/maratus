@@ -1,0 +1,63 @@
+name: _Build Manifest
+
+on:
+  workflow_call:
+
+jobs:
+  build-manifest:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Build manifest package
+        run: moon run manifest:build
+
+      - name: Upload manifest artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: maratus-manifest
+          path: packages/maratus-manifest
+
+      - name: Upload registry artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: maratus-registry
+          path: registry
+
+  build-codemods:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Build codemods
+        run: moon run ':build' --filter 'codemods/*'
+
+      - name: Upload codemod artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: maratus-codemods
+          path: codemods/*/dist
