@@ -1,0 +1,46 @@
+name: _Changeset Check
+
+on:
+  workflow_call:
+    inputs:
+      manifest-affected:
+        required: true
+        type: string
+
+jobs:
+  changeset-check:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Verify changeset for manifest-affecting changes
+        env:
+          MANIFEST_AFFECTED: ${{ inputs.manifest-affected }}
+        run: |
+          if [ "$MANIFEST_AFFECTED" != "true" ]; then
+            exit 0
+          fi
+
+          mkdir -p tmp
+          bunx changeset status --output=tmp/changeset-status.json
+
+          if jq -e '.releases[] | select(.name == "@maratus/manifest")' tmp/changeset-status.json >/dev/null; then
+            exit 0
+          fi
+
+          echo "Manifest-affecting changes require a changeset that releases @maratus/manifest." >&2
+          exit 1
