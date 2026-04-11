@@ -10,7 +10,9 @@ import (
 )
 
 func New(configFilePath func() string) *cobra.Command {
-	return &cobra.Command{
+	yes := false
+
+	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize Maratus config",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -18,54 +20,73 @@ func New(configFilePath func() string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			configRoot := filepath.Dir(project.ResolveConfigPath(cwd, configFilePath()))
+			cfg := defaultConfig()
 
-			srcDir, err := AskSourceDir(cmd, configRoot)
-			if err != nil {
-				return err
-			}
-			componentsDir, err := AskComponentsDir(cmd, configRoot, srcDir)
-			if err != nil {
-				return err
-			}
-			libDir, err := AskLibDir(cmd, configRoot, srcDir)
-			if err != nil {
-				return err
-			}
-			themeDir, err := AskThemeDir(cmd, configRoot, srcDir)
-			if err != nil {
-				return err
-			}
-			componentsLayout, err := AskComponentsLayout(cmd)
-			if err != nil {
-				return err
-			}
-			style, err := AskStyle(cmd)
-			if err != nil {
-				return err
+			if !yes {
+				configRoot := filepath.Dir(project.ResolveConfigPath(cwd, configFilePath()))
+
+				srcDir, err := AskSourceDir(cmd, configRoot)
+				if err != nil {
+					return err
+				}
+				componentsDir, err := AskComponentsDir(cmd, configRoot, srcDir)
+				if err != nil {
+					return err
+				}
+				libDir, err := AskLibDir(cmd, configRoot, srcDir)
+				if err != nil {
+					return err
+				}
+				themeDir, err := AskThemeDir(cmd, configRoot, srcDir)
+				if err != nil {
+					return err
+				}
+				componentsLayout, err := AskComponentsLayout(cmd)
+				if err != nil {
+					return err
+				}
+				style, err := AskStyle(cmd)
+				if err != nil {
+					return err
+				}
+
+				cfg.SrcDir = srcDir
+				cfg.ComponentsDir = componentsDir
+				cfg.LibDir = libDir
+				cfg.ThemeDir = themeDir
+				cfg.Layout.Kind = config.LayoutKind(componentsLayout)
+				cfg.Style = style
 			}
 
-			cfg, err := project.NormalizeConfigForPath(cwd, configFilePath(), config.Config{
-				SrcDir:        srcDir,
-				ComponentsDir: componentsDir,
-				LibDir:        libDir,
-				ThemeDir:      themeDir,
-				FormatCommand: ":",
-				Layout: config.LayoutConfig{
-					Kind: config.LayoutKind(componentsLayout),
-				},
-				FileNames: config.FileNamesConfig{
-					Lib:        config.DefaultFileNameKind(),
-					Hooks:      config.DefaultFileNameKind(),
-					Components: config.FileNameKindMatchExport,
-				},
-				Style: style,
-			})
+			cfg, err = project.NormalizeConfigForPath(cwd, configFilePath(), cfg)
 			if err != nil {
 				return err
 			}
 
 			return SaveConfigWithFeedback(cmd, configFilePath(), cfg)
 		},
+	}
+
+	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "Save config with defaults without prompting")
+
+	return cmd
+}
+
+func defaultConfig() config.Config {
+	return config.Config{
+		SrcDir:        "src",
+		ComponentsDir: "components",
+		LibDir:        "lib",
+		ThemeDir:      "styles",
+		FormatCommand: ":",
+		Layout: config.LayoutConfig{
+			Kind: config.DefaultLayoutKind(),
+		},
+		FileNames: config.FileNamesConfig{
+			Lib:        config.DefaultFileNameKind(),
+			Hooks:      config.DefaultFileNameKind(),
+			Components: config.FileNameKindMatchExport,
+		},
+		Style: config.DefaultStyle(),
 	}
 }
