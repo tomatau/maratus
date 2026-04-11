@@ -44,13 +44,18 @@ jobs:
 
   build-manifest:
     needs: ci-context
-    if: ${{ needs.ci-context.outputs.manifest_affected == 'true' }}
+    if: >-
+      ${{
+        needs.ci-context.outputs.manifest_affected == 'true' ||
+        needs.ci-context.outputs.cli_affected == 'true'
+      }}
     uses: ./.github/workflows/_build-manifest.yml
 
   test-integration:
     needs:
       - ci-context
       - build-cli
+      - build-manifest
     if: ${{ needs.ci-context.outputs.test_integration_affected == 'true' }}
     uses: ./.github/workflows/_test-integration.yml
     with:

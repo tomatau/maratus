@@ -30,6 +30,12 @@ jobs:
           name: maratus-codemod-runner
           path: packages/maratus-codemod-runner
 
+      - name: Download codemod artefacts
+        uses: actions/download-artifact@v5
+        with:
+          name: maratus-codemods
+          path: codemods
+
       - name: Set up Moon toolchain
         uses: moonrepo/setup-toolchain@v0
         with:
