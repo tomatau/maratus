@@ -3,6 +3,10 @@ name: PR on Pull Request
 on:
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   ci-context:
     uses: ./.github/workflows/_ci-context.yml
@@ -14,11 +18,20 @@ jobs:
     needs: ci-context
     uses: ./.github/workflows/_changeset-check.yml
     with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
       manifest-affected: ${{ needs.ci-context.outputs.manifest_affected }}
 
   registry-sync-check:
     needs: ci-context
     uses: ./.github/workflows/_registry-sync-check.yml
+
+  changeset-signal:
+    needs: ci-context
+    uses: ./.github/workflows/_changeset-signal.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+      pr-number: ${{ github.event.pull_request.number }}
 
   test-unit:
     needs: ci-context

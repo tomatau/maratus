@@ -1,0 +1,90 @@
+name: _Changeset Signal
+
+on:
+  workflow_call:
+    inputs:
+      base-sha:
+        required: true
+        type: string
+      head-sha:
+        required: true
+        type: string
+      pr-number:
+        required: false
+        type: string
+
+jobs:
+  changeset-signal:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Set up yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Report affected release packages
+        id: signal
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          {
+            echo 'body<<EOF'
+            ./.github/workflows/_changeset-signal.sh
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write job summary
+        env:
+          BODY: ${{ steps.signal.outputs.body }}
+        run: |
+          if [ -z "$BODY" ]; then
+            exit 0
+          fi
+
+          {
+            echo '## Affected packages'
+            echo
+            echo "$BODY"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Find existing PR comment
+        if: ${{ inputs.pr-number != '' && steps.signal.outputs.body != '' }}
+        id: find_comment
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ inputs.pr-number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- maratus-changeset-signal -->'
+
+      - name: Create or update PR comment
+        if: ${{ inputs.pr-number != '' && steps.signal.outputs.body != '' }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ inputs.pr-number }}
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- maratus-changeset-signal -->
+            ## Affected packages
+
+            ${{ steps.signal.outputs.body }}

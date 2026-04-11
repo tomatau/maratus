@@ -3,6 +3,9 @@ name: _Changeset Check
 on:
   workflow_call:
     inputs:
+      base-sha:
+        required: true
+        type: string
       manifest-affected:
         required: true
         type: string
@@ -35,10 +38,17 @@ jobs:
             exit 0
           fi
 
-          mkdir -p tmp
-          bunx changeset status --output=tmp/changeset-status.json
+          status_path='tmp/changeset-status.json'
+          release_query='.releases[] | select(.name == "@maratus/manifest")'
 
-          if jq -e '.releases[] | select(.name == "@maratus/manifest")' tmp/changeset-status.json >/dev/null; then
+          mkdir -p tmp
+          set +e
+          bunx @changesets/cli status \
+            --since=${{ inputs.base-sha }} \
+            --output="$status_path"
+          set -e
+
+          if [ -f "$status_path" ] && jq -e "$release_query" "$status_path" >/dev/null; then
             exit 0
           fi
 
