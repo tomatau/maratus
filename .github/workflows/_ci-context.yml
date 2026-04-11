@@ -22,6 +22,9 @@ on:
       test_integration_affected:
         description: Whether any integration test tasks are affected
         value: ${{ jobs.ci-context.outputs.test_integration_affected }}
+      manifest_affected:
+        description: Whether the manifest package is affected
+        value: ${{ jobs.ci-context.outputs.manifest_affected }}
       cli_platform_matrix:
         description: CLI platform matrix JSON
         value: ${{ jobs.ci-context.outputs.cli_platform_matrix }}
@@ -34,6 +37,7 @@ jobs:
       test_affected: ${{ steps.test_affected.outputs.value }}
       test_unit_affected: ${{ steps.test_unit_affected.outputs.value }}
       test_integration_affected: ${{ steps.test_integration_affected.outputs.value }}
+      manifest_affected: ${{ steps.manifest_affected.outputs.value }}
       cli_platform_matrix: ${{ steps.cli_matrix.outputs.value }}
 
     defaults:
@@ -106,6 +110,21 @@ jobs:
           affected=$(moon query tasks --affected --id test-integration)
 
           if jq -e '[.tasks[] | select(has("test-integration"))] | length > 0' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect manifest changes
+        id: manifest_affected
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query affected --downstream deep)
+
+          if jq -e '.projects["manifest"]' <<<"$affected" >/dev/null
           then
             echo "value=true" >> "$GITHUB_OUTPUT"
           else

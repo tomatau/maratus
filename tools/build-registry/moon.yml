@@ -6,3 +6,5 @@ tasks:
       - 'build'
     inputs:
       - '@group(components-source)'
+    outputs:
+      - '@group(registry-meta)'
