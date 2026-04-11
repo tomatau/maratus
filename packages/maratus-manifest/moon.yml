@@ -6,5 +6,5 @@ tasks:
       - 'build'
     inputs:
       - '@group(repo-config)'
-      - '@group(registry-workspace)'
-      - '@group(codemod-workspace)'
+      - '@group(registry-meta)'
+      - '@group(codemod-meta)'

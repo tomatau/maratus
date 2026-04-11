@@ -1,7 +1,9 @@
 fileGroups:
   repo-config:
     - '/repo.yml'
-  registry-workspace:
-    - '/registry/**'
-  codemod-workspace:
-    - '/codemods/**'
+  registry-meta:
+    - '/registry/*/package.json'
+    - '/registry/*/meta.json'
+  codemod-meta:
+    - '/codemods/*/package.json'
+    - '/codemods/*/meta.json'
