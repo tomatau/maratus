@@ -36,6 +36,9 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
       - name: Run affected integration tests
         run: |
           moon ci :test-integration \
