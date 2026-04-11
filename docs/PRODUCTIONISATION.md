@@ -39,14 +39,14 @@ The intended model is:
 
 ## Registry Index Package
 
-Publish an npm package that contains catalogue metadata for components, lib packages, and codemods.
+Publish the manifest package `@maratus/manifest` as the catalogue index for components and codemods.
 
 This package decouples discovery from CLI releases:
 
 - We can publish new catalogue entries without requiring a CLI release
-- The release pipeline can update the index package as part of normal npm publishing
+- The release pipeline rebuilds and publishes the manifest package as part of normal npm publishing
 
-The index package is the source of truth for catalogue discovery.
+The manifest package exports generated JSON built from `registry/*/meta.json`, `registry/*/package.json`, `codemods/*/meta.json`, and `codemods/*/package.json`.
 Treat CLI self-update behaviour as a separate concern rather than conflating it with registry refresh.
 
 ## Codemod Compatibility Metadata
