@@ -124,7 +124,7 @@ jobs:
         run: |
           affected=$(moon query affected --downstream deep)
 
-          if jq -e '.projects["manifest"]' <<<"$affected" >/dev/null
+          if jq -e '.tasks["manifest:build"]' <<<"$affected" >/dev/null
           then
             echo "value=true" >> "$GITHUB_OUTPUT"
           else
