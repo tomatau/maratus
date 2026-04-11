@@ -14,6 +14,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Ensure local main branch
+        run: |
+          if ! git show-ref --verify --quiet refs/heads/main; then
+            git branch main origin/main
+          fi
 
       - name: Set up Moon toolchain
         uses: moonrepo/setup-toolchain@v0
@@ -46,6 +54,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Ensure local main branch
+        run: |
+          if ! git show-ref --verify --quiet refs/heads/main; then
+            git branch main origin/main
+          fi
 
       - name: Set up Moon toolchain
         uses: moonrepo/setup-toolchain@v0
@@ -54,7 +70,7 @@ jobs:
           auto-setup: true
 
       - name: Build codemods
-        run: moon run ':build' --filter 'codemods/*'
+        run: moon run 'codemods/*:build'
 
       - name: Upload codemod artefacts
         uses: actions/upload-artifact@v4
