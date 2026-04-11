@@ -1,5 +1,7 @@
 tasks:
   build:
+    deps:
+      - 'tools-build-registry:build'
     command: 'bun'
     args:
       - 'run'
