@@ -128,6 +128,94 @@ func TestInitUsesDefaultSrcDirInNonInteractiveMode(t *testing.T) {
 	}
 }
 
+func TestInitYesUsesDefaultConfig(t *testing.T) {
+	wd := t.TempDir()
+	configPath := filepath.Join(wd, "maratus.json")
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"init", "--yes"})
+
+	stdout := &bytes.Buffer{}
+	stderr := &bytes.Buffer{}
+	root.SetOut(stdout)
+	root.SetErr(stderr)
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = os.Chdir(previous)
+	})
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute init --yes: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	var cfg struct {
+		SrcDir        string `json:"srcDir"`
+		ComponentsDir string `json:"componentsDir"`
+		LibDir        string `json:"libDir"`
+		ThemeDir      string `json:"themeDir"`
+		FormatCommand string `json:"formatCommand"`
+		Layout        struct {
+			Kind   string `json:"kind"`
+			Barrel bool   `json:"barrel"`
+		} `json:"layout"`
+		FileNames struct {
+			Lib        string `json:"lib"`
+			Hooks      string `json:"hooks"`
+			Components string `json:"components"`
+		} `json:"filenames"`
+		Style string `json:"style"`
+	}
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		t.Fatalf("unmarshal config: %v", err)
+	}
+	if cfg.SrcDir != "src" {
+		t.Fatalf("expected srcDir to default to src, got %q", cfg.SrcDir)
+	}
+	if cfg.ComponentsDir != "components" {
+		t.Fatalf("expected componentsDir to default to components, got %q", cfg.ComponentsDir)
+	}
+	if cfg.LibDir != "lib" {
+		t.Fatalf("expected libDir to default to lib, got %q", cfg.LibDir)
+	}
+	if cfg.ThemeDir != "styles" {
+		t.Fatalf("expected themeDir to default to styles, got %q", cfg.ThemeDir)
+	}
+	if cfg.FormatCommand != ":" {
+		t.Fatalf("expected formatCommand to default to :, got %q", cfg.FormatCommand)
+	}
+	if cfg.Layout.Kind != "nested" {
+		t.Fatalf("expected layout.kind to default to nested, got %q", cfg.Layout.Kind)
+	}
+	if cfg.Layout.Barrel {
+		t.Fatalf("expected layout.barrel to default to false")
+	}
+	if cfg.FileNames.Lib != "kebab-case" {
+		t.Fatalf("expected filenames.lib to default to kebab-case, got %q", cfg.FileNames.Lib)
+	}
+	if cfg.FileNames.Hooks != "kebab-case" {
+		t.Fatalf("expected filenames.hooks to default to kebab-case, got %q", cfg.FileNames.Hooks)
+	}
+	if cfg.FileNames.Components != "match-export" {
+		t.Fatalf("expected filenames.components to default to match-export, got %q", cfg.FileNames.Components)
+	}
+	if cfg.Style != "css-files" {
+		t.Fatalf("expected style to default to css-files, got %q", cfg.Style)
+	}
+}
+
 func TestInitUsesConfigFileRelativePaths(t *testing.T) {
 	wd := t.TempDir()
 	if err := os.Mkdir(filepath.Join(wd, "tmp"), 0o755); err != nil {
