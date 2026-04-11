@@ -82,6 +82,7 @@ jobs:
       ${{
         always() &&
         needs.ci-context.outputs.cli_affected == 'true' &&
+        contains(fromJson('["success","skipped"]'), needs.build-cli.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-functional.result)
