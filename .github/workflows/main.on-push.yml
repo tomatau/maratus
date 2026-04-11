@@ -13,7 +13,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test-unit:
+    uses: ./.github/workflows/_test-unit.yml
+    with:
+      base-sha: ${{ github.event.before }}
+      head-sha: ${{ github.sha }}
+
+  test-functional:
+    uses: ./.github/workflows/_test-functional.yml
+    with:
+      base-sha: ${{ github.event.before }}
+      head-sha: ${{ github.sha }}
+
   cli-smoke:
+    needs:
+      - test-unit
+      - test-functional
     uses: ./.github/workflows/_cli-smoke.yml
 
   npm-publish:
