@@ -1,3 +1,6 @@
+dependsOn:
+  - 'codemod-runner'
+
 tasks:
   build:
     extends: 'platform-cli-path'
@@ -9,7 +12,7 @@ tasks:
       - '-ldflags=-s -w'
       - '.'
 
-  test:
+  test-integration:
     command: 'go'
     args:
       - 'test'

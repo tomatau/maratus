@@ -30,6 +30,17 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - name: Cache Playwright browser binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-linux-${{ hashFiles('tools/playwright/package.json') }}
+          restore-keys: |
+            playwright-linux-
+
+      - name: Install Playwright browser
+        run: bunx playwright install --with-deps chromium
+
       - name: Run affected functional tests
         run: |
           moon ci :test \
