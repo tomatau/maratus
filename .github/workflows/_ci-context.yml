@@ -13,6 +13,12 @@ on:
       cli_affected:
         description: Whether CLI smoke should run
         value: ${{ jobs.ci-context.outputs.cli_affected }}
+      test_affected:
+        description: Whether any functional test tasks are affected
+        value: ${{ jobs.ci-context.outputs.test_affected }}
+      test_unit_affected:
+        description: Whether any unit test tasks are affected
+        value: ${{ jobs.ci-context.outputs.test_unit_affected }}
       cli_platform_matrix:
         description: CLI platform matrix JSON
         value: ${{ jobs.ci-context.outputs.cli_platform_matrix }}
@@ -22,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cli_affected: ${{ steps.cli_affected.outputs.value }}
+      test_affected: ${{ steps.test_affected.outputs.value }}
+      test_unit_affected: ${{ steps.test_unit_affected.outputs.value }}
       cli_platform_matrix: ${{ steps.cli_matrix.outputs.value }}
 
     defaults:
@@ -49,6 +57,36 @@ jobs:
           affected=$(moon query affected --downstream deep)
 
           if jq -e '.projects["cli-wrapper"]' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect affected functional tests
+        id: test_affected
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query tasks --affected --id test)
+
+          if jq -e '[.tasks[] | select(has("test"))] | length > 0' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect affected unit tests
+        id: test_unit_affected
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query tasks --affected --id test-unit)
+
+          if jq -e '[.tasks[] | select(has("test-unit"))] | length > 0' <<<"$affected" >/dev/null
           then
             echo "value=true" >> "$GITHUB_OUTPUT"
           else

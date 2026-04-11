@@ -20,12 +20,16 @@ jobs:
       head-sha: ${{ github.sha }}
 
   test-unit:
+    needs: ci-context
+    if: ${{ needs.ci-context.outputs.test_unit_affected == 'true' }}
     uses: ./.github/workflows/_test-unit.yml
     with:
       base-sha: ${{ github.event.before }}
       head-sha: ${{ github.sha }}
 
   test-functional:
+    needs: ci-context
+    if: ${{ needs.ci-context.outputs.test_affected == 'true' }}
     uses: ./.github/workflows/_test-functional.yml
     with:
       base-sha: ${{ github.event.before }}
@@ -44,7 +48,13 @@ jobs:
       - build-cli
       - test-unit
       - test-functional
-    if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
+    if: >-
+      ${{
+        always() &&
+        needs.ci-context.outputs.cli_affected == 'true' &&
+        contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
+        contains(fromJson('["success","skipped"]'), needs.test-functional.result)
+      }}
     uses: ./.github/workflows/_cli-smoke.yml
     with:
       cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
