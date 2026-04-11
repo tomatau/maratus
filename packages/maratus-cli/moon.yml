@@ -1,2 +1,6 @@
 dependsOn:
   - 'cli-go'
+  - 'packages/maratus-cli-darwin-arm64'
+  - 'packages/maratus-cli-darwin-x64'
+  - 'packages/maratus-cli-linux-x64'
+  - 'packages/maratus-cli-win32-x64'

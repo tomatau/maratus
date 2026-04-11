@@ -13,6 +13,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  ci-context:
+    uses: ./.github/workflows/_ci-context.yml
+    with:
+      base-sha: ${{ github.event.before }}
+      head-sha: ${{ github.sha }}
+
   test-unit:
     uses: ./.github/workflows/_test-unit.yml
     with:
@@ -25,15 +31,31 @@ jobs:
       base-sha: ${{ github.event.before }}
       head-sha: ${{ github.sha }}
 
+  build-cli:
+    needs: ci-context
+    if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
+    uses: ./.github/workflows/_build-cli.yml
+    with:
+      cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
+
   cli-smoke:
     needs:
+      - ci-context
+      - build-cli
       - test-unit
       - test-functional
+    if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
     uses: ./.github/workflows/_cli-smoke.yml
+    with:
+      cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
 
   npm-publish:
-    needs: cli-smoke
+    needs:
+      - ci-context
+      - cli-smoke
     uses: ./.github/workflows/_npm-publish.yml
+    with:
+      cli-affected: ${{ needs.ci-context.outputs.cli_affected }}
     secrets: inherit
 
   consumer-smoke:

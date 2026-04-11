@@ -7,5 +7,7 @@ tasks:
     env:
       GOOS: 'darwin'
       GOARCH: 'arm64'
+      CLI_PLATFORM_PACKAGE: 'maratus-cli-darwin-arm64'
+      CLI_BINARY_NAME: 'maratus'
     outputs:
-      - '/packages/maratus-cli-${GOOS}-${GOARCH}/bin/maratus'
+      - '/packages/${CLI_PLATFORM_PACKAGE}/bin/${CLI_BINARY_NAME}'

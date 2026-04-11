@@ -1,0 +1,94 @@
+name: _CI Context
+
+on:
+  workflow_call:
+    inputs:
+      base-sha:
+        required: true
+        type: string
+      head-sha:
+        required: true
+        type: string
+    outputs:
+      cli_affected:
+        description: Whether CLI smoke should run
+        value: ${{ jobs.ci-context.outputs.cli_affected }}
+      cli_platform_matrix:
+        description: CLI platform matrix JSON
+        value: ${{ jobs.ci-context.outputs.cli_platform_matrix }}
+
+jobs:
+  ci-context:
+    runs-on: ubuntu-latest
+    outputs:
+      cli_affected: ${{ steps.cli_affected.outputs.value }}
+      cli_platform_matrix: ${{ steps.cli_matrix.outputs.value }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Detect CLI changes
+        id: cli_affected
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query affected --downstream deep)
+
+          if jq -e '.projects["cli-wrapper"]' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Emit CLI platform matrix
+        id: cli_matrix
+        run: |
+          json=$(
+            cat <<'EOF'
+          {
+            "include": [
+              {
+                "name": "macOS arm64",
+                "runner": "macos-14",
+                "package": "maratus-cli-darwin-arm64",
+                "goos": "darwin",
+                "goarch": "arm64",
+                "binary": "maratus"
+              },
+              {
+                "name": "Linux x64",
+                "runner": "ubuntu-latest",
+                "package": "maratus-cli-linux-x64",
+                "goos": "linux",
+                "goarch": "amd64",
+                "binary": "maratus"
+              },
+              {
+                "name": "Windows x64",
+                "runner": "windows-latest",
+                "package": "maratus-cli-win32-x64",
+                "goos": "windows",
+                "goarch": "amd64",
+                "binary": "maratus.exe"
+              }
+            ]
+          }
+          EOF
+          )
+
+          echo "value=$json" >> "$GITHUB_OUTPUT"

@@ -2,6 +2,10 @@ name: _NPM Publish
 
 on:
   workflow_call:
+    inputs:
+      cli-affected:
+        required: true
+        type: string
     outputs:
       cli-version:
         description: Effective @maratus/cli version after versioning
@@ -48,12 +52,13 @@ jobs:
       - name: Build codemods
         run: just build codemods
 
-      - name: Stage platform CLI binaries
-        run: |
-          just cli-stage-platform maratus-cli-darwin-arm64 darwin arm64 maratus
-          just cli-stage-platform maratus-cli-darwin-x64 darwin amd64 maratus
-          just cli-stage-platform maratus-cli-linux-x64 linux amd64 maratus
-          just cli-stage-platform maratus-cli-win32-x64 windows amd64 maratus.exe
+      - name: Download platform CLI artefacts
+        if: ${{ inputs.cli-affected == 'true' }}
+        uses: actions/download-artifact@v5
+        with:
+          pattern: maratus-cli-*
+          path: packages
+          merge-multiple: true
 
       - name: Version packages
         run: just changeset version

@@ -2,6 +2,10 @@ name: _CLI Smoke
 
 on:
   workflow_call:
+    inputs:
+      cli-platform-matrix:
+        required: true
+        type: string
 
 jobs:
   cli-smoke:
@@ -9,26 +13,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - name: macOS arm64
-            runner: macos-14
-            package: maratus-cli-darwin-arm64
-            goos: darwin
-            goarch: arm64
-            binary: maratus
-          - name: Linux x64
-            runner: ubuntu-latest
-            package: maratus-cli-linux-x64
-            goos: linux
-            goarch: amd64
-            binary: maratus
-          - name: Windows x64
-            runner: windows-latest
-            package: maratus-cli-win32-x64
-            goos: windows
-            goarch: amd64
-            binary: maratus.exe
+      matrix: ${{ fromJson(inputs.cli-platform-matrix) }}
 
     defaults:
       run:
@@ -38,16 +23,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
-      - name: Set up development tools
-        uses: ./.github/actions/setup-dev
-
-      - name: Stage native CLI binary
-        run: |
-          just cli-stage-platform \
-            ${{ matrix.package }} \
-            ${{ matrix.goos }} \
-            ${{ matrix.goarch }} \
-            ${{ matrix.binary }}
+      - name: Download platform package artefact
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ matrix.package }}
+          path: packages/${{ matrix.package }}
 
       - name: Run wrapper smoke test
-        run: node packages/maratus-cli/bin/maratus.mjs --help
+        run: npm exec --prefix packages/maratus-cli -- maratus --help
