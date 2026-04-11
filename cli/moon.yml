@@ -1,5 +1,7 @@
 dependsOn:
   - 'codemod-runner'
+  - 'codemods/rewrite-internal-imports'
+  - 'codemods/rewrite-relative-imports'
 
 tasks:
   build:
