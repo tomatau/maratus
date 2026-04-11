@@ -9,11 +9,6 @@ TMP_CONFIG_FILE := env("MARATUS_CONFIG_FILE", TMP_DIR + "/maratus.json")
 default:
   @just --list
 
-[group('cli')]
-[group('test')]
-cli-test:
-  go -C cli test ./...
-
 [group('release')]
 changeset command *args:
   bun run changeset {{command}} {{args}}
@@ -52,6 +47,19 @@ test-unit workspace='' package='':
     just _test-package {{workspace}} {{package}} test:unit; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace test:unit; \
+  else \
+    echo "expected workspace" >&2; \
+    exit 1; \
+  fi
+
+[group('test')]
+test-integration workspace='' package='':
+  @if [ "{{workspace}}" = "cli" ] && [ -z "{{package}}" ]; then \
+    go -C cli test ./...; \
+  elif [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
+    just _test-package {{workspace}} {{package}} test:integration; \
+  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace test:integration; \
   else \
     echo "expected workspace" >&2; \
     exit 1; \
