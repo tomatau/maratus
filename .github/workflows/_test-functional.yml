@@ -31,7 +31,7 @@ jobs:
           auto-setup: true
 
       - name: Cache Playwright browser binaries
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-linux-${{ hashFiles('tools/playwright/package.json') }}
