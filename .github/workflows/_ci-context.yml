@@ -58,7 +58,8 @@ jobs:
       - name: Emit CLI platform matrix
         id: cli_matrix
         run: |
-          json=$(
+          {
+            echo 'value<<EOF'
             cat <<'EOF'
           {
             "include": [
@@ -89,6 +90,5 @@ jobs:
             ]
           }
           EOF
-          )
-
-          echo "value=$json" >> "$GITHUB_OUTPUT"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
