@@ -78,7 +78,7 @@ jobs:
 
       - name: Create or update PR comment
         if: ${{ inputs.pr-number != '' && steps.signal.outputs.body != '' }}
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ inputs.pr-number }}
           comment-id: ${{ steps.find_comment.outputs.comment-id }}

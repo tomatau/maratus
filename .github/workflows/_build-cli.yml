@@ -38,7 +38,7 @@ jobs:
         run: moon run codemod-runner:build
 
       - name: Upload codemod runner artefact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maratus-codemod-runner
           path: packages/maratus-codemod-runner
@@ -101,7 +101,7 @@ jobs:
         run: moon run cli-go:build
 
       - name: Upload platform package artefact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.package }}
           path: packages/${{ matrix.package }}

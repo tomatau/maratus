@@ -5,7 +5,7 @@ runs:
   using: composite
   steps:
     - name: Restore cached tools
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: .cache/tools
         key: setup-tools-v1-linux-x64

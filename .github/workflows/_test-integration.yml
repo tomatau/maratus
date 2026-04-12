@@ -25,13 +25,13 @@ jobs:
           fetch-depth: 0
 
       - name: Download codemod runner artefact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-codemod-runner
           path: packages/maratus-codemod-runner
 
       - name: Download codemod artefacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-codemods
           path: codemods
