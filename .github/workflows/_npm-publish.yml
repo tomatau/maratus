@@ -60,6 +60,14 @@ jobs:
           path: packages
           merge-multiple: true
 
+      - name: Restore CLI executable bits
+        if: ${{ inputs.cli-affected == 'true' }}
+        run: |
+          chmod +x packages/maratus-cli-darwin-arm64/bin/maratus
+          chmod +x packages/maratus-cli-darwin-x64/bin/maratus
+          chmod +x packages/maratus-cli-linux-x64/bin/maratus
+          chmod +x packages/maratus-cli-win32-x64/bin/maratus.exe || true
+
       - name: Version packages
         run: just changeset version
 

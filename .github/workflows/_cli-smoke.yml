@@ -35,6 +35,15 @@ jobs:
           name: ${{ matrix.package }}
           path: packages/${{ matrix.package }}
 
+      - name: Debug downloaded platform package
+        run: |
+          find packages -maxdepth 4 -type f | sort
+          ls -l packages/${{ matrix.package }} || true
+          ls -l packages/${{ matrix.package }}/bin || true
+
+      - name: Restore CLI executable bit
+        run: chmod +x "packages/${{ matrix.package }}/bin/${{ matrix.binary }}"
+
       - name: Link workspace packages
         run: bun install --frozen-lockfile
 
