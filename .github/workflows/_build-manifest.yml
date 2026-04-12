@@ -33,13 +33,13 @@ jobs:
         run: moon run manifest:build
 
       - name: Upload manifest artefact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maratus-manifest
           path: packages/maratus-manifest
 
       - name: Upload registry artefacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maratus-registry
           path: registry
@@ -73,7 +73,7 @@ jobs:
         run: moon run 'codemods/*:build'
 
       - name: Upload codemod artefacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maratus-codemods
           path: codemods/*/dist

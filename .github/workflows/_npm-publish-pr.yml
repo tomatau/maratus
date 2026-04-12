@@ -46,6 +46,12 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - name: Set up npm authentication
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
 
@@ -54,21 +60,21 @@ jobs:
 
       - name: Download macOS arm64 CLI artefact
         if: ${{ inputs.cli-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-cli-darwin-arm64
           path: packages/maratus-cli-darwin-arm64
 
       - name: Download Linux x64 CLI artefact
         if: ${{ inputs.cli-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-cli-linux-x64
           path: packages/maratus-cli-linux-x64
 
       - name: Download Windows x64 CLI artefact
         if: ${{ inputs.cli-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-cli-win32-x64
           path: packages/maratus-cli-win32-x64
@@ -82,28 +88,28 @@ jobs:
 
       - name: Download codemod runner artefact
         if: ${{ inputs.cli-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-codemod-runner
           path: packages/maratus-codemod-runner
 
       - name: Download manifest artefact
         if: ${{ inputs.manifest-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-manifest
           path: packages/maratus-manifest
 
       - name: Download registry artefacts
         if: ${{ inputs.manifest-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-registry
           path: registry
 
       - name: Download codemod artefacts
         if: ${{ inputs.manifest-affected == 'true' }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: maratus-codemods
           path: codemods

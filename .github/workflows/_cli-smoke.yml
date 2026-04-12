@@ -30,7 +30,7 @@ jobs:
           auto-setup: true
 
       - name: Download platform package artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.package }}
           path: packages/${{ matrix.package }}
