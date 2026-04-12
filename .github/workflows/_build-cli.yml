@@ -78,6 +78,25 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - if: failure()
+        name: Debug Moon toolchain failure
+        shell: bash
+        run: |
+          pwd
+          find . -maxdepth 2 \( -name '*.log' -o -name 'proto*' -o -name 'moon*' \) -print || true
+          find "$RUNNER_TEMP" -maxdepth 3 \( -name '*.log' -o -name 'proto*' -o -name 'moon*' \) -print || true
+          for file in \
+            ./*.log \
+            ./.moon/*.log \
+            "$RUNNER_TEMP"/*.log \
+            "$RUNNER_TEMP"/proto* \
+            "$RUNNER_TEMP"/moon*; do
+            if [ -f "$file" ]; then
+              echo "===== $file ====="
+              cat "$file"
+            fi
+          done
+
       - name: Build platform CLI binary
         run: moon run cli-go:build
 

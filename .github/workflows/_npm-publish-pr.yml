@@ -52,19 +52,31 @@ jobs:
       - name: Set up workflow tools
         uses: ./.github/actions/setup-tools
 
-      - name: Download platform CLI artefacts
+      - name: Download macOS arm64 CLI artefact
         if: ${{ inputs.cli-affected == 'true' }}
         uses: actions/download-artifact@v5
         with:
-          pattern: maratus-cli-*
-          path: packages
-          merge-multiple: true
+          name: maratus-cli-darwin-arm64
+          path: packages/maratus-cli-darwin-arm64
+
+      - name: Download Linux x64 CLI artefact
+        if: ${{ inputs.cli-affected == 'true' }}
+        uses: actions/download-artifact@v5
+        with:
+          name: maratus-cli-linux-x64
+          path: packages/maratus-cli-linux-x64
+
+      - name: Download Windows x64 CLI artefact
+        if: ${{ inputs.cli-affected == 'true' }}
+        uses: actions/download-artifact@v5
+        with:
+          name: maratus-cli-win32-x64
+          path: packages/maratus-cli-win32-x64
 
       - name: Restore CLI executable bits
         if: ${{ inputs.cli-affected == 'true' }}
         run: |
           chmod +x packages/maratus-cli-darwin-arm64/bin/maratus
-          chmod +x packages/maratus-cli-darwin-x64/bin/maratus
           chmod +x packages/maratus-cli-linux-x64/bin/maratus
           chmod +x packages/maratus-cli-win32-x64/bin/maratus.exe || true
 
