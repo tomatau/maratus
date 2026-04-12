@@ -12,6 +12,15 @@ type PackageRunCommand struct {
 	Dir  string
 }
 
+type ProjectPackageRunCommandResolver func(
+	proj Project,
+	packageName string,
+	binaryName string,
+	args []string,
+) (PackageRunCommand, error)
+
+var ResolveProjectPackageRunCommand ProjectPackageRunCommandResolver = defaultResolveProjectPackageRunCommand
+
 func ResolvePackageRunCommand(
 	packageManager PackageManager,
 	packageName string,
@@ -34,7 +43,7 @@ func ResolvePackageRunCommand(
 	}
 }
 
-func ResolveProjectPackageRunCommand(
+func defaultResolveProjectPackageRunCommand(
 	proj Project,
 	packageName string,
 	binaryName string,

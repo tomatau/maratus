@@ -14,6 +14,31 @@ import (
 	"testing"
 )
 
+func init() {
+	defaultResolver := project.ResolveProjectPackageRunCommand
+	project.ResolveProjectPackageRunCommand = func(
+		proj project.Project,
+		packageName string,
+		binaryName string,
+		args []string,
+	) (project.PackageRunCommand, error) {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return project.PackageRunCommand{}, err
+		}
+
+		stubPath := filepath.Join(cwd, ".test-bin", binaryName)
+		if _, err := os.Stat(stubPath); err == nil {
+			return project.PackageRunCommand{
+				Args: append([]string{stubPath}, args...),
+				Dir:  cwd,
+			}, nil
+		}
+
+		return defaultResolver(proj, packageName, binaryName, args)
+	}
+}
+
 type registryFixture struct {
 	name            string
 	dependencies    map[string]string
@@ -1231,6 +1256,7 @@ func writeRegistryFixture(t *testing.T, wd string, fixture registryFixture) {
 	writeStyleFiles(t, tailwindDir, fixture.tailwindCSS)
 	writeFixtureRepoConfig(t, wd)
 	writeFixtureManifest(t, wd)
+	writeStubCodemodRunnerFixture(t, wd)
 }
 
 func writeFixtureRepoConfig(t *testing.T, wd string) {
@@ -1459,6 +1485,8 @@ func writeInstalledRegistryFixture(t *testing.T, wd string, fixture registryFixt
 func writeInstalledCodemodRunnerFixture(t *testing.T, wd string) {
 	t.Helper()
 
+	writeStubCodemodRunnerFixture(t, wd)
+
 	runnerPath := filepath.Join(wd, "node_modules", ".bin", "maratus-codemod-runner")
 	writeFile(
 		t,
@@ -1469,6 +1497,116 @@ func writeInstalledCodemodRunnerFixture(t *testing.T, wd string) {
 			"const manifestPath = process.argv[2]",
 			"const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))",
 			"process.stdout.write(JSON.stringify({ files: manifest.files }))",
+		}, "\n")+"\n",
+	)
+
+	if err := os.Chmod(runnerPath, 0o755); err != nil {
+		t.Fatalf("chmod %s: %v", runnerPath, err)
+	}
+}
+
+func writeStubCodemodRunnerFixture(t *testing.T, wd string) {
+	t.Helper()
+
+	runnerPath := filepath.Join(wd, ".test-bin", "maratus-codemod-runner")
+	writeFile(
+		t,
+		runnerPath,
+		strings.Join([]string{
+			"#!/usr/bin/env node",
+			"const fs = require('node:fs')",
+			"const path = require('node:path')",
+			"const manifest = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))",
+			"const posix = path.posix",
+			"function norm(value) { return String(value || '').replaceAll('\\\\', '/') }",
+			"function toKebabCase(value) {",
+			"  return String(value || '').replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/([A-Z])([A-Z][a-z])/g, '$1-$2').toLowerCase()",
+			"}",
+			"function rewriteImportTarget(targetPath) {",
+			"  if (targetPath.endsWith('.module.css') || targetPath.endsWith('.css')) return targetPath",
+			"  return targetPath.replace(/\\.(tsx?|jsx?)$/, '').replace(/\\/index$/, '')",
+			"}",
+			"function relativeSpecifier(fromDir, targetPath) {",
+			"  let rel = norm(posix.relative(norm(fromDir), norm(targetPath)))",
+			"  rel = rewriteImportTarget(rel)",
+			"  if (!rel.startsWith('.')) rel = './' + rel",
+			"  return rel",
+			"}",
+			"function findKnownFile(knownPaths, candidate) {",
+			"  const candidates = [",
+			"    candidate,",
+			"    candidate + '.ts',",
+			"    candidate + '.tsx',",
+			"    candidate + '.js',",
+			"    candidate + '.jsx',",
+			"    candidate + '.css',",
+			"    candidate + '.module.css',",
+			"    posix.join(candidate, 'index.ts'),",
+			"    posix.join(candidate, 'index.tsx'),",
+			"    posix.join(candidate, 'index.js'),",
+			"    posix.join(candidate, 'index.jsx')",
+			"  ]",
+			"  return candidates.find((item) => knownPaths.has(item))",
+			"}",
+			"function replaceImports(sourceText, rewriteSpecifier) {",
+			"  return String(sourceText || '').replace(/(['\"])([^'\"]+)\\1/g, (match, quote, specifier) => {",
+			"    const rewritten = rewriteSpecifier(specifier)",
+			"    return rewritten === specifier ? match : quote + rewritten + quote",
+			"  })",
+			"}",
+			"function resolveNonBarrelTarget(pkg) {",
+			"  const indexCandidates = ['index.ts', 'index.tsx', 'index.js', 'index.jsx']",
+			"  for (const fileName of indexCandidates) {",
+			"    const sourcePath = path.join(pkg.sourceDir, fileName)",
+			"    if (!fs.existsSync(sourcePath)) continue",
+			"    const sourceText = fs.readFileSync(sourcePath, 'utf8')",
+			"    const match = sourceText.match(/['\"]\\.\\/([^'\"]+)['\"]/) || sourceText.match(/['\"]\\.\\.\\/([^'\"]+)['\"]/) ",
+			"    if (!match) continue",
+			"    const rewrittenBase = pkg.fileNameKind === 'kebab-case' ? toKebabCase(match[1]) : match[1]",
+			"    return norm(posix.join(norm(pkg.destinationDir), rewrittenBase))",
+			"  }",
+			"  return norm(posix.join(norm(pkg.destinationDir), 'dependency'))",
+			"}",
+			"if (Array.isArray(manifest?.options?.files)) {",
+			"  const optionByPath = new Map(manifest.options.files.map((item) => [norm(item.path), item]))",
+			"  const knownPaths = new Set(Array.from(optionByPath.keys()))",
+			"  const files = (manifest.files || []).map((file) => {",
+			"    const filePath = norm((file.path ?? file.Path))",
+			"    const fileOption = optionByPath.get(filePath)",
+			"    const outputDir = posix.dirname(norm(fileOption?.rewrittenPath || filePath))",
+			"    const sourceText = replaceImports((file.sourceText ?? file.SourceText), (specifier) => {",
+			"      if (!specifier.startsWith('.')) return specifier",
+			"      const resolved = findKnownFile(knownPaths, norm(posix.normalize(posix.join(posix.dirname(filePath), specifier))))",
+			"      if (!resolved) return specifier",
+			"      const targetOption = optionByPath.get(resolved)",
+			"      return relativeSpecifier(outputDir, norm(targetOption?.rewrittenPath || resolved))",
+			"    })",
+			"    return { path: filePath, sourceText }",
+			"  })",
+			"  process.stdout.write(JSON.stringify({ files }))",
+			"  process.exit(0)",
+			"}",
+			"if (Array.isArray(manifest?.options?.packages)) {",
+			"  const files = (manifest.files || []).map((file) => {",
+			"    const filePath = norm((file.path ?? file.Path))",
+			"    const outputDir = posix.dirname(filePath)",
+			"    let sourceText = String((file.sourceText ?? file.SourceText) || '')",
+			"    for (const pkg of manifest.options.packages) {",
+			"      const targetPath = pkg.barrel ? norm(pkg.destinationDir) : resolveNonBarrelTarget(pkg)",
+			"      const specifier = relativeSpecifier(outputDir, targetPath)",
+			"      const packageName = String(pkg.packageName || '')",
+			"      const scopedPackageName = `@maratus-lib/${packageName}`",
+			"      sourceText = sourceText.replaceAll(`'${packageName}'`, `'${specifier}'`)",
+			"      sourceText = sourceText.replaceAll(`\"${packageName}\"`, `\"${specifier}\"`)",
+			"      sourceText = sourceText.replaceAll(`'${scopedPackageName}'`, `'${specifier}'`)",
+			"      sourceText = sourceText.replaceAll(`\"${scopedPackageName}\"`, `\"${specifier}\"`)",
+			"    }",
+			"    return { path: filePath, sourceText }",
+			"  })",
+			"  process.stdout.write(JSON.stringify({ files }))",
+			"  process.exit(0)",
+			"}",
+			"process.stdout.write(JSON.stringify({ files: manifest.files || [] }))",
 		}, "\n")+"\n",
 	)
 
