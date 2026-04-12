@@ -31,6 +31,7 @@ jobs:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
         run: |
           rm -rf "$APP_DIR"
+          mkdir -p "$APP_DIR"
           cd "$APP_DIR"
           npm init -y
 
