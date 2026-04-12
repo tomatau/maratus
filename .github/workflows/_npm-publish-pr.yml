@@ -204,3 +204,18 @@ jobs:
           done <<'EOF'
           ${{ steps.released_packages.outputs.specs }}
           EOF
+
+      - name: Comment published packages on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ inputs.pr-number }}
+          body: |
+            Published PR snapshot packages with dist-tag `pr`.
+
+            CLI version:
+            `${{ steps.cli_version.outputs.value }}`
+
+            Published packages:
+            ```
+            ${{ steps.released_packages.outputs.specs }}
+            ```
