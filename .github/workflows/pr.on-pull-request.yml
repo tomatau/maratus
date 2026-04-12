@@ -96,7 +96,7 @@ jobs:
     with:
       cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
 
-  npm-publish-pr:
+  publish-pr:
     needs:
       - ci-context
       - build-cli
@@ -127,3 +127,9 @@ jobs:
       branch-name: ${{ github.event.pull_request.head.ref }}
       head-sha: ${{ github.event.pull_request.head.sha }}
     secrets: inherit
+
+  consumer-smoke:
+    needs: publish-pr
+    uses: ./.github/workflows/_consumer-smoke.yml
+    with:
+      cli-version: ${{ needs.publish-pr.outputs.cli-version }}

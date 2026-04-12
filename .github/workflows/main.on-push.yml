@@ -82,10 +82,29 @@ jobs:
     with:
       cli-platform-matrix: ${{ needs.ci-context.outputs.cli_platform_matrix }}
 
-  npm-publish:
+  publish-stable:
     needs:
       - ci-context
+      - build-cli
+      - build-manifest
+      - test-integration
+      - test-unit
+      - test-functional
       - cli-smoke
+    if: >-
+      ${{
+        always() &&
+        (
+          needs.ci-context.outputs.cli_affected == 'true' ||
+          needs.ci-context.outputs.manifest_affected == 'true'
+        ) &&
+        contains(fromJson('["success","skipped"]'), needs.build-cli.result) &&
+        contains(fromJson('["success","skipped"]'), needs.build-manifest.result) &&
+        contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
+        contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
+        contains(fromJson('["success","skipped"]'), needs.test-functional.result) &&
+        contains(fromJson('["success","skipped"]'), needs.cli-smoke.result)
+      }}
     uses: ./.github/workflows/_npm-publish-stable.yml
     with:
       cli-affected: ${{ needs.ci-context.outputs.cli_affected }}
@@ -94,7 +113,7 @@ jobs:
     secrets: inherit
 
   consumer-smoke:
-    needs: npm-publish
+    needs: publish-stable
     uses: ./.github/workflows/_consumer-smoke.yml
     with:
-      cli-version: ${{ needs.npm-publish.outputs.cli-version }}
+      cli-version: ${{ needs.publish-stable.outputs.cli-version }}
