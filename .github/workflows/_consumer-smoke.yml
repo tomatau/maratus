@@ -23,33 +23,16 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
 
+      - name: Set up workflow tools
+        uses: ./.github/actions/setup-tools
+
       - name: Create consumer fixture
         env:
           APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
         run: |
           rm -rf "$APP_DIR"
-          mkdir -p "$APP_DIR/src/components" "$APP_DIR/src/lib" "$APP_DIR/src/styles"
           cd "$APP_DIR"
           npm init -y
-          cat > maratus.json <<'EOF'
-          {
-            "srcDir": "src",
-            "componentsDir": "components",
-            "libDir": "lib",
-            "themeDir": "styles",
-            "formatCommand": ":",
-            "layout": {
-              "kind": "nested",
-              "barrel": true
-            },
-            "filenames": {
-              "lib": "kebab-case",
-              "hooks": "kebab-case",
-              "components": "match-export"
-            },
-            "style": "css-files"
-          }
-          EOF
 
       - name: Install published CLI
         env:
@@ -58,6 +41,14 @@ jobs:
         run: |
           cd "$APP_DIR"
           npm install "@maratus/cli@$CLI_VERSION"
+
+      - name: Initialise consumer project
+        env:
+          APP_DIR: ${{ runner.temp }}/maratus-consumer-smoke
+        run: |
+          cd "$APP_DIR"
+          npx -- maratus init --yes
+          yq -i '.layout.barrel = true' maratus.json
 
       - name: Inspect installed Maratus packages
         env:
