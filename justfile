@@ -34,6 +34,8 @@ cli-stage-platform package goos goarch binary='maratus':
 test workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}}; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace test "$(just _workspace-filter {{workspace}})"; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace test; \
   else \
@@ -45,6 +47,8 @@ test workspace='' package='':
 test-unit workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}} test:unit; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace test:unit "$(just _workspace-filter {{workspace}})"; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace test:unit; \
   else \
@@ -59,6 +63,7 @@ test-integration workspace='' package='':
   elif [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}} test:integration; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    go -C cli test ./...; \
     just _run-workspace test:integration; \
   else \
     echo "expected workspace" >&2; \
@@ -114,6 +119,8 @@ _workspace-scope workspace:
     echo "@maratus-component/"; \
   elif [ "{{workspace}}" = "consumers" ]; then \
     echo "@maratus-consumer/"; \
+  elif [ "{{workspace}}" = "lib" ]; then \
+    echo "@maratus-lib/"; \
   else \
     echo "@maratus/"; \
   fi
