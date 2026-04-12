@@ -86,9 +86,11 @@ jobs:
     needs:
       - ci-context
       - cli-smoke
-    uses: ./.github/workflows/_npm-publish.yml
+    uses: ./.github/workflows/_npm-publish-stable.yml
     with:
       cli-affected: ${{ needs.ci-context.outputs.cli_affected }}
+      manifest-affected: ${{ needs.ci-context.outputs.manifest_affected }}
+      branch-name: ${{ github.ref_name }}
     secrets: inherit
 
   consumer-smoke:

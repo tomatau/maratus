@@ -1,0 +1,65 @@
+name: _NPM Publish Stable
+
+on:
+  workflow_call:
+    inputs:
+      cli-affected:
+        required: true
+        type: string
+      manifest-affected:
+        required: true
+        type: string
+      branch-name:
+        required: true
+        type: string
+    outputs:
+      cli-version:
+        description: Effective @maratus/cli version after versioning
+        value: ${{ jobs.publish.outputs.cli-version }}
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_npm-publish.yml
+    with:
+      cli-affected: ${{ inputs.cli-affected }}
+      manifest-affected: ${{ inputs.manifest-affected }}
+      branch-name: ${{ inputs.branch-name }}
+      publish-command: just changeset publish
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  commit-release:
+    needs: publish
+    if: ${{ needs.publish.outputs.has-version-changes == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_BOT_NAME: github-actions[bot]
+      RELEASE_BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "$RELEASE_BOT_NAME"
+          git config user.email "$RELEASE_BOT_EMAIL"
+
+      - name: Commit version changes
+        run: |
+          git add -A
+          git commit -m "chore(release): publish stable packages [skip ci]"
+
+      - name: Push release commit
+        run: git push origin HEAD:${{ inputs.branch-name }}

@@ -6,24 +6,42 @@ on:
       cli-affected:
         required: true
         type: string
+      manifest-affected:
+        required: false
+        type: string
+        default: 'false'
+      publish-command:
+        required: true
+        type: string
+      pr-number:
+        required: false
+        type: string
+        default: ''
+      branch-name:
+        required: false
+        type: string
+        default: ''
+      head-sha:
+        required: false
+        type: string
+        default: ''
     outputs:
       cli-version:
         description: Effective @maratus/cli version after versioning
         value: ${{ jobs.publish.outputs.cli-version }}
+      has-version-changes:
+        description: Whether versioning changed the working tree
+        value: ${{ jobs.publish.outputs.has-version-changes }}
     secrets:
       NPM_TOKEN:
-        required: false
+        required: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     outputs:
       cli-version: ${{ steps.cli_version.outputs.value }}
-    permissions:
-      contents: write
-    env:
-      RELEASE_BOT_NAME: github-actions[bot]
-      RELEASE_BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      has-version-changes: ${{ steps.version_changes.outputs.value }}
 
     defaults:
       run:
@@ -32,25 +50,24 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
         with:
-          fetch-depth: 0
+          auto-install: true
+          auto-setup: true
 
-      - name: Set up development tools
-        uses: ./.github/actions/setup-dev
+      - name: Set up npm authentication
+        uses: actions/setup-node@v6
         with:
-          npm-auth: 'true'
+          node-version: 24
+          registry-url: https://registry.npmjs.org
 
-      - name: Build registry artefacts
-        run: just build registry
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
 
-      - name: Build manifest package
-        run: just build packages maratus-manifest
-
-      - name: Build codemod runner
-        run: just build packages maratus-codemod-runner
-
-      - name: Build codemods
-        run: just build codemods
+      - name: Set up workflow tools
+        uses: ./.github/actions/setup-tools
 
       - name: Download macOS arm64 CLI artefact
         if: ${{ inputs.cli-affected == 'true' }}
@@ -80,35 +97,96 @@ jobs:
           chmod +x packages/maratus-cli-linux-x64/bin/maratus
           chmod +x packages/maratus-cli-win32-x64/bin/maratus.exe || true
 
-      - name: Version packages
-        run: just changeset version
+      - name: Download codemod runner artefact
+        if: ${{ inputs.cli-affected == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: maratus-codemod-runner
+          path: packages/maratus-codemod-runner
+
+      - name: Download manifest artefact
+        if: ${{ inputs.manifest-affected == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: maratus-manifest
+          path: packages/maratus-manifest
+
+      - name: Download registry artefacts
+        if: ${{ inputs.manifest-affected == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: maratus-registry
+          path: registry
+
+      - name: Download codemod artefacts
+        if: ${{ inputs.manifest-affected == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: maratus-codemods
+          path: codemods
+
+      - name: Determine publish kind
+        id: publish_kind
+        env:
+          BRANCH_NAME: ${{ inputs.branch-name }}
+        run: |
+          stable_branch=$(yq -r '.channels.stable.branch' release.yml)
+          rc_branch=$(yq -r '.channels.rc.activeBranch // ""' release.yml)
+
+          if [ "$BRANCH_NAME" = "$stable_branch" ]; then
+            echo "value=stable" >> "$GITHUB_OUTPUT"
+          elif [ -n "$rc_branch" ] && [ "$BRANCH_NAME" = "$rc_branch" ]; then
+            echo "value=rc" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=pr" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build snapshot tag
+        if: ${{ steps.publish_kind.outputs.value == 'pr' }}
+        id: snapshot_tag
+        env:
+          PR_NUMBER: ${{ inputs.pr-number }}
+          BRANCH_NAME: ${{ inputs.branch-name }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          snapshot_template=$(yq -r '.channels.pr.versionFormat' release.yml)
+          snapshot_suffix=${snapshot_template#\{baseVersion\}-}
+          branch_slug=$(printf '%s' "$BRANCH_NAME" | tr '/ ' '--')
+          short_sha=$(printf '%s' "$HEAD_SHA" | cut -c1-7)
+
+          snapshot_tag=${snapshot_suffix//\{prNumber\}/$PR_NUMBER}
+          snapshot_tag=${snapshot_tag//\{branch\}/$branch_slug}
+          snapshot_tag=${snapshot_tag//\{sha\}/$short_sha}
+
+          echo "value=$snapshot_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Version snapshot packages
+        if: ${{ steps.publish_kind.outputs.value == 'pr' }}
+        run: bun run changeset version --snapshot "${{ steps.snapshot_tag.outputs.value }}"
+
+      - name: Version non-PR packages
+        if: ${{ steps.publish_kind.outputs.value != 'pr' }}
+        run: bun run changeset version
+
+      - name: Detect version changes
+        id: version_changes
+        run: |
+          if git diff --quiet; then
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Read CLI version
         id: cli_version
         run: |
-          version=$(sed -n 's/^  "version": "\(.*\)",$/\1/p' packages/maratus-cli/package.json)
+          version=$(jq -r '.version' packages/maratus-cli/package.json)
           echo "value=$version" >> "$GITHUB_OUTPUT"
-
-      - name: Detect release changes
-        id: release_changes
-        run: |
-          if git diff --quiet; then
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Set up yq
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
 
       - name: Collect released package specs
         id: released_packages
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
         run: |
-          mapfile -t relevant_dirs < <(
+          mapfile -t release_roots < <(
             yq -r '
               .workspaces
               | to_entries[]
@@ -119,70 +197,52 @@ jobs:
 
           {
             echo "specs<<EOF"
-            while IFS= read -r path; do
-              [ -n "$path" ] || continue
+            for root in "${release_roots[@]}"; do
+              find "$root" -mindepth 2 -maxdepth 2 -name package.json -print 2>/dev/null
+            done \
+              | sort -u \
+              | while IFS= read -r package_json; do
+                  [ -n "$package_json" ] || continue
 
-              if git diff --quiet -- "$path"; then
-                continue
-              fi
+                  private=$(jq -r '.private // false' "$package_json")
+                  if [ "$private" = 'true' ]; then
+                    continue
+                  fi
 
-              private=$(sed -n 's/^  "private": \(true\|false\),$/\1/p' "$path" | head -n1)
-              if [ "$private" != "false" ]; then
-                continue
-              fi
+                  name=$(jq -r '.name // empty' "$package_json")
+                  version=$(jq -r '.version // empty' "$package_json")
 
-              name=$(sed -n 's/^  "name": "\(.*\)",$/\1/p' "$path" | head -n1)
-              version=$(sed -n 's/^  "version": "\(.*\)",$/\1/p' "$path" | head -n1)
-
-              if [ -n "$name" ] && [ -n "$version" ]; then
-                echo "$name@$version"
-              fi
-            done < <(
-              for dir in "${relevant_dirs[@]}"; do
-                find "$dir" -mindepth 2 -maxdepth 2 -name package.json
-              done | sort -u
-            )
+                  if [ -n "$name" ] && [ -n "$version" ]; then
+                    echo "$name@$version"
+                  fi
+                done
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Configure git
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
-        run: |
-          git config user.name "$RELEASE_BOT_NAME"
-          git config user.email "$RELEASE_BOT_EMAIL"
-
-      - name: Commit version changes
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
-        run: |
-          git add -A
-          git commit -m "chore(release): publish stable packages [skip ci]"
-
       - name: Publish packages
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: just changeset publish
+          PUBLISH_COMMAND: ${{ inputs.publish-command }}
+        run: eval "$PUBLISH_COMMAND"
 
-      - name: Wait for npm package availability
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
+      - name: Wait for published packages
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           RELEASED_PACKAGE_SPECS: ${{ steps.released_packages.outputs.specs }}
         run: |
           while IFS= read -r spec; do
             [ -n "$spec" ] || continue
 
-            success=false
+            available=false
             for attempt in 1 2 3 4 5 6 7 8 9 10; do
-              if npm view "$spec" version >/dev/null 2>&1; then
-                success=true
+              if bun pm view "$spec" version >/dev/null 2>&1; then
+                available=true
                 break
               fi
 
               sleep 15
             done
 
-            if [ "$success" != "true" ]; then
+            if [ "$available" != 'true' ]; then
               echo "Timed out waiting for $spec to become visible on npm" >&2
               exit 1
             fi
@@ -190,6 +250,18 @@ jobs:
           ${{ steps.released_packages.outputs.specs }}
           EOF
 
-      - name: Push release commit
-        if: ${{ steps.release_changes.outputs.has_changes == 'true' }}
-        run: git push origin HEAD:main
+      - name: Comment published packages on PR
+        if: ${{ inputs.pr-number != '' }}
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ inputs.pr-number }}
+          body: |
+            Published PR snapshot packages with dist-tag `pr`.
+
+            CLI version:
+            `${{ steps.cli_version.outputs.value }}`
+
+            Published packages:
+            ```
+            ${{ steps.released_packages.outputs.specs }}
+            ```
