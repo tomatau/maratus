@@ -1,5 +1,11 @@
 # @maratus/cli
 
+## 0.3.8
+
+### Patch Changes
+
+- d1594a3: Adds --yes flag to cli init command
+
 ## 0.3.7
 
 ### Patch Changes
