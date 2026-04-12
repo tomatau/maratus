@@ -39,7 +39,7 @@ jobs:
             playwright-linux-
 
       - name: Install Playwright browser
-        run: bunx playwright install --with-deps chromium
+        run: bunx playwright install --with-deps chromium --only-shell
 
       - name: Run affected functional tests
         run: |
