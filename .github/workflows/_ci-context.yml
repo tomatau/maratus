@@ -13,6 +13,9 @@ on:
       cli_affected:
         description: Whether CLI smoke should run
         value: ${{ jobs.ci-context.outputs.cli_affected }}
+      manifest_affected:
+        description: Whether the manifest package is affected
+        value: ${{ jobs.ci-context.outputs.manifest_affected }}
       test_affected:
         description: Whether any functional test tasks are affected
         value: ${{ jobs.ci-context.outputs.test_affected }}
@@ -22,9 +25,6 @@ on:
       test_integration_affected:
         description: Whether any integration test tasks are affected
         value: ${{ jobs.ci-context.outputs.test_integration_affected }}
-      manifest_affected:
-        description: Whether the manifest package is affected
-        value: ${{ jobs.ci-context.outputs.manifest_affected }}
       cli_platform_matrix:
         description: CLI platform matrix JSON
         value: ${{ jobs.ci-context.outputs.cli_platform_matrix }}
@@ -56,8 +56,11 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - name: Set up workflow tools
+        uses: ./.github/actions/setup-tools
+
       - name: Detect CLI changes
-        id: cli_affected
+        id: cli_affected_moon
         env:
           MOON_BASE: ${{ inputs.base-sha }}
           MOON_HEAD: ${{ inputs.head-sha }}
@@ -117,7 +120,7 @@ jobs:
           fi
 
       - name: Detect manifest changes
-        id: manifest_affected
+        id: manifest_affected_moon
         env:
           MOON_BASE: ${{ inputs.base-sha }}
           MOON_HEAD: ${{ inputs.head-sha }}
@@ -126,6 +129,92 @@ jobs:
 
           if jq -e '.tasks["manifest:build"]' <<<"$affected" >/dev/null
           then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect pending release context
+        id: pending_release_context
+        run: |
+          status_path='tmp/changeset-status.json'
+          cli_affected=false
+          manifest_affected=false
+
+          packages_scope=$(yq -r '.workspaces.packages.scope' repo.yml)
+          codemods_scope=$(yq -r '.workspaces.codemods.scope' repo.yml)
+
+          mapfile -t manifest_scopes < <(
+            yq -r '
+              .workspaces
+              | to_entries[]
+              | select(.value.consumption != "none")
+              | select(.key != "packages" and .key != "codemods")
+              | .value.scope
+            ' repo.yml
+          )
+
+          mkdir -p tmp
+          set +e
+          bunx @changesets/cli status --output="$status_path"
+          status_exit=$?
+          set -e
+
+          if [ "$status_exit" -ne 0 ] && [ ! -f "$status_path" ]; then
+            echo "cli=false" >> "$GITHUB_OUTPUT"
+            echo "manifest=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          while IFS= read -r package_name; do
+            [ -n "$package_name" ] || continue
+
+            if [ "$package_name" = '@maratus/manifest' ]; then
+              manifest_affected=true
+              continue
+            fi
+
+            if [[ "$package_name" == "$codemods_scope"* ]]; then
+              cli_affected=true
+              manifest_affected=true
+              continue
+            fi
+
+            if [[ "$package_name" == "$packages_scope"* ]]; then
+              cli_affected=true
+              continue
+            fi
+
+            for scope in "${manifest_scopes[@]}"; do
+              if [[ "$package_name" == "$scope"* ]]; then
+                manifest_affected=true
+                break
+              fi
+            done
+          done < <(jq -r '.releases[]?.name // empty' "$status_path")
+
+          echo "cli=$cli_affected" >> "$GITHUB_OUTPUT"
+          echo "manifest=$manifest_affected" >> "$GITHUB_OUTPUT"
+
+      - name: Finalise CLI affected flag
+        id: cli_affected
+        env:
+          MOON_AFFECTED: ${{ steps.cli_affected_moon.outputs.value }}
+          PENDING_AFFECTED: ${{ steps.pending_release_context.outputs.cli }}
+        run: |
+          if [ "$MOON_AFFECTED" = 'true' ] || [ "$PENDING_AFFECTED" = 'true' ]; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Finalise manifest affected flag
+        id: manifest_affected
+        env:
+          MOON_AFFECTED: ${{ steps.manifest_affected_moon.outputs.value }}
+          PENDING_AFFECTED: ${{ steps.pending_release_context.outputs.manifest }}
+        run: |
+          if [ "$MOON_AFFECTED" = 'true' ] || [ "$PENDING_AFFECTED" = 'true' ]; then
             echo "value=true" >> "$GITHUB_OUTPUT"
           else
             echo "value=false" >> "$GITHUB_OUTPUT"
