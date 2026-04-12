@@ -91,7 +91,7 @@ func TestAddCSSFilesCopiesBuiltSourceGraph(t *testing.T) {
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".css"))
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
@@ -131,7 +131,7 @@ func TestAddCSSModulesCopiesBuiltSourceGraph(t *testing.T) {
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".module.css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".module.css"))
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
@@ -171,7 +171,7 @@ func TestAddTailwindCSSCopiesBuiltSourceGraph(t *testing.T) {
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".css"))
 	assertFileContains(
 		t,
 		filepath.Join(wd, "tmp", "src", "components", "use-component.ts"),
@@ -211,7 +211,7 @@ func TestAddNestedLayoutPreservesRelativeFiles(t *testing.T) {
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, "use-component.ts"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentWithHookName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName, componentTypeName(componentWithHookName)+".css"))
 }
 
 func TestAddMultipleComponentsCSSFiles(t *testing.T) {
@@ -246,10 +246,10 @@ func TestAddMultipleComponentsCSSFiles(t *testing.T) {
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".css"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"))
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", "use-component.ts"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentWithHookName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".css"))
 }
 
 func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.T) {
@@ -324,7 +324,7 @@ func TestAddInConsumerModeInstallsRequiredPackagesAndCopiesComponent(t *testing.
 	}
 
 	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".tsx"))
-	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentOnlyName+".css"))
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentOnlyName)+".css"))
 }
 
 func TestAddInConsumerModeRestoresPackageManagerFiles(t *testing.T) {
