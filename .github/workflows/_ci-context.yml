@@ -141,7 +141,7 @@ jobs:
             "include": [
               {
                 "name": "macOS arm64",
-                "runner": "macos-14",
+                "runner": "macos-latest",
                 "package": "maratus-cli-darwin-arm64",
                 "goos": "darwin",
                 "goarch": "arm64",
