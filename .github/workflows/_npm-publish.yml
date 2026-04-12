@@ -39,9 +39,14 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       cli-version: ${{ steps.cli_version.outputs.value }}
       has-version-changes: ${{ steps.version_changes.outputs.value }}
+    env:
+      RELEASE_BOT_NAME: github-actions[bot]
+      RELEASE_BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
 
     defaults:
       run:
@@ -140,6 +145,33 @@ jobs:
           else
             echo "value=pr" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Derive publish metadata
+        id: publish_metadata
+        env:
+          PUBLISH_KIND: ${{ steps.publish_kind.outputs.value }}
+        run: |
+          case "$PUBLISH_KIND" in
+            stable)
+              dist_tag=$(yq -r '.channels.stable.distTag' release.yml)
+              commit_message='chore(release): publish stable packages [skip ci]'
+              comment_heading='Published stable packages'
+              ;;
+            rc)
+              dist_tag=$(yq -r '.channels.rc.distTag' release.yml)
+              commit_message='chore(release): publish rc packages [skip ci]'
+              comment_heading='Published rc packages'
+              ;;
+            *)
+              dist_tag=$(yq -r '.channels.pr.distTag' release.yml)
+              commit_message=''
+              comment_heading='Published snapshot packages'
+              ;;
+          esac
+
+          echo "dist-tag=$dist_tag" >> "$GITHUB_OUTPUT"
+          echo "commit-message=$commit_message" >> "$GITHUB_OUTPUT"
+          echo "comment-heading=$comment_heading" >> "$GITHUB_OUTPUT"
 
       - name: Build snapshot tag
         if: ${{ steps.publish_kind.outputs.value == 'pr' }}
@@ -250,13 +282,41 @@ jobs:
           ${{ steps.released_packages.outputs.specs }}
           EOF
 
+      - name: Configure release git identity
+        if: >-
+          ${{
+            (steps.publish_kind.outputs.value == 'stable' || steps.publish_kind.outputs.value == 'rc') &&
+            steps.version_changes.outputs.value == 'true'
+          }}
+        run: |
+          git config user.name "$RELEASE_BOT_NAME"
+          git config user.email "$RELEASE_BOT_EMAIL"
+
+      - name: Commit release version changes
+        if: >-
+          ${{
+            (steps.publish_kind.outputs.value == 'stable' || steps.publish_kind.outputs.value == 'rc') &&
+            steps.version_changes.outputs.value == 'true'
+          }}
+        run: |
+          git add -A
+          git commit -m "${{ steps.publish_metadata.outputs.commit-message }}"
+
+      - name: Push release commit and tags
+        if: >-
+          ${{
+            (steps.publish_kind.outputs.value == 'stable' || steps.publish_kind.outputs.value == 'rc') &&
+            steps.version_changes.outputs.value == 'true'
+          }}
+        run: git push origin HEAD:${{ inputs.branch-name }} --follow-tags
+
       - name: Comment published packages on PR
         if: ${{ inputs.pr-number != '' }}
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ inputs.pr-number }}
           body: |
-            Published PR snapshot packages with dist-tag `pr`.
+            ${{ steps.publish_metadata.outputs.comment-heading }} with dist-tag `${{ steps.publish_metadata.outputs.dist-tag }}`.
 
             CLI version:
             `${{ steps.cli_version.outputs.value }}`
