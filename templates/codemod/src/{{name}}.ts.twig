@@ -1,0 +1,8 @@
+---
+to: src/{{ name | kebab_case }}.ts
+---
+import type { Codemod } from '@maratus/codemod-runner'
+
+export const {{ name | camel_case }}: Codemod = ({ files }) => {
+  return files
+}

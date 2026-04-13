@@ -1,0 +1,14 @@
+---
+to: specs/{{ name | camel_case }}.spec.tsx
+---
+import { expect, test } from '@playwright/experimental-ct-react'
+import { {{ name | pascal_case }}Probe } from './{{ name | camel_case }}.story'
+
+test('PRD-002 exposes the exported API through the public entry point', async ({
+  mount,
+  page,
+}) => {
+  await mount(<{{ name | pascal_case }}Probe />)
+
+  await expect(page.getByTestId('value')).toHaveText('{{ name | kebab_case }}')
+})

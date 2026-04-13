@@ -1,0 +1,22 @@
+$schema: ../../.moon/cache/schemas/template.json
+title: Codemod
+description: Scaffold a minimal codemod package under codemods/.
+destination: /codemods/{{ name | kebab_case }}
+variables:
+  name:
+    type: string
+    prompt: Codemod package name
+    required: true
+    order: 1
+  options_category:
+    type: enum
+    prompt: Codemod options category
+    values:
+      - value: modify-file-imports
+        label: modify-file-imports - rewrite relative or local file imports
+      - value: modify-package-imports
+        label: modify-package-imports - rewrite package or workspace imports
+    default: modify-file-imports
+    order: 2
+  runner_version:
+    type: string

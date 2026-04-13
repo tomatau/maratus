@@ -1,0 +1,10 @@
+$schema: ../../.moon/cache/schemas/template.json
+title: Component
+description: Scaffold a minimal component package under components/.
+destination: /components/{{ name | kebab_case }}
+variables:
+  name:
+    type: string
+    prompt: Component package name
+    required: true
+    order: 1

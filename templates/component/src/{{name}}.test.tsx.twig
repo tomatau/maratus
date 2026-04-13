@@ -1,0 +1,14 @@
+---
+to: src/{{ name | pascal_case }}.test.tsx
+---
+import { describe, expect, test } from 'bun:test'
+import { render } from '@testing-library/react'
+import { {{ name | pascal_case }} } from './{{ name | pascal_case }}'
+
+describe({{ name | pascal_case }}, () => {
+  test('renders a native element', () => {
+    const { container } = render(<{{ name | pascal_case }} />)
+
+    expect(container.querySelector('div')).not.toBeNull()
+  })
+})

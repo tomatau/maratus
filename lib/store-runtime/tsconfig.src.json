@@ -1,4 +1,10 @@
 {
   "extends": "@maratus/dotfiles/tsconfig",
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/**/*.func.ts",
+    "src/**/*.func.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
 }

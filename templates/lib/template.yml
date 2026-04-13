@@ -1,0 +1,10 @@
+$schema: ../../.moon/cache/schemas/template.json
+title: Lib
+description: Scaffold a minimal library package under lib/.
+destination: /lib/{{ name | kebab_case }}
+variables:
+  name:
+    type: string
+    prompt: Library package name
+    required: true
+    order: 1

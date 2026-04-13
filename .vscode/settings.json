@@ -7,6 +7,9 @@
     "source.fixAll": "explicit",
     "source.fixAll.oxc": "explicit"
   },
+  "files.associations": {
+    "*.twig": "twig"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
@@ -30,5 +33,8 @@
   },
   "[go]": {
     "editor.defaultFormatter": "golang.go"
+  },
+  "[twig]": {
+    "editor.defaultFormatter": "mblode.twig-language-2"
   }
 }

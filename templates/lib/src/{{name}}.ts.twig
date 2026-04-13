@@ -1,0 +1,6 @@
+---
+to: src/{{ name | kebab_case }}.ts
+---
+export function create{{ name | pascal_case }}Value() {
+  return '{{ name | kebab_case }}'
+}

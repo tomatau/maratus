@@ -1,0 +1,8 @@
+---
+to: specs/{{ name | camel_case }}.story.tsx
+---
+import { create{{ name | pascal_case }}Value } from '../src'
+
+export function {{ name | pascal_case }}Probe() {
+  return <output data-testid="value">{create{{ name | pascal_case }}Value()}</output>
+}

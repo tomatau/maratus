@@ -89,6 +89,25 @@ build workspace='' package='':
 clear-tmp-src:
   rm -rf {{TMP_SRC_DIR}}/
 
+[group('generate')]
+generate template:
+  @case "{{template}}" in \
+    codemod) \
+      moon generate codemod -- \
+        --runner_version "$$(jq -r '.version' packages/maratus-codemod-runner/package.json)" \
+      ;; \
+    lib) \
+      moon generate lib \
+      ;; \
+    component) \
+      moon generate component \
+      ;; \
+    *) \
+      echo "unknown generator template: {{template}}" >&2; \
+      exit 1 \
+      ;; \
+  esac
+
 [group('cli')]
 cli consumer command='' *args:
   {{CLI_BIN}} -cf="$(just _consumer-config-file {{consumer}})" {{command}} {{args}}

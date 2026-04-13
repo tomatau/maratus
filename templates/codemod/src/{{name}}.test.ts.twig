@@ -1,0 +1,26 @@
+---
+to: src/{{ name | kebab_case }}.test.ts
+---
+import { describe, expect, it } from 'bun:test'
+import { runCodemod } from '@maratus/codemod-runner'
+import { {{ name | camel_case }} } from './{{ name | kebab_case }}'
+
+describe({{ name | camel_case }}, () => {
+  it('returns files unchanged by default', async () => {
+    const [result] = await runCodemod(
+      {{ name | camel_case }},
+      [
+        {
+          path: '/consumer/example.ts',
+          sourceText: 'export const value = 1\n',
+        },
+      ],
+      {},
+    )
+
+    expect(result).toEqual({
+      path: '/consumer/example.ts',
+      sourceText: 'export const value = 1\n',
+    })
+  })
+})

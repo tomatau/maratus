@@ -1,0 +1,19 @@
+---
+to: src/{{ name | pascal_case }}.tsx
+---
+import type { HTMLAttributes } from 'react'
+import clsx from 'clsx'
+import styles from './{{ name | pascal_case }}.module.css'
+
+export type {{ name | pascal_case }}Props = HTMLAttributes<HTMLDivElement>
+
+export function {{ name | pascal_case }}(props: {{ name | pascal_case }}Props) {
+  const { className, ...rest } = props
+
+  return (
+    <div
+      {...rest}
+      className={clsx(styles.{{ name | camel_case }}, className)}
+    />
+  )
+}

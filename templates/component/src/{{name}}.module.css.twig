@@ -1,0 +1,10 @@
+---
+to: src/{{ name | pascal_case }}.module.css
+---
+.root {
+  --ara-{{ name | kebab_case }}-detail: var(--ara-color-content-detail);
+}
+
+.{{ name | camel_case }} {
+  color: var(--ara-{{ name | kebab_case }}-detail)
+}
