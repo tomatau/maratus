@@ -34,12 +34,12 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-linux-${{ hashFiles('tools/playwright/package.json') }}
+          key: playwright-shell-linux-${{ hashFiles('tools/playwright/package.json') }}
           restore-keys: |
-            playwright-linux-
+            playwright-shell-linux-
 
       - name: Install Playwright browser
-        run: bunx playwright install --with-deps chromium --only-shell
+        run: bunx playwright install --with-deps --only-shell
 
       - name: Run affected functional tests
         run: |
