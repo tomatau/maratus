@@ -71,7 +71,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps['aria-disabled']).toBe('false')
   })
 
-  test('whenEnabled omits props when interaction is disabled', () => {
+  test('omits pointer activation handlers when interaction is disabled', () => {
     const onClick = () => undefined
     const onMouseDown = () => undefined
 
@@ -79,60 +79,54 @@ describe(useButton, () => {
       useButton({
         children: 'Save',
         disabled: true,
-      }),
-    )
-
-    expect(
-      result.current.whenEnabled({
         onClick,
         onMouseDown,
       }),
-    ).toEqual({})
+    )
+
+    expect(result.current.buttonProps.onClick).toBeUndefined()
+    expect(result.current.buttonProps.onMouseDown).toBeUndefined()
   })
 
-  test('whenEnabled preserves props when interaction is enabled', () => {
+  test('preserves pointer activation handlers when interaction is enabled', () => {
     const onClick = () => undefined
-    const tabIndex = 0
 
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
+        onClick,
       }),
     )
 
-    expect(result.current.whenEnabled({ onClick, tabIndex })).toEqual({
-      onClick,
-      tabIndex,
-    })
+    expect(result.current.buttonProps.onClick).toBe(onClick)
   })
 
-  test('preventDisabledActivation preserves keyboard handlers when enabled', () => {
+  test('preserves keyboard handlers when enabled', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
 
-    const { result } = renderHook(() =>
+    const onKeyDown = () => {
+      keyDownCalls += 1
+    }
+    const onKeyUp = () => {
+      keyUpCalls += 1
+    }
+    const { result: handlersResult } = renderHook(() =>
       useButton({
         children: 'Save',
+        onKeyDown,
+        onKeyUp,
       }),
     )
 
-    const handlers = result.current.preventDisabledActivation({
-      onKeyDown: () => {
-        keyDownCalls += 1
-      },
-      onKeyUp: () => {
-        keyUpCalls += 1
-      },
-    })
-
-    handlers.onKeyDown?.(createKeyboardEvent('Enter'))
-    handlers.onKeyUp?.(createKeyboardEvent(' '))
+    handlersResult.current.buttonProps.onKeyDown?.(createKeyboardEvent('Enter'))
+    handlersResult.current.buttonProps.onKeyUp?.(createKeyboardEvent(' '))
 
     expect(keyDownCalls).toBe(1)
     expect(keyUpCalls).toBe(1)
   })
 
-  test('preventDisabledActivation blocks Enter on keydown for focusable disabled buttons', () => {
+  test('blocks Enter on keydown for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -141,16 +135,13 @@ describe(useButton, () => {
         children: 'Save',
         disabled: true,
         disabledBehavior: 'focusable',
+        onKeyDown: () => {
+          keyDownCalls += 1
+        },
       }),
     )
 
-    const handlers = result.current.preventDisabledActivation({
-      onKeyDown: () => {
-        keyDownCalls += 1
-      },
-    })
-
-    handlers.onKeyDown?.(
+    result.current.buttonProps.onKeyDown?.(
       createKeyboardEvent('Enter', () => {
         prevented = true
       }),
@@ -160,7 +151,7 @@ describe(useButton, () => {
     expect(keyDownCalls).toBe(0)
   })
 
-  test('preventDisabledActivation blocks Space on keydown and keyup for focusable disabled buttons', () => {
+  test('blocks Space on keydown and keyup for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
     let preventedKeyDown = false
@@ -171,25 +162,22 @@ describe(useButton, () => {
         children: 'Save',
         disabled: true,
         disabledBehavior: 'focusable',
+        onKeyDown: () => {
+          keyDownCalls += 1
+        },
+        onKeyUp: () => {
+          keyUpCalls += 1
+        },
       }),
     )
 
-    const handlers = result.current.preventDisabledActivation({
-      onKeyDown: () => {
-        keyDownCalls += 1
-      },
-      onKeyUp: () => {
-        keyUpCalls += 1
-      },
-    })
-
-    handlers.onKeyDown?.(
+    result.current.buttonProps.onKeyDown?.(
       createKeyboardEvent(' ', () => {
         preventedKeyDown = true
       }),
     )
 
-    handlers.onKeyUp?.(
+    result.current.buttonProps.onKeyUp?.(
       createKeyboardEvent(' ', () => {
         preventedKeyUp = true
       }),
@@ -201,7 +189,7 @@ describe(useButton, () => {
     expect(keyUpCalls).toBe(0)
   })
 
-  test('preventDisabledActivation does not block non-activation keys for focusable disabled buttons', () => {
+  test('does not block non-activation keys for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -210,16 +198,13 @@ describe(useButton, () => {
         children: 'Save',
         disabled: true,
         disabledBehavior: 'focusable',
+        onKeyDown: () => {
+          keyDownCalls += 1
+        },
       }),
     )
 
-    const handlers = result.current.preventDisabledActivation({
-      onKeyDown: () => {
-        keyDownCalls += 1
-      },
-    })
-
-    handlers.onKeyDown?.(
+    result.current.buttonProps.onKeyDown?.(
       createKeyboardEvent('Tab', () => {
         prevented = true
       }),
@@ -227,5 +212,28 @@ describe(useButton, () => {
 
     expect(prevented).toBe(false)
     expect(keyDownCalls).toBe(1)
+  })
+
+  test('sets native disabled when native disabled behaviour applies', () => {
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        disabled: true,
+      }),
+    )
+
+    expect(result.current.buttonProps.disabled).toBe(true)
+  })
+
+  test('does not set native disabled when focusable disabled behaviour applies', () => {
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        disabled: true,
+        disabledBehavior: 'focusable',
+      }),
+    )
+
+    expect(result.current.buttonProps.disabled).toBe(false)
   })
 })
