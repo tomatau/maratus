@@ -3,6 +3,7 @@
   "compilerOptions": {
     "types": [
       "cypress",
+      "cypress-real-events",
       "@maratus/cypress/support-types",
       "@maratus/dotfiles/css-modules"
     ]

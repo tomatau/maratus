@@ -3,5 +3,6 @@ declare namespace Cypress {
     mount: (typeof import('cypress/react'))['mount']
     injectAxeAtRoot(): Chainable<void>
     auditA11y(subject?: string): Chainable<void>
+    getRootElement(): Chainable<Subject>
   }
 }
