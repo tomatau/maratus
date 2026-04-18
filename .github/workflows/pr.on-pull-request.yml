@@ -121,6 +121,7 @@ jobs:
       }}
     permissions:
       contents: write
+      issues: write
       pull-requests: write
     uses: ./.github/workflows/_npm-publish-pr.yml
     with:
@@ -133,6 +134,7 @@ jobs:
 
   consumer-smoke:
     needs: publish-pr
+    if: ${{ always() && needs.publish-pr.result == 'success' }}
     uses: ./.github/workflows/_consumer-smoke.yml
     with:
       cli-version: ${{ needs.publish-pr.outputs.cli-version }}
