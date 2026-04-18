@@ -119,6 +119,9 @@ jobs:
         contains(fromJson('["success","skipped"]'), needs.test-functional.result) &&
         contains(fromJson('["success","skipped"]'), needs.cli-smoke.result)
       }}
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ./.github/workflows/_npm-publish-pr.yml
     with:
       cli-affected: ${{ needs.ci-context.outputs.cli_affected }}
