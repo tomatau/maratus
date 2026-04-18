@@ -38,6 +38,9 @@ jobs:
           restore-keys: |
             playwright-shell-linux-
 
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
       - name: Install Playwright browser
         run: bunx playwright install --with-deps --only-shell
 
