@@ -9,9 +9,17 @@ Package-local requirements remain in each package’s own `requirements.md`.
 
 ## Scope
 
-These requirements cover shared non-functional expectations that should hold across components and libs, especially where behaviour is implemented through common infrastructure or repeated patterns.
+These requirements cover shared product and non-functional expectations that should hold across components and libs, especially where behaviour is implemented through common infrastructure or repeated patterns.
 
-## Requirement Matrix
+## Global Product Requirements
+
+| ID       | Level | Requirement                                                                                                                       | Source         | Applicability |
+| -------- | ----- | --------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
+| GPRD-001 | MUST  | Components that support root substitution MUST expose the substitution prop as `as`.                                              | Library policy | Current       |
+| GPRD-002 | MUST  | A component `as` prop MUST accept either an intrinsic element name string or a React component value.                             | Library policy | Current       |
+| GPRD-003 | MUST  | Hooks that shape semantics differently for native and non-native roots MUST expose an `isNative` option and default it to `true`. | Library policy | Current       |
+
+## Non-Functional Requirements
 
 | ID      | Level | Requirement                                                                                                                                                                                              | Source         | Applicability |
 | ------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |

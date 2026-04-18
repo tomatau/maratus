@@ -26,8 +26,12 @@ type ToggleButtonProps = {
   pressed: boolean | 'mixed'
 }
 
-export type ButtonProps = CommonButtonProps &
+export type ButtonBaseProps = CommonButtonProps &
   (CommandButtonProps | ToggleButtonProps)
+
+export type UseButtonProps = ButtonBaseProps & {
+  isNative?: boolean
+}
 
 type ButtonRootProps = NativeButtonProps & {
   'data-focus-visible'?: ''
@@ -38,13 +42,14 @@ export type UseButtonResult = {
   buttonProps: ButtonRootProps
 }
 
-export function useButton(props: ButtonProps): UseButtonResult {
+export function useButton(props: UseButtonProps): UseButtonResult {
   const {
     'aria-busy': ariaBusy,
     'aria-disabled': ariaDisabled,
     className,
     disabled,
     disabledBehavior = 'native',
+    isNative = true,
     isLoading = false,
     kind = 'command',
     onClick,
@@ -61,6 +66,11 @@ export function useButton(props: ButtonProps): UseButtonResult {
   const isInteractionDisabled = disabled || isLoading
   const ariaPressed = kind === 'toggle' ? pressed : undefined
   const isFocusVisible = useIsFocusVisible()
+  const activationOptions = {
+    isInteractionDisabled,
+    isNative,
+    disabledBehavior,
+  }
 
   return {
     buttonProps: {
@@ -73,24 +83,22 @@ export function useButton(props: ButtonProps): UseButtonResult {
       className: clsx(styles.button, className),
       'data-focus-visible': isFocusVisible ? '' : undefined,
       'data-loading': isLoading ? '' : undefined,
-      disabled: isInteractionDisabled && disabledBehavior === 'native',
-      ...getPointerActivationHandlerProps(
-        { isInteractionDisabled },
-        {
-          onClick,
-          onMouseDown,
-          onPointerDown,
-          onTouchStart,
-        },
-      ),
-      ...getKeyboardActivationHandlerProps(
-        { isInteractionDisabled, disabledBehavior },
-        {
-          onKeyDown,
-          onKeyUp,
-        },
-      ),
-      type,
+      ...getRootSemanticsProps(activationOptions, nativeProps),
+      disabled:
+        isNative && isInteractionDisabled && disabledBehavior === 'native'
+          ? true
+          : undefined,
+      ...getPointerActivationHandlerProps(activationOptions, {
+        onClick,
+        onMouseDown,
+        onPointerDown,
+        onTouchStart,
+      }),
+      ...getKeyboardActivationHandlerProps(activationOptions, {
+        onKeyDown,
+        onKeyUp,
+      }),
+      type: isNative ? type : undefined,
     },
   }
 }
@@ -100,33 +108,54 @@ type ActivationHandlerProps = {
   onKeyUp?: KeyboardEventHandler<HTMLButtonElement>
 }
 
-type PointerActivationHandlerProps = {
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  onMouseDown?: MouseEventHandler<HTMLButtonElement>
-  onPointerDown?: PointerEventHandler<HTMLButtonElement>
-  onTouchStart?: TouchEventHandler<HTMLButtonElement>
-}
-
 type ActivationPhase = keyof ActivationHandlerProps
 
-const activationKeysByPhase: Record<ActivationPhase, Set<string>> = {
-  onKeyDown: new Set(['Enter', ' ']),
-  onKeyUp: new Set([' ']),
-}
-
 type ActivationOptions = {
+  isNative: boolean
   disabledBehavior?: CommonButtonProps['disabledBehavior']
   isInteractionDisabled: boolean
+}
+
+type RootSemanticsProps = Pick<ButtonRootProps, 'role' | 'tabIndex'>
+
+function getRootSemanticsProps(
+  { isNative, isInteractionDisabled, disabledBehavior }: ActivationOptions,
+  { tabIndex }: UseButtonProps,
+): RootSemanticsProps {
+  if (isNative) return {}
+  return {
+    role: 'button',
+    tabIndex:
+      tabIndex ??
+      (isInteractionDisabled && disabledBehavior === 'native' ? -1 : 0),
+  }
 }
 
 function getKeyboardActivationHandlerProps(
   options: ActivationOptions,
   props: ActivationHandlerProps,
 ): ActivationHandlerProps {
+  const createActivationHandler = (
+    phase: ActivationPhase,
+    handler?: KeyboardEventHandler<HTMLButtonElement>,
+  ) =>
+    preventNonFocusActivation(
+      phase,
+      options,
+      options.isNative ? handler : createKeyboardClickHandler(phase, handler),
+    )
+
   return {
-    onKeyDown: wrapActivationHandler('onKeyDown', options, props.onKeyDown),
-    onKeyUp: wrapActivationHandler('onKeyUp', options, props.onKeyUp),
+    onKeyDown: createActivationHandler('onKeyDown', props.onKeyDown),
+    onKeyUp: createActivationHandler('onKeyUp', props.onKeyUp),
   }
+}
+
+type PointerActivationHandlerProps = {
+  onClick?: MouseEventHandler<HTMLButtonElement>
+  onMouseDown?: MouseEventHandler<HTMLButtonElement>
+  onPointerDown?: PointerEventHandler<HTMLButtonElement>
+  onTouchStart?: TouchEventHandler<HTMLButtonElement>
 }
 
 function getPointerActivationHandlerProps(
@@ -145,7 +174,12 @@ function getPointerActivationHandlerProps(
   }
 }
 
-function wrapActivationHandler(
+const activationKeysByPhase: Record<ActivationPhase, Set<string>> = {
+  onKeyDown: new Set(['Enter', ' ']),
+  onKeyUp: new Set([' ']),
+}
+
+function preventNonFocusActivation(
   phase: ActivationPhase,
   options: ActivationOptions,
   handler?: KeyboardEventHandler<HTMLButtonElement>,
@@ -169,5 +203,31 @@ function wrapActivationHandler(
     }
 
     handler?.(event)
+  }
+}
+
+function createKeyboardClickHandler(
+  phase: ActivationPhase,
+  handler?: KeyboardEventHandler<HTMLButtonElement>,
+): KeyboardEventHandler<HTMLButtonElement> | undefined {
+  return (event) => {
+    if (phase === 'onKeyDown' && event.key === ' ') {
+      event.preventDefault()
+    }
+
+    handler?.(event)
+
+    if (event.defaultPrevented) {
+      return
+    }
+
+    const shouldDispatchClick =
+      (phase === 'onKeyDown' && event.key === 'Enter') ||
+      (phase === 'onKeyUp' && event.key === ' ')
+
+    if (shouldDispatchClick) {
+      event.preventDefault()
+      event.currentTarget.click()
+    }
   }
 }

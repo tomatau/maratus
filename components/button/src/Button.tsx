@@ -1,8 +1,17 @@
-import type { ButtonProps } from './useButton'
+import type { ButtonBaseProps } from './useButton'
+import { ElementType } from 'react'
 import { useButton } from './useButton'
 
-export function Button(props: ButtonProps) {
-  const { buttonProps } = useButton(props)
+export type ButtonProps = ButtonBaseProps & {
+  as?: ElementType
+}
 
-  return <button {...buttonProps} />
+export function Button(props: ButtonProps) {
+  const { as: Root = 'button', ...hookProps } = props
+  const { buttonProps } = useButton({
+    ...hookProps,
+    isNative: Root === 'button',
+  })
+
+  return <Root {...buttonProps} />
 }

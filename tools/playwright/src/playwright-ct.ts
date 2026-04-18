@@ -7,9 +7,11 @@ export function createPlaywrightCTConfig(testDir: string) {
     testMatch: ['**/*.spec.{ts,tsx}'],
     use: {
       ctTemplateDir: '../../tools/playwright/template',
-      ctCacheDir: 'playwright/.cache',
       ctViteConfig: {
         plugins: [react()],
+        build: {
+          emptyOutDir: true,
+        },
       },
     },
   })
