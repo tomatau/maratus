@@ -4,8 +4,12 @@
   "type": "module",
   "exports": {
     "./css-modules": "./css-modules.d.ts",
+    "./matchers": "./matchers.d.ts",
     "./tsconfig": "./tsconfig.json",
     "./tsconfig/bun": "./tsconfig/bun.json",
     "./tsconfig/playwright": "./tsconfig/playwright.json"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0"
   }
 }

@@ -1,6 +1,6 @@
 # Button Requirements
 
-## Normative Sources
+## Accessibility Sources
 
 - HTML Standard: [`button` element](https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element)
 - WAI-ARIA 1.2: [`button` role](https://www.w3.org/TR/wai-aria-1.2/#button)
@@ -16,6 +16,7 @@
 ### Current scope
 
 - Native button output
+- Non-native button-like roots
 - Disabled state
 - Toggle button state
 - Loading state semantics
@@ -24,12 +25,14 @@
 
 ### Potential scope
 
-- Alternate rendered elements
+- Native anchor-specific navigation behaviour
 - Icon slots
 - Progress or pending announcement patterns beyond `aria-busy`
 - Command and popover button features
 
-## Normative Matrix
+## Accessibility Requirements
+
+### Given Native Button Element
 
 | ID      | Level  | Requirement                                                                                                                                                                                  | Source                                                                              | Applicability |
 | ------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------- |
@@ -55,6 +58,17 @@
 | REQ-020 | MUST   | When the button is disabled through the rendered variant, do not activate through keyboard interaction.                                                                                      | HTML Standard `button` activation behaviour; WAI-ARIA 1.2 `aria-disabled`           | Current       |
 | REQ-021 | MUST   | When the button receives keyboard focus in a focus-visible interaction mode, expose a visible focus indicator state that authors can style separately from raw focus.                        | WCAG 2.2 SC 2.4.7; Selectors Level 4 `:focus-visible`                               | Current       |
 | REQ-022 | SHOULD | When the button receives pointer focus, do not expose the focus-visible indicator state unless the browser or author explicitly does so.                                                     | Selectors Level 4 `:focus-visible`                                                  | Current       |
+
+### Given Non-Native Element
+
+| ID      | Level  | Requirement                                                                                                                                                                        | Source                                                                    | Applicability |
+| ------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------- |
+| REQ-023 | MUST   | When the button renders a non-native element, expose button semantics with a programmatically determinable `button` role and accessible name.                                      | WAI-ARIA 1.2 `button`; WCAG 2.2 SC 4.1.2                                  | Current       |
+| REQ-024 | MUST   | When the button renders a non-native element that is enabled, make it keyboard focusable.                                                                                         | WAI-ARIA 1.2 `button`; WCAG 2.2 SC 2.1.1; WCAG 2.2 SC 4.1.2               | Current       |
+| REQ-025 | MUST   | When the enabled non-native button has keyboard focus, support activation with `Enter` and `Space`.                                                                              | WAI-ARIA 1.2 `button`; WCAG 2.2 SC 2.1.1                                  | Current       |
+| REQ-026 | MUST   | When the disabled non-native button remains rendered, expose disabled semantics with `aria-disabled="true"` and do not activate it through pointer, click, or keyboard interaction. | WAI-ARIA 1.2 `aria-disabled`; WCAG 2.2 SC 4.1.2                           | Current       |
+| REQ-027 | MUST   | When the button renders a non-native element, do not use the HTML `disabled` attribute to convey the disabled state.                                                              | HTML Standard `disabled` attribute; WAI-ARIA 1.2 `aria-disabled`          | Current       |
+| REQ-028 | SHOULD | When the button renders a non-native element, do not expose native `<button>`-only attributes on that element, including `type`, `form`, `formaction`, `formenctype`, `formmethod`, `formnovalidate`, and `formtarget`. | HTML Standard `button` element; WCAG 2.2 SC 4.1.2                         | Current       |
 
 ## Product Requirements
 

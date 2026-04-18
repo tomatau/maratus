@@ -9,11 +9,17 @@ afterEach(() => {
 
 function createKeyboardEvent(
   key: string,
-  preventDefault: () => void = () => undefined,
+  options: {
+    currentTarget?: Pick<HTMLButtonElement, 'click'>
+    preventDefault?: () => void
+  } = {},
 ) {
   return {
+    currentTarget: options.currentTarget ?? {
+      click: () => undefined,
+    },
     key,
-    preventDefault,
+    preventDefault: options.preventDefault ?? (() => undefined),
   } as unknown as KeyboardEvent<HTMLButtonElement>
 }
 
@@ -142,8 +148,10 @@ describe(useButton, () => {
     )
 
     result.current.buttonProps.onKeyDown?.(
-      createKeyboardEvent('Enter', () => {
-        prevented = true
+      createKeyboardEvent('Enter', {
+        preventDefault: () => {
+          prevented = true
+        },
       }),
     )
 
@@ -172,14 +180,18 @@ describe(useButton, () => {
     )
 
     result.current.buttonProps.onKeyDown?.(
-      createKeyboardEvent(' ', () => {
-        preventedKeyDown = true
+      createKeyboardEvent(' ', {
+        preventDefault: () => {
+          preventedKeyDown = true
+        },
       }),
     )
 
     result.current.buttonProps.onKeyUp?.(
-      createKeyboardEvent(' ', () => {
-        preventedKeyUp = true
+      createKeyboardEvent(' ', {
+        preventDefault: () => {
+          preventedKeyUp = true
+        },
       }),
     )
 
@@ -205,8 +217,10 @@ describe(useButton, () => {
     )
 
     result.current.buttonProps.onKeyDown?.(
-      createKeyboardEvent('Tab', () => {
-        prevented = true
+      createKeyboardEvent('Tab', {
+        preventDefault: () => {
+          prevented = true
+        },
       }),
     )
 
@@ -234,6 +248,105 @@ describe(useButton, () => {
       }),
     )
 
-    expect(result.current.buttonProps.disabled).toBe(false)
+    expect(result.current.buttonProps.disabled).toBe(undefined)
+  })
+
+  describe('non-native roots', () => {
+    test('returns button semantics', () => {
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          isNative: false,
+        }),
+      )
+
+      expect(result.current.buttonProps.role).toBe('button')
+      expect(result.current.buttonProps.tabIndex).toBe(0)
+    })
+
+    test('keeps focusable disabled roots in the tab order', () => {
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          disabled: true,
+          disabledBehavior: 'focusable',
+          isNative: false,
+        }),
+      )
+
+      expect(result.current.buttonProps.tabIndex).toBe(0)
+      expect(result.current.buttonProps.disabled).toBe(undefined)
+    })
+
+    test('does not return native-only props', () => {
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          disabled: true,
+          isNative: false,
+          type: 'submit',
+        }),
+      )
+
+      expect(result.current.buttonProps.disabled).toBe(undefined)
+      expect(result.current.buttonProps.type).toBe(undefined)
+    })
+
+    test('synthesises click activation for Enter and Space', () => {
+      let clicks = 0
+
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          isNative: false,
+        }),
+      )
+
+      result.current.buttonProps.onKeyDown?.(
+        createKeyboardEvent('Enter', {
+          currentTarget: {
+            click: () => {
+              clicks += 1
+            },
+          },
+        }),
+      )
+
+      result.current.buttonProps.onKeyUp?.(
+        createKeyboardEvent(' ', {
+          currentTarget: {
+            click: () => {
+              clicks += 1
+            },
+          },
+        }),
+      )
+
+      expect(clicks).toBe(2)
+    })
+
+    test('calls non-native keyboard handlers once', () => {
+      let keyDownCalls = 0
+      let keyUpCalls = 0
+
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          isNative: false,
+          onKeyDown: () => {
+            keyDownCalls += 1
+          },
+          onKeyUp: () => {
+            keyUpCalls += 1
+          },
+        }),
+      )
+
+      result.current.buttonProps.onKeyDown?.(createKeyboardEvent('Enter'))
+      result.current.buttonProps.onKeyUp?.(createKeyboardEvent(' '))
+
+      expect(keyDownCalls).toBe(1)
+      expect(keyUpCalls).toBe(1)
+    })
   })
 })

@@ -1,6 +1,10 @@
 {
   "extends": "./react-component.json",
   "compilerOptions": {
-    "types": ["@maratus/dotfiles/css-modules", "bun"]
+    "types": [
+      "@maratus/dotfiles/css-modules",
+      "bun",
+      "@maratus/dotfiles/matchers"
+    ]
   }
 }

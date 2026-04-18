@@ -146,6 +146,17 @@ test('REQ-010 native button does not set a redundant explicit button role', asyn
   )
 })
 
+test('GPRD-001 GPRD-002 REQ-023 REQ-024 REQ-027 non-native intrinsic roots expose button semantics when rendered with as', async ({
+  mount,
+  page,
+}) => {
+  await mount(<Button as="div">Press me</Button>)
+
+  await expect(page.locator('#root div')).toHaveAttribute('role', 'button')
+  await expect(page.locator('#root div')).toHaveAttribute('tabindex', '0')
+  await expect(page.locator('#root div')).not.toHaveAttribute('disabled', '')
+})
+
 test('REQ-017 enabled buttons activate through pointer interaction', async ({
   mount,
   page,
@@ -164,6 +175,30 @@ test('REQ-017 enabled buttons activate through pointer interaction', async ({
 
   await page.locator('#root button').click()
   expect(activated).toBe(1)
+})
+
+test('REQ-025 non-native roots activate through keyboard interaction', async ({
+  mount,
+  page,
+}) => {
+  let activated = 0
+
+  await mount(
+    <Button
+      as="div"
+      onClick={() => {
+        activated += 1
+      }}
+    >
+      Press me
+    </Button>,
+  )
+
+  await page.getByRole('button', { name: 'Press me' }).focus()
+  await page.getByRole('button', { name: 'Press me' }).press('Enter')
+  await page.getByRole('button', { name: 'Press me' }).press('Space')
+
+  expect(activated).toBe(2)
 })
 
 test('REQ-018 enabled buttons activate through keyboard interaction', async ({
@@ -245,6 +280,60 @@ test('REQ-020 disabled buttons do not activate through keyboard interaction', as
   await page.keyboard.press('Enter')
   await page.keyboard.press('Space')
   expect(activated).toBe(0)
+})
+
+test('REQ-026 non-native disabled roots expose disabled semantics and do not activate through pointer or keyboard interaction', async ({
+  mount,
+  page,
+}) => {
+  let activated = 0
+
+  await mount(
+    <Button
+      as="div"
+      disabled
+      onClick={() => {
+        activated += 1
+      }}
+    >
+      Press me
+    </Button>,
+  )
+
+  await expect(page.getByRole('button', { name: 'Press me' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  )
+  await page.getByRole('button', { name: 'Press me' }).dispatchEvent('click')
+  await page.getByRole('button', { name: 'Press me' }).focus()
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('Space')
+
+  expect(activated).toBe(0)
+})
+
+test('REQ-028 non-native roots do not expose native button-only attributes', async ({
+  mount,
+  page,
+}) => {
+  await mount(
+    <Button
+      as="div"
+      type="submit"
+    >
+      Submit
+    </Button>,
+  )
+
+  const root = page.locator('#root div')
+
+  await expect(root).not.toHaveAttribute('type', 'submit')
+  await expect(root).not.toHaveAttribute('form', 'settings-form')
+  await expect(root).not.toHaveAttribute('formaction', '/save')
+  await expect(root).not.toHaveAttribute('formenctype', 'multipart/form-data')
+  await expect(root).not.toHaveAttribute('formmethod', 'post')
+  await expect(root).not.toHaveAttribute('formnovalidate', '')
+  await expect(root).not.toHaveAttribute('formtarget', '_blank')
 })
 
 test('REQ-021 PRD-004 keyboard focus exposes a focus-visible state hook', async ({
