@@ -1,0 +1,17 @@
+{
+  "name": "@maratus/cypress",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./cypress-ct": "./cypress-ct.mjs",
+    "./support": "./support.mjs",
+    "./support-types": "./support.d.ts"
+  },
+  "devDependencies": {
+    "@cypress/react": "^9.0.1",
+    "@vitejs/plugin-react": "^5.0.2",
+    "cypress": "^15.2.0",
+    "cypress-axe": "^1.7.0",
+    "vite": "^7.3.1"
+  }
+}
