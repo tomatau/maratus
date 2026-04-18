@@ -1,0 +1,10 @@
+{
+  "extends": "./react-component.json",
+  "compilerOptions": {
+    "types": [
+      "cypress",
+      "@maratus/cypress/support-types",
+      "@maratus/dotfiles/css-modules"
+    ]
+  }
+}
