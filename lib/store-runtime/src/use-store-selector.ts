@@ -1,8 +1,8 @@
-import type { MaratusStore, MaratusStoreValue } from './types'
+import type { MaratusStore, MaratusStoreState } from './types'
 import { useSyncExternalStore } from 'react'
 
 export function useStoreSelector<
-  TState extends Record<string, MaratusStoreValue>,
+  TState extends MaratusStoreState,
   TKey extends keyof TState,
 >(store: MaratusStore<TState>, key: TKey) {
   return useSyncExternalStore(

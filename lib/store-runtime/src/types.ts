@@ -11,8 +11,10 @@ export type MaratusStoreValue =
 
 export type MaratusStoreListener = () => void
 
+export type MaratusStoreState = Record<string, MaratusStoreValue>
+
 export type MaratusStore<
-  TState extends Record<string, MaratusStoreValue>,
+  TState extends MaratusStoreState = MaratusStoreState,
   TKey extends keyof TState = keyof TState,
 > = {
   get<TKeyName extends TKey>(key: TKeyName): TState[TKeyName]
@@ -32,12 +34,19 @@ export type MaratusStore<
     key: TKeyName,
     listener: MaratusStoreListener,
   ): () => void
+
+  dispose?(): void
 }
 
-export type WritableMaratusStore<
-  TState extends Record<string, MaratusStoreValue>,
-> = MaratusStore<TState>
+export type WritableMaratusStore<TState extends MaratusStoreState> =
+  MaratusStore<TState>
+
+export type AnyMaratusStore = MaratusStore<any, any>
 
 export type MaratusStoreRuntime = {
-  getStore<TStore>(key: symbol, createStore: () => TStore): TStore
+  getStore<TStore extends AnyMaratusStore>(
+    key: symbol,
+    createStore: () => TStore,
+  ): TStore
+  reset(): void
 }

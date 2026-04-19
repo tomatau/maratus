@@ -24,6 +24,11 @@ function createFocusModalityStore(): MaratusStore<FocusModalityState> {
 
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('pointerdown', handlePointerDown)
+
+    store.dispose = () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('pointerdown', handlePointerDown)
+    }
   }
 
   return store
