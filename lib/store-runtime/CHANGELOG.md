@@ -1,5 +1,11 @@
 # @maratus-lib/store-runtime
 
+## 0.3.0
+
+### Minor Changes
+
+- 856801d: Adds store reset, components `as` prop
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@maratus-lib/focus-modality",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": false,
   "type": "module",
   "exports": {
@@ -11,7 +11,7 @@
     "cypress:open": "cypress open --component --config-file cypress.config.mjs"
   },
   "dependencies": {
-    "@maratus-lib/store-runtime": "0.2.0"
+    "@maratus-lib/store-runtime": "0.3.0"
   },
   "devDependencies": {
     "@maratus/cypress": "workspace:*",

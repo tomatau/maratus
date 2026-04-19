@@ -1,5 +1,16 @@
 # @maratus-lib/focus-modality
 
+## 0.3.0
+
+### Minor Changes
+
+- 856801d: Adds store reset, components `as` prop
+
+### Patch Changes
+
+- Updated dependencies [856801d]
+  - @maratus-lib/store-runtime@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes

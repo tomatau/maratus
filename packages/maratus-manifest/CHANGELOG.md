@@ -1,5 +1,12 @@
 # @maratus/manifest
 
+## 0.3.0
+
+### Minor Changes
+
+- 274c75a: Button support for `as` prop
+- 856801d: Adds store reset, components `as` prop
+
 ## 0.2.2
 
 ### Patch Changes
