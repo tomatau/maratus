@@ -1,0 +1,13 @@
+---
+to: spec/{{ name | kebab_case }}.cy.tsx
+---
+import { {{ name | pascal_case }} } from '../src'
+
+describe('{{ name | pascal_case }}', () => {
+  it('REQ-001 renders native element semantics and has no automatic axe violations', () => {
+    cy.mount(<{{ name | pascal_case }} />)
+
+    cy.injectAxeAtRoot()
+    cy.auditA11y()
+  })
+})

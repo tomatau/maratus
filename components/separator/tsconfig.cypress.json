@@ -1,4 +1,4 @@
 {
   "extends": "@maratus/dotfiles/tsconfig/cypress",
-  "include": ["cypress"]
+  "include": ["spec"]
 }

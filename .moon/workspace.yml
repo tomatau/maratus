@@ -14,7 +14,7 @@ projects:
     tools-utils: 'tools/utils'
     tools-dotfiles: 'tools/dotfiles'
     tools-bun: 'tools/bun'
-    tools-playwright: 'tools/playwright'
+    tools-cypress: 'tools/cypress'
     codemod-runner: 'packages/maratus-codemod-runner'
     manifest: 'packages/maratus-manifest'
     cli-wrapper: 'packages/maratus-cli'

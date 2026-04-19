@@ -1,0 +1,12 @@
+---
+to: spec/{{ name | camel_case }}.cy.tsx
+---
+import { {{ name | pascal_case }}Probe } from '../src/{{ name | camel_case }}'
+
+describe('{{ name | pascal_case }}', () => {
+  it('PRD-002 exposes the exported API through the public entry point', () => {
+    cy.mount(<{{ name | pascal_case }}Probe />)
+
+    cy.getByTestId('value').should('have.text', '{{ name | kebab_case }}')
+  })
+})

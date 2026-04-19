@@ -30,19 +30,21 @@ jobs:
           auto-install: true
           auto-setup: true
 
-      - name: Cache Playwright browser binaries
+      - name: Cache Cypress binary
         uses: actions/cache@v5
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-shell-linux-${{ hashFiles('tools/playwright/package.json') }}
+          path: ~/.cache/Cypress
+          key: cypress-linux-${{ hashFiles('tools/cypress/package.json') }}
           restore-keys: |
-            playwright-shell-linux-
+            cypress-linux-
 
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install Playwright browser
-        run: bunx playwright install --with-deps --only-shell
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
 
       - name: Run affected functional tests
         run: |

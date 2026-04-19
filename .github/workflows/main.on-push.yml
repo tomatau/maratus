@@ -35,14 +35,6 @@ jobs:
       base-sha: ${{ github.event.before }}
       head-sha: ${{ github.sha }}
 
-  test-cypress:
-    needs: ci-context
-    if: ${{ needs.ci-context.outputs.test_affected == 'true' }}
-    uses: ./.github/workflows/_test-cypress.yml
-    with:
-      base-sha: ${{ github.event.before }}
-      head-sha: ${{ github.sha }}
-
   build-cli:
     needs: ci-context
     if: ${{ needs.ci-context.outputs.cli_affected == 'true' }}
@@ -77,7 +69,6 @@ jobs:
       - test-integration
       - test-unit
       - test-functional
-      - test-cypress
     if: >-
       ${{
         always() &&
@@ -85,8 +76,7 @@ jobs:
         contains(fromJson('["success","skipped"]'), needs.build-cli.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
-        contains(fromJson('["success","skipped"]'), needs.test-functional.result) &&
-        contains(fromJson('["success","skipped"]'), needs.test-cypress.result)
+        contains(fromJson('["success","skipped"]'), needs.test-functional.result)
       }}
     uses: ./.github/workflows/_cli-smoke.yml
     with:
@@ -100,7 +90,6 @@ jobs:
       - test-integration
       - test-unit
       - test-functional
-      - test-cypress
       - cli-smoke
     if: >-
       ${{
@@ -114,7 +103,6 @@ jobs:
         contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-functional.result) &&
-        contains(fromJson('["success","skipped"]'), needs.test-cypress.result) &&
         contains(fromJson('["success","skipped"]'), needs.cli-smoke.result)
       }}
     uses: ./.github/workflows/_npm-publish-stable.yml

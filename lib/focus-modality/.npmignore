@@ -1,6 +1,6 @@
-playwright-ct.config.ts
+cypress.config.mjs
 requirements.md
-specs/
+spec/
 test-results/
 tsconfig*.json
 .DS_Store

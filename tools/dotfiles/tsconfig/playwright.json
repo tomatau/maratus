@@ -1,9 +1,0 @@
-{
-  "extends": "./react-component.json",
-  "compilerOptions": {
-    "types": [
-      "@maratus/dotfiles/css-modules",
-      "@playwright/experimental-ct-react"
-    ]
-  }
-}
