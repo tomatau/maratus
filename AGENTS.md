@@ -4,7 +4,7 @@
 
 - Build accessible React components under `components/` (one package per component).
 - Use Bun as the primary dev tool.
-- Use Playwright component testing for all component validation.
+- Use Cypress component testing for all component validation.
 
 ## Docs
 
@@ -26,7 +26,7 @@ For each component:
 1. Identify normative sources (HTML, ARIA, WCAG, APG if relevant).
 2. Create `requirements.md` in the component package with IDs (e.g. `REQ-001`) and source links.
 3. Mark each requirement as `MUST` or `SHOULD`.
-4. Map each requirement to a Playwright component test.
+4. Map each requirement to a Cypress component test.
 
 ## Requirement Writing
 
@@ -60,7 +60,7 @@ For each component:
 
 A component is "done" when:
 
-- Playwright component tests pass.
+- Cypress component tests pass.
 - Keyboard behaviour tests pass (if interactive).
 - Semantics/ARIA assertions pass.
-- Axe checks via `@axe-core/playwright` report no violations.
+- Axe checks in the Cypress AXE functional tests report no violations.

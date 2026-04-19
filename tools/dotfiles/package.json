@@ -7,8 +7,7 @@
     "./matchers": "./matchers.d.ts",
     "./tsconfig": "./tsconfig.json",
     "./tsconfig/bun": "./tsconfig/bun.json",
-    "./tsconfig/cypress": "./tsconfig/cypress.json",
-    "./tsconfig/playwright": "./tsconfig/playwright.json"
+    "./tsconfig/cypress": "./tsconfig/cypress.json"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.8.0"

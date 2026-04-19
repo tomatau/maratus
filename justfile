@@ -44,26 +44,13 @@ test workspace='' package='':
   fi
 
 [group('test')]
-cypress workspace='' package='':
-  @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
-    just _test-package {{workspace}} {{package}} test:cypress; \
-  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test:cypress "$(just _workspace-filter {{workspace}})"; \
-  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test:cypress; \
-  else \
-    echo "expected workspace" >&2; \
-    exit 1; \
-  fi
-
-[group('test')]
 cypress-open workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
-    just _test-package {{workspace}} {{package}} test:cypress:open; \
+    just _test-package {{workspace}} {{package}} cypress:open; \
   elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test:cypress:open "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace cypress:open "$(just _workspace-filter {{workspace}})"; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test:cypress:open; \
+    just _run-workspace cypress:open; \
   else \
     echo "expected workspace" >&2; \
     exit 1; \

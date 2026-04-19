@@ -9,7 +9,7 @@
 ## CI Split
 
 - `test-unit` runs Moon `:test-unit` tasks.
-- `test-functional` runs Moon `:test` tasks and installs Playwright browsers.
+- `test-functional` runs Moon `:test` tasks and executes Cypress component tests.
 - `test-integration` runs Moon `:test-integration` tasks.
 - `cli-smoke` validates the packaged CLI after CLI artefacts build.
 

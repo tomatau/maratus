@@ -7,18 +7,15 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "test": "playwright test -c playwright-ct.config.ts",
-    "test:cypress": "cypress run --component --config-file cypress.config.mjs",
-    "test:cypress:open": "cypress open --component --config-file cypress.config.mjs"
+    "test": "cypress run --component --config-file cypress.config.mjs",
+    "cypress:open": "cypress open --component --config-file cypress.config.mjs"
   },
   "dependencies": {
     "@maratus-lib/store-runtime": "0.2.0"
   },
   "devDependencies": {
     "@maratus/cypress": "workspace:*",
-    "@maratus/dotfiles": "workspace:*",
-    "@maratus/playwright": "workspace:*",
-    "@playwright/experimental-ct-react": "^1.55.1"
+    "@maratus/dotfiles": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.1.1"

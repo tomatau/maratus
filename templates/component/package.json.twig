@@ -4,16 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "playwright test -c playwright-ct.config.ts",
+    "test": "cypress run --component --config-file cypress.config.mjs",
+    "cypress:open": "cypress open --component --config-file cypress.config.mjs",
     "test:unit": "bun test --preload @maratus/bun/unit-test src/**"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.2",
     "@maratus/bun": "workspace:*",
+    "@maratus/cypress": "workspace:*",
     "@maratus/dotfiles": "workspace:*",
-    "@maratus/playwright": "workspace:*",
-    "@playwright/experimental-ct-react": "^1.55.0",
-    "@playwright/test": "^1.55.0",
     "@types/react": "^19.2.14",
     "clsx": "^2.1.1",
     "react": "^19.1.1",
