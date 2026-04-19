@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     { "path": "./tsconfig.src.json" },
-    { "path": "./tsconfig.bun.json" },
-    { "path": "./tsconfig.playwright.json" }
+    { "path": "./tsconfig.playwright.json" },
+    { "path": "./tsconfig.cypress.json" }
   ]
 }
