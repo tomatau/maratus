@@ -33,13 +33,9 @@ export async function buildRegistryPackageManifest(
     componentName,
     'package.json',
   )
-  const existingRegistrySource = await readFile(
+  const existingRegistryManifest = await readOptionalPackageManifest(
     existingRegistryPackagePath,
-    'utf8',
   )
-  const existingRegistryManifest = JSON.parse(
-    existingRegistrySource,
-  ) as SourcePackageManifest
   const dependencies = await resolveRegistryDependencyVersions(
     manifest.dependencies,
     import.meta.url,
@@ -47,7 +43,7 @@ export async function buildRegistryPackageManifest(
 
   return {
     name: `${repoConfig.workspaces.registry.scope}${componentName}`,
-    version: existingRegistryManifest.version ?? manifest.version ?? '0.0.0',
+    version: existingRegistryManifest?.version ?? manifest.version ?? '0.0.0',
     private: false,
     files: [
       styleDirFor(ConfigStyle.CssFiles),
@@ -94,4 +90,19 @@ async function resolveRegistryDependencyVersions(
   )
 
   return Object.fromEntries(resolvedEntries)
+}
+
+async function readOptionalPackageManifest(
+  packagePath: string,
+): Promise<SourcePackageManifest | undefined> {
+  try {
+    const source = await readFile(packagePath, 'utf8')
+    return JSON.parse(source) as SourcePackageManifest
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return undefined
+    }
+
+    throw error
+  }
 }
