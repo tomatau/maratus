@@ -29,6 +29,8 @@ Cypress.Commands.add('getRootElement', () =>
           $el,
           message: 'Element rendered at root',
         })
+
+        return $el
       }),
   ),
 )

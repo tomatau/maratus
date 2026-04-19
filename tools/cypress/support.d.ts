@@ -5,8 +5,13 @@ declare namespace Cypress {
     auditA11y(subject?: string): Chainable<void>
     getByTestId(
       testId: string,
-      options?: Partial<Cypress.Loggable & Cypress.Timeoutable & Cypress.Withinable & Cypress.Shadow>,
+      options?: Partial<
+        Cypress.Loggable &
+          Cypress.Timeoutable &
+          Cypress.Withinable &
+          Cypress.Shadow
+      >,
     ): Chainable<JQuery<HTMLElement>>
-    getRootElement(): Chainable<Subject>
+    getRootElement(): Chainable<JQuery<HTMLElement>>
   }
 }

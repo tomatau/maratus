@@ -1,0 +1,29 @@
+:root {
+  --ara-link-fg: var(--ara-color-nav-fg);
+  --ara-link-fg--hover: var(--ara-color-nav-fg--hover);
+  --ara-link-fg--focus: var(--ara-color-nav-fg--focus);
+  --ara-link-fg--loading: var(--ara-color-nav-fg--loading);
+  --ara-link-focus: var(--ara-color-nav-focus, currentColor);
+  --ara-link-focus-offset: var(--ara-spacing-x1);
+  --ara-link-focus-width: var(--ara-border-width-x1);
+}
+
+.link {
+  color: var(--ara-link-fg);
+}
+
+.link:hover {
+  color: var(--ara-link-fg--hover);
+}
+
+.link:focus-visible,
+.link[data-focus-visible] {
+  color: var(--ara-link-fg--focus);
+  outline-color: var(--ara-link-focus);
+  outline-offset: var(--ara-link-focus-offset);
+  outline-width: var(--ara-link-focus-width);
+}
+
+.link[data-loading] {
+  color: var(--ara-link-fg--loading);
+}

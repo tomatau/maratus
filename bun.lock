@@ -59,6 +59,25 @@
         "react-dom": "^19.0.0",
       },
     },
+    "components/link": {
+      "name": "@maratus-component/link",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
+        "clsx": "^2.1.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
     "components/separator": {
       "name": "@maratus-component/separator",
       "version": "0.0.0",
@@ -121,7 +140,7 @@
     },
     "lib/focus-modality": {
       "name": "@maratus-lib/focus-modality",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "dependencies": {
         "@maratus-lib/store-runtime": "0.2.0",
       },
@@ -135,7 +154,7 @@
     },
     "lib/store-runtime": {
       "name": "@maratus-lib/store-runtime",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "devDependencies": {
         "@maratus/bun": "workspace:*",
         "@maratus/cypress": "workspace:*",
@@ -189,14 +208,14 @@
     },
     "packages/maratus-manifest": {
       "name": "@maratus/manifest",
-      "version": "0.2.2",
+      "version": "0.3.0",
       "devDependencies": {
         "@maratus/utils": "workspace:*",
       },
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "dependencies": {
         "@maratus-lib/focus-modality": "workspace:*",
       },
@@ -208,7 +227,7 @@
     },
     "registry/separator": {
       "name": "@maratus-registry/separator",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -477,6 +496,8 @@
     "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
 
     "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
+
+    "@maratus-component/link": ["@maratus-component/link@workspace:components/link"],
 
     "@maratus-component/separator": ["@maratus-component/separator@workspace:components/separator"],
 
