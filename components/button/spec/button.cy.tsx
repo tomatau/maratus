@@ -281,7 +281,7 @@ describe('Button', () => {
   it('REQ-021 PRD-004 keyboard focus exposes a focus-visible state hook', () => {
     cy.mount(<Button>Press me</Button>)
 
-    cy.realPress('Tab')
+    cy.getRootElement().press(Cypress.Keyboard.Keys.TAB)
 
     cy.get('button')
       .should('be.focused')
@@ -301,7 +301,7 @@ describe('Button', () => {
   it('REQ-021 native button remains compatible with the browser focus-visible pseudo-class', () => {
     cy.mount(<Button>Press me</Button>)
 
-    cy.realPress('Tab')
+    cy.getRootElement().press(Cypress.Keyboard.Keys.TAB)
 
     cy.get('button')
       .should('be.focused')
