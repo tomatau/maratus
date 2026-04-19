@@ -1,31 +1,20 @@
-import type { HTMLAttributes } from 'react'
-import clsx from 'clsx'
-import styles from './separator.module.css'
+import type { ElementType, HTMLAttributes } from 'react'
+import { useSeparator } from './useSeparator'
 
 export type SeparatorProps = HTMLAttributes<HTMLHRElement> & {
+  as?: ElementType
   isDecorative?: boolean
   orientation?: 'horizontal' | 'vertical'
 }
 
 export function Separator(props: SeparatorProps) {
-  const { className, isDecorative, orientation = 'horizontal', ...rest } = props
-  const isVertical = orientation === 'vertical'
+  const { as, orientation = 'horizontal' } = props
+  const defaultTag = orientation === 'vertical' ? 'div' : 'hr'
+  const Root = as ?? defaultTag
+  const { separatorProps } = useSeparator({
+    ...props,
+    isNative: Root === 'hr',
+  })
 
-  const Tag = isVertical ? 'div' : 'hr'
-  const ariaHidden = isDecorative ? true : rest['aria-hidden']
-  const semanticProps = isVertical
-    ? {
-        'aria-orientation': 'vertical' as const,
-        role: 'separator' as const,
-      }
-    : {}
-
-  return (
-    <Tag
-      {...rest}
-      aria-hidden={ariaHidden}
-      {...semanticProps}
-      className={clsx(styles.separator, className)}
-    />
-  )
+  return <Root {...separatorProps} />
 }
