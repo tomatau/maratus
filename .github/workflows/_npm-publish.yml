@@ -284,6 +284,15 @@ jobs:
           ${{ steps.released_packages.outputs.specs }}
           EOF
 
+      - name: Find existing publish PR comment
+        if: ${{ inputs.pr-number != '' }}
+        id: find_publish_comment
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ inputs.pr-number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- maratus-publish -->'
+
       - name: Configure release git identity
         if: >-
           ${{
@@ -317,13 +326,16 @@ jobs:
         uses: peter-evans/create-or-update-comment@v5
         with:
           issue-number: ${{ inputs.pr-number }}
+          comment-id: ${{ steps.find_publish_comment.outputs.comment-id }}
+          edit-mode: replace
           body: |
+            <!-- maratus-publish -->
             ${{ steps.publish_metadata.outputs.comment-heading }} with dist-tag `${{ steps.publish_metadata.outputs.dist-tag }}`.
 
             CLI version:
             `${{ steps.cli_version.outputs.value }}`
 
-            Published packages:
+            Packages:
             ```
             ${{ steps.released_packages.outputs.specs }}
             ```
