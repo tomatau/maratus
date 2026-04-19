@@ -41,6 +41,11 @@ jobs:
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
 
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+
       - name: Run affected Cypress tests
         run: |
           moon ci :test-cypress \
