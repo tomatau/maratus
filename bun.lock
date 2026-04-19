@@ -133,6 +133,7 @@
         "@maratus-lib/store-runtime": "0.2.0",
       },
       "devDependencies": {
+        "@maratus/cypress": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.1",
@@ -146,6 +147,7 @@
       "version": "0.2.0",
       "devDependencies": {
         "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
         "@maratus/dotfiles": "workspace:*",
         "@maratus/playwright": "workspace:*",
         "@playwright/experimental-ct-react": "^1.55.1",

@@ -14,6 +14,10 @@ Cypress.Commands.add('auditA11y', (subject = CYPRESS_ROOT) => {
   cy.checkA11y(subject)
 })
 
+Cypress.Commands.add('getByTestId', (testId, options) =>
+  cy.get(`[data-testid="${testId}"]`, options),
+)
+
 Cypress.Commands.add('getRootElement', () =>
   cy.get(CYPRESS_ROOT, { log: false }).then(($root) =>
     cy

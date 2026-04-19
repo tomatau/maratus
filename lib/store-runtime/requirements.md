@@ -23,3 +23,4 @@
 | PRD-002 | Expose `useStoreSelector()` as the selector-based consumption surface for reading store state through React consumers.    | Current       |
 | PRD-003 | Selector-based consumers should only observe a logical change when the selected value they read has changed.              | Current       |
 | PRD-004 | Expose `createStoreRuntime()` and `useStoreRuntime()` as the shared runtime surface for resolving store instances by key. | Current       |
+| PRD-005 | Expose `createStoreRuntime().reset()` so controlled callers can clear cached stores and dispose them.                     | Current       |
