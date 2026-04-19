@@ -1,12 +1,13 @@
 import type {
+  MaratusStore,
   MaratusStoreListener,
+  MaratusStoreState,
   MaratusStoreValue,
-  WritableMaratusStore,
 } from './types'
 
-export function createStore<TState extends Record<string, MaratusStoreValue>>(
+export function createStore<TState extends MaratusStoreState>(
   initialState: TState,
-): WritableMaratusStore<TState> {
+): MaratusStore<TState> {
   let state = initialState
   const anyListeners = new Set<MaratusStoreListener>()
   const keyListeners = new Map<keyof TState, Set<MaratusStoreListener>>()
