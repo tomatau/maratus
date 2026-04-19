@@ -38,7 +38,10 @@ describe('useFocusModality', () => {
   it('REQ-002 pointer interaction switches the global focus modality to pointer', () => {
     cy.mount(<Probe />)
 
-    cy.get('body').realMouseDown({ position: 'topLeft' })
+    cy.get('body').trigger('pointerdown', {
+      button: 0,
+      bubbles: true,
+    })
 
     cy.get('output').should('have.text', 'pointer')
   })
