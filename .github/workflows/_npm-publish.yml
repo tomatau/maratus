@@ -39,10 +39,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
     outputs:
       cli-version: ${{ steps.cli_version.outputs.value }}
       has-version-changes: ${{ steps.version_changes.outputs.value }}
