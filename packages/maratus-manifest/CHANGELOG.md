@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.4.1
+
+### Patch Changes
+
+- 650e18e: Fix case sensitive naming of button and separator styles
+
 ## 0.4.0
 
 ### Minor Changes
