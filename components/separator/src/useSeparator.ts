@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react'
 import clsx from 'clsx'
-import styles from './separator.module.css'
+import styles from './Separator.module.css'
 
 export type UseSeparatorProps = HTMLAttributes<HTMLHRElement> & {
   isDecorative?: boolean

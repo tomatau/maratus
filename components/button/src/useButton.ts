@@ -7,7 +7,7 @@ import type {
 } from 'react'
 import { useIsFocusVisible } from '@maratus-lib/focus-modality'
 import clsx from 'clsx'
-import styles from './button.module.css'
+import styles from './Button.module.css'
 
 type NativeButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
 
