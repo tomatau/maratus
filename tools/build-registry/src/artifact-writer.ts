@@ -4,13 +4,12 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import {
   ConfigStyle,
-  CSS_EXT,
-  CSS_MODULE_EXT,
   REGISTRY_META_FILENAME,
   REGISTRY_PACKAGE_FILENAME,
   styleDirFor,
 } from './config'
 import { wrapInLayer } from './css-format'
+import { componentCssFileName, componentCssModuleFileName } from './monorepo'
 
 export async function writeCssFilesArtifacts(
   componentName: string,
@@ -34,7 +33,7 @@ export async function writeCssFilesArtifacts(
     writtenPaths.push(filePath)
   }
 
-  const cssPath = join(dir, `${componentName}${CSS_EXT}`)
+  const cssPath = join(dir, componentCssFileName(componentName))
   await writeFile(cssPath, wrapInLayer('components', css), 'utf8')
   return [...writtenPaths, cssPath]
 }
@@ -61,7 +60,7 @@ export async function writeTailwindCssArtifacts(
     writtenPaths.push(filePath)
   }
 
-  const cssPath = join(dir, `${componentName}${CSS_EXT}`)
+  const cssPath = join(dir, componentCssFileName(componentName))
   await writeFile(cssPath, css, 'utf8')
   return [...writtenPaths, cssPath]
 }
@@ -88,7 +87,7 @@ export async function writeCssModulesArtifacts(
     writtenPaths.push(filePath)
   }
 
-  const cssModulePath = join(dir, `${componentName}${CSS_MODULE_EXT}`)
+  const cssModulePath = join(dir, componentCssModuleFileName(componentName))
   await writeFile(cssModulePath, cssModuleSource, 'utf8')
   return [...writtenPaths, cssModulePath]
 }

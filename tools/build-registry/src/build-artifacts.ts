@@ -12,6 +12,7 @@ import { collectComponentSourceGraph } from './component-source-graph'
 import { emitTailwindCssWithLightning } from './emit-tailwind-css'
 import { formatGeneratedFiles } from './formatter'
 import {
+  componentCssFileName,
   getComponentNamesWithStyles,
   componentSourceFileName,
   componentCssModuleFileName,
@@ -69,7 +70,7 @@ export async function buildArtifacts(
         source: transformCssModuleSource(
           source,
           `./${componentCssModuleFileName(componentName)}`,
-          `./${componentName}.css`,
+          `./${componentCssFileName(componentName)}`,
           cssModule.exports,
         ).source,
       }),

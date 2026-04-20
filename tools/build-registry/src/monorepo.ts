@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
-import { CSS_MODULE_EXT, SRC_DIR, TSX_EXT } from './config'
+import { CSS_EXT, CSS_MODULE_EXT, SRC_DIR, TSX_EXT } from './config'
 
 export async function getComponentNamesWithStyles(
   componentsDir: string,
@@ -27,7 +27,19 @@ export function componentSourceFileName(componentName: string): string {
 }
 
 export function componentCssModuleFileName(componentName: string): string {
-  return `${componentName}${CSS_MODULE_EXT}`
+  const baseName = componentSourceFileName(componentName).slice(
+    0,
+    -TSX_EXT.length,
+  )
+  return `${baseName}${CSS_MODULE_EXT}`
+}
+
+export function componentCssFileName(componentName: string): string {
+  const baseName = componentSourceFileName(componentName).slice(
+    0,
+    -TSX_EXT.length,
+  )
+  return `${baseName}${CSS_EXT}`
 }
 
 export function ensureComponentSourcePath(
