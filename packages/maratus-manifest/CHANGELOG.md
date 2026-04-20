@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.4.0
+
+### Minor Changes
+
+- ffdb2df: Adds link component
+
 ## 0.3.0
 
 ### Minor Changes
