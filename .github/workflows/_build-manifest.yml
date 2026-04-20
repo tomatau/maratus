@@ -29,8 +29,11 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
       - name: Build manifest package
-        run: moon run manifest:build
+        run: moon run manifest:build --force
 
       - name: Upload manifest artefact
         uses: actions/upload-artifact@v7
