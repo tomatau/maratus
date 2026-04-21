@@ -47,7 +47,7 @@ export async function collectComponentInputs(
     })
   }
 
-  return components
+  return components.sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export function componentSourceFileName(componentName: string): string {

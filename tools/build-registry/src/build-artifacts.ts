@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { styleText } from 'node:util'
 import {
   writeCssFilesArtifacts,
   writeCssModulesArtifacts,
@@ -33,6 +34,16 @@ export async function buildArtifacts(
 
   for (const componentInput of componentInputs) {
     const { name: componentName } = componentInput
+
+    console.log(
+      `${styleText('cyan', 'build-registry')} ${styleText('bold', componentName)}`,
+    )
+    if (!componentInput.cssModulePath) {
+      console.log(
+        `${styleText('yellow', '  no CSS module file')} skipping CSS artefacts`,
+      )
+    }
+
     const packageManifest = await buildRegistryPackageManifest(
       componentName,
       componentInput.packageJsonPath,
