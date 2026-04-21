@@ -11,6 +11,7 @@
   },
   "scripts": {
     "build": "bun build ./src/index.ts --target=node --outfile ./dist/index.mjs",
+    "clean": "rm -rf ./dist",
     "test:unit": "bun test"
   },
   "dependencies": {

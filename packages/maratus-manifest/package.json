@@ -10,7 +10,8 @@
     ".": "./dist/index.json"
   },
   "scripts": {
-    "build": "node ./build.mjs"
+    "build": "node ./build.mjs",
+    "clean": "rm -rf ./dist"
   },
   "devDependencies": {
     "@maratus/utils": "workspace:*"
