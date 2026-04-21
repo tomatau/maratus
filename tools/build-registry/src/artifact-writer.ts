@@ -14,7 +14,7 @@ import { componentCssFileName, componentCssModuleFileName } from './monorepo'
 export async function writeCssFilesArtifacts(
   componentName: string,
   componentSources: ComponentSourceFile[],
-  css: string,
+  css: string | undefined,
   registryDir: string,
 ): Promise<string[]> {
   const dir = join(
@@ -33,6 +33,10 @@ export async function writeCssFilesArtifacts(
     writtenPaths.push(filePath)
   }
 
+  if (!css) {
+    return writtenPaths
+  }
+
   const cssPath = join(dir, componentCssFileName(componentName))
   await writeFile(cssPath, wrapInLayer('components', css), 'utf8')
   return [...writtenPaths, cssPath]
@@ -41,7 +45,7 @@ export async function writeCssFilesArtifacts(
 export async function writeTailwindCssArtifacts(
   componentName: string,
   componentSources: ComponentSourceFile[],
-  css: string,
+  css: string | undefined,
   registryDir: string,
 ): Promise<string[]> {
   const dir = join(
@@ -60,6 +64,10 @@ export async function writeTailwindCssArtifacts(
     writtenPaths.push(filePath)
   }
 
+  if (!css) {
+    return writtenPaths
+  }
+
   const cssPath = join(dir, componentCssFileName(componentName))
   await writeFile(cssPath, css, 'utf8')
   return [...writtenPaths, cssPath]
@@ -68,7 +76,7 @@ export async function writeTailwindCssArtifacts(
 export async function writeCssModulesArtifacts(
   componentName: string,
   componentSources: ComponentSourceFile[],
-  cssModuleSource: string,
+  cssModuleSource: string | undefined,
   registryDir: string,
 ): Promise<string[]> {
   const dir = join(
@@ -85,6 +93,10 @@ export async function writeCssModulesArtifacts(
     await mkdir(dirname(filePath), { recursive: true })
     await writeFile(filePath, source, 'utf8')
     writtenPaths.push(filePath)
+  }
+
+  if (!cssModuleSource) {
+    return writtenPaths
   }
 
   const cssModulePath = join(dir, componentCssModuleFileName(componentName))

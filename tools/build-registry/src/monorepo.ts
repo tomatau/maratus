@@ -3,22 +3,51 @@ import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { CSS_EXT, CSS_MODULE_EXT, SRC_DIR, TSX_EXT } from './config'
 
-export async function getComponentNamesWithStyles(
+export type ComponentInput = {
+  name: string
+  rootDir: string
+  srcDir: string
+  packageJsonPath: string
+  componentSourcePath: string
+  cssModulePath?: string
+}
+
+export async function collectComponentInputs(
   componentsDir: string,
-): Promise<string[]> {
+): Promise<ComponentInput[]> {
   const entries = await readdir(componentsDir, { withFileTypes: true })
-  const names: string[] = []
+  const components: ComponentInput[] = []
+
   for (const entry of entries) {
     if (!entry.isDirectory()) continue
-    const stylesPath = join(
-      componentsDir,
-      entry.name,
-      SRC_DIR,
-      componentCssModuleFileName(entry.name),
-    )
-    if (existsSync(stylesPath)) names.push(entry.name)
+    const name = entry.name
+    const rootDir = join(componentsDir, name)
+    const srcDir = join(rootDir, SRC_DIR)
+    const packageJsonPath = join(rootDir, 'package.json')
+    const componentSourcePath = join(srcDir, componentSourceFileName(name))
+    const cssModulePath = join(srcDir, componentCssModuleFileName(name))
+
+    if (!existsSync(srcDir)) {
+      continue
+    }
+    if (!existsSync(packageJsonPath)) {
+      continue
+    }
+    if (!existsSync(componentSourcePath)) {
+      continue
+    }
+
+    components.push({
+      name,
+      rootDir,
+      srcDir,
+      packageJsonPath,
+      componentSourcePath,
+      cssModulePath: existsSync(cssModulePath) ? cssModulePath : undefined,
+    })
   }
-  return names
+
+  return components
 }
 
 export function componentSourceFileName(componentName: string): string {
@@ -40,32 +69,4 @@ export function componentCssFileName(componentName: string): string {
     -TSX_EXT.length,
   )
   return `${baseName}${CSS_EXT}`
-}
-
-export function ensureComponentSourcePath(
-  componentsDir: string,
-  componentName: string,
-  fileName: string,
-): string {
-  const path = join(componentsDir, componentName, SRC_DIR, fileName)
-  if (!existsSync(path)) {
-    throw new Error(`Missing component source file: ${path}`)
-  }
-  return path
-}
-
-export function ensureComponentCssModulePath(
-  componentsDir: string,
-  componentName: string,
-): string {
-  const path = join(
-    componentsDir,
-    componentName,
-    SRC_DIR,
-    componentCssModuleFileName(componentName),
-  )
-  if (!existsSync(path)) {
-    throw new Error(`Missing component CSS module file: ${path}`)
-  }
-  return path
 }

@@ -1,5 +1,4 @@
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import {
   writeCssFilesArtifacts,
   writeCssModulesArtifacts,
@@ -7,17 +6,14 @@ import {
   writeTailwindCssArtifacts,
 } from './artifact-writer'
 import { compileCssModule } from './compile-css-module'
-import { extractComponentMeta } from './component-meta'
+import { emptyComponentMeta, extractComponentMeta } from './component-meta'
 import { collectComponentSourceGraph } from './component-source-graph'
 import { emitTailwindCssWithLightning } from './emit-tailwind-css'
 import { formatGeneratedFiles } from './formatter'
 import {
+  collectComponentInputs,
   componentCssFileName,
-  getComponentNamesWithStyles,
-  componentSourceFileName,
   componentCssModuleFileName,
-  ensureComponentCssModulePath,
-  ensureComponentSourcePath,
 } from './monorepo'
 import { buildRegistryPackageManifest } from './registry-package'
 import { transformCssModuleSource } from './transform-css-module-source'
@@ -32,49 +28,41 @@ export async function buildArtifacts(
 ): Promise<void> {
   const { componentsDir, registryDir } = options
 
-  const componentNames = await getComponentNamesWithStyles(componentsDir)
+  const componentInputs = await collectComponentInputs(componentsDir)
   const generatedFiles: string[] = []
 
-  for (const componentName of componentNames) {
-    const componentSourcePath = ensureComponentSourcePath(
-      componentsDir,
-      componentName,
-      componentSourceFileName(componentName),
-    )
-    const cssModulePath = ensureComponentCssModulePath(
-      componentsDir,
-      componentName,
-    )
-    const componentPackagePath = join(
-      componentsDir,
-      componentName,
-      'package.json',
-    )
-    const cssModuleSource = await readFile(cssModulePath, 'utf8')
-    const cssModule = await compileCssModule(cssModulePath)
-    const componentMeta = await extractComponentMeta(cssModulePath)
+  for (const componentInput of componentInputs) {
+    const { name: componentName } = componentInput
     const packageManifest = await buildRegistryPackageManifest(
       componentName,
-      componentPackagePath,
+      componentInput.packageJsonPath,
       registryDir,
     )
-
-    const componentSrcDir = join(componentsDir, componentName, 'src')
     const componentSourceGraph = await collectComponentSourceGraph(
-      componentSourcePath,
-      componentSrcDir,
+      componentInput.componentSourcePath,
+      componentInput.srcDir,
     )
-    const componentSourcesForCssFiles = componentSourceGraph.map(
-      ({ fileName, source }) => ({
-        fileName,
-        source: transformCssModuleSource(
-          source,
-          `./${componentCssModuleFileName(componentName)}`,
-          `./${componentCssFileName(componentName)}`,
-          cssModule.exports,
-        ).source,
-      }),
-    )
+
+    const cssModuleSource = componentInput.cssModulePath
+      ? await readFile(componentInput.cssModulePath, 'utf8')
+      : undefined
+    const cssModule = componentInput.cssModulePath
+      ? await compileCssModule(componentInput.cssModulePath)
+      : undefined
+    const componentMeta = componentInput.cssModulePath
+      ? await extractComponentMeta(componentInput.cssModulePath)
+      : emptyComponentMeta()
+    const componentSourcesForCssFiles = cssModule
+      ? componentSourceGraph.map(({ fileName, source }) => ({
+          fileName,
+          source: transformCssModuleSource(
+            source,
+            `./${componentCssModuleFileName(componentName)}`,
+            `./${componentCssFileName(componentName)}`,
+            cssModule.exports,
+          ).source,
+        }))
+      : componentSourceGraph
 
     generatedFiles.push(
       ...(await writeCssModulesArtifacts(
@@ -88,7 +76,7 @@ export async function buildArtifacts(
       ...(await writeCssFilesArtifacts(
         componentName,
         componentSourcesForCssFiles,
-        cssModule.css,
+        cssModule?.css,
         registryDir,
       )),
     )
@@ -96,7 +84,7 @@ export async function buildArtifacts(
       ...(await writeTailwindCssArtifacts(
         componentName,
         componentSourcesForCssFiles,
-        emitTailwindCssWithLightning(cssModule.css),
+        cssModule ? emitTailwindCssWithLightning(cssModule.css) : undefined,
         registryDir,
       )),
     )

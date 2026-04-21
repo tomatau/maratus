@@ -13,6 +13,14 @@ export type ComponentMeta = {
   componentTokens: ComponentTokenMapping[]
 }
 
+export function emptyComponentMeta(): ComponentMeta {
+  return {
+    sourceType: 'registry-component',
+    themeTokens: [],
+    componentTokens: [],
+  }
+}
+
 export async function extractComponentMeta(
   cssModulePath: string,
 ): Promise<ComponentMeta> {
