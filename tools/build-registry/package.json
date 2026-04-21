@@ -6,7 +6,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "bun run scripts/build-artifacts.ts"
+    "build": "bun run scripts/build-artifacts.ts",
+    "clean": "bun run scripts/clean-artifacts.ts"
   },
   "dependencies": {
     "@maratus/utils": "workspace:*",

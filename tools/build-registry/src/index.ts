@@ -1,4 +1,6 @@
 export type { BuildArtifactsOptions } from './build-artifacts'
+export type { CleanArtifactsOptions } from './clean-artifacts'
 export type { CompiledCssModule } from './compile-css-module'
 export { buildArtifacts } from './build-artifacts'
+export { cleanArtifacts } from './clean-artifacts'
 export { compileCssModule } from './compile-css-module'

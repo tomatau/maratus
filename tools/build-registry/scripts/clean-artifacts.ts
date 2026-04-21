@@ -1,12 +1,10 @@
 import { join } from 'node:path'
 import { readRepoContext } from '@maratus/utils'
-import { buildArtifacts } from '../src'
+import { cleanArtifacts } from '../src'
 
 const { repoConfig, repoRoot } = await readRepoContext(import.meta.url)
-const COMPONENTS_DIR = join(repoRoot, repoConfig.workspaces.components.path)
 const REGISTRY_DIR = join(repoRoot, repoConfig.workspaces.registry.path)
 
-await buildArtifacts({
-  componentsDir: COMPONENTS_DIR,
+await cleanArtifacts({
   registryDir: REGISTRY_DIR,
 })

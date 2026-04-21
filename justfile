@@ -87,19 +87,35 @@ test-integration workspace='' package='':
 [group('build')]
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
-    just _build-package tools build-registry build && \
+    just _build-package tools build-registry && \
     just _run-workspace build "$(just _workspace-filter packages)" && \
     just _run-workspace build "$(just _workspace-filter codemods)"; \
   elif [ "{{workspace}}" = "registry" ]; then \
-    just _build-package tools build-registry build; \
+    just _build-package tools build-registry; \
   elif [ -n "{{package}}" ]; then \
     just _build-package {{workspace}} {{package}}; \
   else \
     just _run-workspace build "$(just _workspace-filter {{workspace}})"; \
   fi
 
+
+# workspace=registry|codemods|packages
+[group('build')]
+clean workspace='' package='':
+  @if [ -z "{{workspace}}" ]; then \
+    just _clean-package tools build-registry && \
+    just _run-workspace clean "$(just _workspace-filter packages)" && \
+    just _run-workspace clean "$(just _workspace-filter codemods)"; \
+  elif [ "{{workspace}}" = "registry" ]; then \
+    just _clean-package tools build-registry; \
+  elif [ -n "{{package}}" ]; then \
+    just _clean-package {{workspace}} {{package}}; \
+  else \
+    just _run-workspace build "$(just _workspace-filter {{workspace}})"; \
+  fi
+
 [group('tmp')]
-clear-tmp-src:
+clean-tmp-src:
   rm -rf {{TMP_SRC_DIR}}/
 
 [group('generate')]
@@ -162,6 +178,9 @@ _workspace-scope workspace:
 
 @_run-package command workspace package:
   just _run-workspace {{command}} "$(just _package-name {{workspace}} {{package}})"
+
+@_clean-package workspace package command='clean':
+  just _run-package {{command}} {{workspace}} {{package}}
 
 @_build-package workspace package command='build':
   just _run-package {{command}} {{workspace}} {{package}}
