@@ -88,8 +88,8 @@ test-integration workspace='' package='':
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _build-package tools build-registry && \
-    just _run-workspace build "$(just _workspace-filter packages)" && \
-    just _run-workspace build "$(just _workspace-filter codemods)"; \
+    just _run-workspace build "$(just _workspace-filter codemods)" && \
+    just _run-workspace build "$(just _workspace-filter packages)"; \
   elif [ "{{workspace}}" = "registry" ]; then \
     just _build-package tools build-registry; \
   elif [ -n "{{package}}" ]; then \
@@ -104,8 +104,8 @@ build workspace='' package='':
 clean workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _clean-package tools build-registry && \
-    just _run-workspace clean "$(just _workspace-filter packages)" && \
-    just _run-workspace clean "$(just _workspace-filter codemods)"; \
+    just _run-workspace clean "$(just _workspace-filter codemods)" && \
+    just _run-workspace clean "$(just _workspace-filter packages)"; \
   elif [ "{{workspace}}" = "registry" ]; then \
     just _clean-package tools build-registry; \
   elif [ -n "{{package}}" ]; then \
