@@ -59,6 +59,25 @@
         "react-dom": "^19.0.0",
       },
     },
+    "components/field": {
+      "name": "@maratus-component/field",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
+        "clsx": "^2.1.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
     "components/link": {
       "name": "@maratus-component/link",
       "version": "0.0.0",
@@ -208,14 +227,14 @@
     },
     "packages/maratus-manifest": {
       "name": "@maratus/manifest",
-      "version": "0.3.0",
+      "version": "0.4.1",
       "devDependencies": {
         "@maratus/utils": "workspace:*",
       },
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "dependencies": {
         "@maratus-lib/focus-modality": "workspace:*",
       },
@@ -227,7 +246,7 @@
     },
     "registry/link": {
       "name": "@maratus-registry/link",
-      "version": "0.0.0",
+      "version": "0.1.1",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -505,6 +524,8 @@
     "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
 
     "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
+
+    "@maratus-component/field": ["@maratus-component/field@workspace:components/field"],
 
     "@maratus-component/link": ["@maratus-component/link@workspace:components/link"],
 
