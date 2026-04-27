@@ -1,0 +1,14 @@
+:root {
+  --ara-field-detail: var(--ara-color-content-detail);
+  --ara-field-error-message-fg: var(--ara-color-feedback-fg);
+  --ara-field-error-message-spacing: var(--ara-spacing-x1);
+}
+
+.field {
+  color: var(--ara-field-detail);
+}
+
+.errorMessage {
+  color: var(--ara-field-error-message-fg);
+  margin-block: var(--ara-field-error-message-spacing) 0;
+}
