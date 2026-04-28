@@ -1,20 +1,22 @@
-import type { FieldContextValue } from './FieldContext'
-import type {
-  HTMLAttributes,
-  InputHTMLAttributes,
-  LabelHTMLAttributes,
-  ReactNode,
-} from 'react'
+import type { FieldErrorKey, FieldErrorPolicy } from './FieldContext'
+import type { ControlRenderProps } from './useField'
+import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'
-import { useId, useState } from 'react'
-import { FieldContext, useFieldContext } from './FieldContext'
+import { FieldProvider } from './FieldContext'
+import {
+  useControl,
+  useDescription,
+  useErrorMessage,
+  useLabel,
+} from './useField'
 import styles from './Field.module.css'
 
 export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
-  activeErrors?: readonly string[]
+  activeErrors?: ReadonlySet<FieldErrorKey>
   controlId?: string
   description?: ReactNode
-  errorMap?: ReadonlyMap<string, ReactNode>
+  errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
+  errorPolicy?: FieldErrorPolicy
   label: ReactNode
   name: string
 }
@@ -26,35 +28,26 @@ export function FieldRoot(props: FieldRootProps) {
     controlId,
     description,
     errorMap,
+    errorPolicy,
     label,
     name,
     ...rest
   } = props
-  const [nativeErrors, setNativeErrors] = useState<readonly string[]>([])
-  const generatedId = useId()
-  const resolvedControlId = controlId ?? `${generatedId}-control`
-  const visibleErrors = activeErrors ?? nativeErrors
-  const contextValue: FieldContextValue = {
-    activeErrors,
-    controlId: resolvedControlId,
-    description,
-    descriptionId: `${generatedId}-description`,
-    errorId: `${generatedId}-error`,
-    errorMap,
-    label,
-    labelId: `${generatedId}-label`,
-    name,
-    setNativeErrors,
-    visibleErrors,
-  }
-
   return (
-    <FieldContext.Provider value={contextValue}>
+    <FieldProvider
+      activeErrors={activeErrors}
+      controlId={controlId}
+      description={description}
+      errorMap={errorMap}
+      errorPolicy={errorPolicy}
+      label={label}
+      name={name}
+    >
       <div
         {...rest}
         className={clsx(styles.field, className)}
       />
-    </FieldContext.Provider>
+    </FieldProvider>
   )
 }
 
@@ -62,64 +55,35 @@ export type LabelProps = LabelHTMLAttributes<HTMLLabelElement>
 
 export function Label(props: LabelProps) {
   const { children, htmlFor, id, ...rest } = props
-  const field = useFieldContext('Label')
+  const labelProps = useLabel({ children, htmlFor, id })
 
   return (
     <label
       {...rest}
-      htmlFor={htmlFor ?? field.controlId}
-      id={id ?? field.labelId}
-    >
-      {children ?? field.label}
-    </label>
+      {...labelProps}
+    />
   )
 }
-
-type ControlRenderProps = Pick<
-  InputHTMLAttributes<HTMLInputElement>,
-  | 'aria-describedby'
-  | 'aria-errormessage'
-  | 'aria-invalid'
-  | 'id'
-  | 'name'
-  | 'onBlur'
-  | 'onChange'
-  | 'onInput'
-  | 'onInvalid'
->
 
 export type ControlProps = {
   children: (props: ControlRenderProps) => ReactNode
 }
 
 export function Control(props: ControlProps) {
-  const field = useFieldContext('Control')
-  const validityHandlers = createValidityHandlerProps(field)
-
-  return props.children({
-    'aria-describedby': field.description ? field.descriptionId : undefined,
-    'aria-errormessage':
-      field.visibleErrors.length > 0 ? field.errorId : undefined,
-    'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
-    id: field.controlId,
-    name: field.name,
-    ...validityHandlers,
-  })
+  return props.children(useControl())
 }
 
 export type DescriptionProps = HTMLAttributes<HTMLDivElement>
 
 export function Description(props: DescriptionProps) {
   const { children, id, ...rest } = props
-  const field = useFieldContext('Description')
+  const descriptionProps = useDescription({ children, id })
 
   return (
     <div
       {...rest}
-      id={id ?? field.descriptionId}
-    >
-      {children ?? field.description}
-    </div>
+      {...descriptionProps}
+    />
   )
 }
 
@@ -127,66 +91,12 @@ export type ErrorMessageProps = HTMLAttributes<HTMLDivElement>
 
 export function ErrorMessage(props: ErrorMessageProps) {
   const { children, id, ...rest } = props
-  const field = useFieldContext('ErrorMessage')
-  const errorMessages = field.visibleErrors
-    .map((errorKey) => [errorKey, field.errorMap?.get(errorKey)] as const)
-    .filter((entry): entry is readonly [string, ReactNode] => entry[1] != null)
+  const errorMessageProps = useErrorMessage({ children, id })
 
   return (
     <div
       {...rest}
-      id={id ?? field.errorId}
-      role={field.visibleErrors.length > 0 ? 'alert' : undefined}
-    >
-      {children ??
-        errorMessages.map(([errorKey, message]) => (
-          <p
-            className={styles.errorMessage}
-            key={errorKey}
-          >
-            {message}
-          </p>
-        ))}
-    </div>
+      {...errorMessageProps}
+    />
   )
-}
-
-function createValidityHandlerProps(
-  field: FieldContextValue,
-): Pick<ControlRenderProps, 'onBlur' | 'onChange' | 'onInput' | 'onInvalid'> {
-  if (field.activeErrors) {
-    return {}
-  }
-
-  const setNativeErrors = (control: HTMLInputElement) => {
-    field.setNativeErrors(getValidityErrorKeys(control.validity))
-  }
-
-  return {
-    onBlur: (event) => setNativeErrors(event.currentTarget),
-    onChange: (event) => setNativeErrors(event.currentTarget),
-    onInput: (event) => setNativeErrors(event.currentTarget),
-    onInvalid: (event) => setNativeErrors(event.currentTarget),
-  }
-}
-
-const validityErrorKeys = [
-  'valueMissing',
-  'typeMismatch',
-  'patternMismatch',
-  'tooShort',
-  'tooLong',
-  'rangeUnderflow',
-  'rangeOverflow',
-  'stepMismatch',
-  'badInput',
-  'customError',
-] as const
-
-function getValidityErrorKeys(validity: ValidityState): readonly string[] {
-  if (validity.valid) {
-    return []
-  }
-
-  return validityErrorKeys.filter((key) => validity[key])
 }

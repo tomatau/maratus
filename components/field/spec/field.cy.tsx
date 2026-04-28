@@ -1,4 +1,7 @@
+import type { FieldErrorKey, FieldErrorPolicy, ValidityErrorKey } from '../src'
 import { Control, Description, ErrorMessage, FieldRoot, Label } from '../src'
+
+type Stub = sinon.SinonStub
 
 describe('Field', () => {
   it('renders the minimum field contract with no automatic axe violations', () => {
@@ -33,13 +36,15 @@ describe('Field', () => {
     expect(ErrorMessage).to.be.a('function')
   })
 
-  it('REQ-001 PRD-003 generates document-unique ids for each field relationship target', () => {
-    const errorMap = new Map([['valueMissing', 'Enter an email address.']])
+  it('REQ-001 PRD-002 generates document-unique ids for each field relationship target', () => {
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
 
     cy.mount(
       <>
         <FieldRoot
-          activeErrors={['valueMissing']}
+          activeErrors={new Set(['valueMissing'])}
           description="Used for receipts."
           errorMap={errorMap}
           label="Email"
@@ -58,7 +63,7 @@ describe('Field', () => {
           <ErrorMessage data-testid="first-error" />
         </FieldRoot>
         <FieldRoot
-          activeErrors={['valueMissing']}
+          activeErrors={new Set(['valueMissing'])}
           description="Used for account recovery."
           errorMap={errorMap}
           label="Backup email"
@@ -105,7 +110,7 @@ describe('Field', () => {
     })
   })
 
-  it('REQ-002 REQ-003 REQ-004 PRD-003 PRD-004 PRD-005 uses an explicit control id for label and control wiring', () => {
+  it('REQ-002 REQ-003 REQ-004 PRD-002 PRD-003 PRD-004 uses an explicit control id for label and control wiring', () => {
     cy.mount(
       <FieldRoot
         controlId="email-control"
@@ -132,7 +137,7 @@ describe('Field', () => {
       .and('have.attr', 'name', 'email')
   })
 
-  it('REQ-002 REQ-003 PRD-003 PRD-004 PRD-005 associates the label with the generated field control id', () => {
+  it('REQ-002 REQ-003 PRD-002 PRD-003 PRD-004 associates the label with the generated field control id', () => {
     cy.mount(
       <FieldRoot
         label="Email"
@@ -158,7 +163,7 @@ describe('Field', () => {
     })
   })
 
-  it('REQ-005 REQ-006 PRD-003 PRD-004 wires description content to the field control', () => {
+  it('REQ-005 REQ-006 PRD-002 PRD-003 wires description content to the field control', () => {
     cy.mount(
       <FieldRoot
         description="Used for receipts."
@@ -189,12 +194,14 @@ describe('Field', () => {
       })
   })
 
-  it('REQ-007 REQ-008 REQ-009 REQ-011 PRD-003 PRD-004 wires visible errors to the field control', () => {
-    const errorMap = new Map([['valueMissing', 'Enter an email address.']])
+  it('REQ-007 REQ-008 REQ-009 REQ-011 PRD-002 PRD-003 wires visible errors to the field control', () => {
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
 
     cy.mount(
       <FieldRoot
-        activeErrors={['valueMissing']}
+        activeErrors={new Set(['valueMissing'])}
         errorMap={errorMap}
         label="Email"
         name="email"
@@ -224,7 +231,9 @@ describe('Field', () => {
   })
 
   it('REQ-007 REQ-008 REQ-009 REQ-011 REQ-014 wires native validation errors to the field control', () => {
-    const errorMap = new Map([['valueMissing', 'Enter an email address.']])
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
 
     cy.mount(
       <FieldRoot
@@ -263,7 +272,9 @@ describe('Field', () => {
   })
 
   it('REQ-010 omits aria-errormessage when the field has no visible errors', () => {
-    const errorMap = new Map([['valueMissing', 'Enter an email address.']])
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
 
     cy.mount(
       <FieldRoot
@@ -334,17 +345,21 @@ describe('Field', () => {
     })
   })
 
-  it('REQ-013 PRD-003 PRD-004 PRD-007 uses activeErrors as the current active error keys', () => {
-    const errorMap = new Map([
+  it('REQ-013 PRD-002 PRD-003 PRD-006 uses activeErrors as the current active error keys', () => {
+    const errorMap = new Map<FieldErrorKey, string>([
       ['valueMissing', 'Enter an email address.'],
       ['typeMismatch', 'Enter a valid email address.'],
       ['tooShort', 'Use at least 8 characters.'],
       ['customServerError', 'This email is already registered.'],
     ])
+    const activeErrors = new Set<FieldErrorKey>([
+      'typeMismatch',
+      'customServerError',
+    ])
 
     cy.mount(
       <FieldRoot
-        activeErrors={['typeMismatch', 'customServerError']}
+        activeErrors={activeErrors}
         errorMap={errorMap}
         label="Email"
         name="email"
@@ -378,5 +393,438 @@ describe('Field', () => {
       .should('not.contain', 'Enter an email address.')
       .and('not.contain', 'Use at least 8 characters.')
     cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+  })
+
+  describe('errorPolicy', () => {
+    function mountPolicyField({
+      activeErrors,
+      errorMap,
+      errorPolicy,
+      label = 'Email',
+      name = 'email',
+      required = false,
+      type = 'text',
+    }: {
+      activeErrors?: ReadonlySet<FieldErrorKey>
+      errorMap: ReadonlyMap<FieldErrorKey, string>
+      errorPolicy: FieldErrorPolicy | undefined
+      label?: string
+      name?: string
+      required?: boolean
+      type?: string
+    }) {
+      cy.mount(
+        <FieldRoot
+          activeErrors={activeErrors}
+          errorMap={errorMap}
+          errorPolicy={errorPolicy}
+          label={label}
+          name={name}
+        >
+          <Control>
+            {(controlProps) => (
+              <input
+                data-testid="control"
+                required={required}
+                type={type}
+                {...controlProps}
+              />
+            )}
+          </Control>
+          <ErrorMessage data-testid="error" />
+        </FieldRoot>,
+      )
+    }
+
+    function getMessagesForKeys(
+      errorMap: ReadonlyMap<FieldErrorKey, string>,
+      errorKeys: Iterable<FieldErrorKey>,
+    ) {
+      return [...errorKeys].flatMap((errorKey) => {
+        const message = errorMap.get(errorKey)
+        return message ? [message] : []
+      })
+    }
+
+    function expectErrorMessages(messages: readonly string[]) {
+      cy.getByTestId('error')
+        .find('p')
+        .should('have.length', messages.length)
+        .each(($message, index) => {
+          cy.wrap($message).should('have.text', messages[index])
+        })
+    }
+
+    function expectNoErrorMessages() {
+      cy.getByTestId('error').find('p').should('have.length', 0)
+    }
+
+    function getPolicyCall(errorPolicy: Stub, event: string) {
+      return errorPolicy.getCalls().find((call) => call.args[0].event === event)
+    }
+
+    function expectPolicyCallState(
+      errorPolicy: Stub,
+      expectedState: {
+        activeErrors?: ReadonlySet<FieldErrorKey>
+        event: string
+        field?: Partial<{
+          wasBlurred: boolean
+          wasChanged: boolean
+          wasErrored: boolean
+          wasTouched: boolean
+        }>
+        form?: Partial<{ wasSubmitted: boolean }>
+        isErrorVisible?: boolean
+        isValid?: boolean
+        source?: 'event' | 'first' | 'latest'
+      },
+    ) {
+      const source = expectedState.source ?? 'event'
+      const args =
+        source === 'first'
+          ? errorPolicy.firstCall.args[0]
+          : source === 'latest'
+            ? errorPolicy.lastCall.args[0]
+            : getPolicyCall(errorPolicy, expectedState.event)?.args[0]
+
+      expect(args, `${expectedState.event} policy call`).not.to.equal(undefined)
+      expect(args.event, `${expectedState.event} event`).to.equal(
+        expectedState.event,
+      )
+
+      if (expectedState.isValid !== undefined) {
+        expect(args.isValid, `${expectedState.event} isValid`).to.equal(
+          expectedState.isValid,
+        )
+      }
+
+      if (expectedState.isErrorVisible !== undefined) {
+        expect(
+          args.isErrorVisible,
+          `${expectedState.event} isErrorVisible`,
+        ).to.equal(expectedState.isErrorVisible)
+      }
+
+      if (expectedState.activeErrors) {
+        expect(
+          args.activeErrors,
+          `${expectedState.event} activeErrors`,
+        ).to.equal(expectedState.activeErrors)
+      }
+
+      Object.entries(expectedState.field ?? {}).forEach(([key, value]) => {
+        expect(args.field[key], `${expectedState.event} ${key}`).to.equal(value)
+      })
+
+      Object.entries(expectedState.form ?? {}).forEach(([key, value]) => {
+        expect(args.form[key], `${expectedState.event} form.${key}`).to.equal(
+          value,
+        )
+      })
+    }
+
+    it('PRD-007 hides active errors when errorPolicy returns false', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+        ['typeMismatch', 'Enter a valid email address.'],
+      ])
+      const activeErrors = new Set<FieldErrorKey>([
+        'valueMissing',
+        'typeMismatch',
+      ])
+
+      mountPolicyField({
+        activeErrors,
+        errorMap,
+        errorPolicy: () => false,
+      })
+
+      expectNoErrorMessages()
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+    })
+
+    it('PRD-007 shows all active errors when errorPolicy returns true', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+        ['typeMismatch', 'Enter a valid email address.'],
+      ])
+      const activeErrors = new Set<FieldErrorKey>([
+        'valueMissing',
+        'typeMismatch',
+      ])
+      const expectedMessages = getMessagesForKeys(errorMap, activeErrors)
+
+      mountPolicyField({
+        activeErrors,
+        errorMap,
+        errorPolicy: () => true,
+      })
+
+      expectErrorMessages(expectedMessages)
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+    })
+
+    it('PRD-007 shows matching active errors in the order returned by errorPolicy', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+        ['typeMismatch', 'Enter a valid email address.'],
+      ])
+      const activeErrors = new Set<FieldErrorKey>([
+        'valueMissing',
+        'typeMismatch',
+      ])
+      const returnedErrors = [
+        'typeMismatch',
+        'valueMissing',
+      ] as const satisfies readonly FieldErrorKey[]
+      const expectedMessages = getMessagesForKeys(errorMap, returnedErrors)
+
+      mountPolicyField({
+        activeErrors,
+        errorMap,
+        errorPolicy: () => returnedErrors,
+      })
+
+      expectErrorMessages(expectedMessages)
+    })
+
+    it('PRD-007 ignores error keys returned by errorPolicy when they are not active', () => {
+      const ignoredError = 'customServerError' satisfies FieldErrorKey
+      const shownError = 'typeMismatch' satisfies FieldErrorKey
+      const returnedErrors = [
+        ignoredError,
+        shownError,
+      ] as const satisfies readonly FieldErrorKey[]
+      const activeErrors = new Set<FieldErrorKey>(['valueMissing', shownError])
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+        [shownError, 'Enter a valid email address.'],
+        [ignoredError, 'This email is already registered.'],
+      ])
+      const expectedMessages = getMessagesForKeys(
+        errorMap,
+        returnedErrors.filter((errorKey) => activeErrors.has(errorKey)),
+      )
+      const ignoredMessage = errorMap.get(ignoredError)
+
+      mountPolicyField({
+        activeErrors,
+        errorMap,
+        errorPolicy: () => returnedErrors,
+      })
+
+      expectErrorMessages(expectedMessages)
+      cy.getByTestId('error').should('not.contain', ignoredMessage)
+    })
+
+    it('PRD-008 PRD-009 PRD-010 PRD-011 passes initial policy state for controlled active errors', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+        ['typeMismatch', 'Enter a valid email address.'],
+      ])
+      const activeErrors = new Set<FieldErrorKey>([
+        'valueMissing',
+        'typeMismatch',
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(true)
+
+      mountPolicyField({
+        activeErrors,
+        errorMap,
+        errorPolicy,
+      })
+
+      cy.get('@errorPolicy').should('have.been.called')
+      cy.then(() => {
+        expectPolicyCallState(errorPolicy, {
+          activeErrors,
+          event: 'invalid',
+          field: {
+            wasBlurred: false,
+            wasChanged: false,
+            wasErrored: false,
+            wasTouched: false,
+          },
+          form: {
+            wasSubmitted: false,
+          },
+          isErrorVisible: false,
+          isValid: false,
+          source: 'first',
+        })
+      })
+    })
+
+    it('PRD-008 PRD-009 PRD-010 passes invalid event policy state for native validation', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(true)
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy,
+        required: true,
+      })
+
+      cy.getByTestId<HTMLInputElement>('control').then(($control) => {
+        $control.get(0).checkValidity()
+      })
+      expectErrorMessages(['Enter an email address.'])
+      cy.then(() => {
+        expectPolicyCallState(errorPolicy, {
+          event: 'invalid',
+          field: {
+            wasBlurred: false,
+            wasChanged: false,
+            wasErrored: true,
+            wasTouched: true,
+          },
+          isErrorVisible: true,
+          isValid: false,
+          source: 'latest',
+        })
+      })
+    })
+
+    it('PRD-008 PRD-009 PRD-010 passes input event policy state after a visible error', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(true)
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy,
+        required: true,
+      })
+
+      cy.getByTestId<HTMLInputElement>('control').then(($control) => {
+        $control.get(0).checkValidity()
+      })
+      expectErrorMessages(['Enter an email address.'])
+
+      cy.getByTestId('control').invoke('val', 'a').trigger('input')
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.then(() => {
+        expectPolicyCallState(errorPolicy, {
+          event: 'input',
+          field: {
+            wasBlurred: false,
+            wasChanged: true,
+            wasErrored: true,
+            wasTouched: true,
+          },
+          isErrorVisible: false,
+          isValid: true,
+          source: 'latest',
+        })
+      })
+    })
+
+    it('PRD-008 PRD-010 marks the field as blurred after focus leaves the control', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(false)
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy,
+      })
+
+      cy.getByTestId('control').trigger('focusin')
+      cy.getByTestId('control').trigger('focusout')
+      cy.then(() => {
+        expectPolicyCallState(errorPolicy, {
+          event: 'blur',
+          field: {
+            wasBlurred: true,
+          },
+        })
+      })
+    })
+
+    it('PRD-008 PRD-010 marks the field as touched when the control receives focus', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(false)
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy,
+      })
+
+      cy.getByTestId('control').focus()
+      cy.wrap(null).should(() => {
+        expectPolicyCallState(errorPolicy, {
+          event: 'focus',
+          field: {
+            wasTouched: true,
+          },
+        })
+      })
+    })
+
+    it('PRD-007 uses the default error policy when no custom errorPolicy is supplied', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy: undefined,
+        required: true,
+      })
+
+      cy.getByTestId('control').trigger('input')
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      expectNoErrorMessages()
+
+      cy.getByTestId('control').trigger('focusout')
+      expectErrorMessages(['Enter an email address.'])
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+
+      cy.getByTestId('control').invoke('val', 'a').trigger('input')
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      expectNoErrorMessages()
+    })
+
+    it('PRD-008 PRD-010 passes change event policy state for native checkbox changes', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Accept the terms.'],
+      ])
+      const errorPolicy = cy.stub().as('errorPolicy').returns(true)
+
+      mountPolicyField({
+        errorMap,
+        errorPolicy,
+        label: 'Accept terms',
+        name: 'terms',
+        required: true,
+        type: 'checkbox',
+      })
+
+      cy.getByTestId<HTMLInputElement>('control').then(($control) => {
+        $control.get(0).checkValidity()
+      })
+      expectErrorMessages(['Accept the terms.'])
+
+      cy.getByTestId('control').check()
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.then(() => {
+        expectPolicyCallState(errorPolicy, {
+          event: 'change',
+          field: {
+            wasChanged: true,
+            wasTouched: true,
+          },
+          isErrorVisible: true,
+          isValid: true,
+        })
+      })
+    })
   })
 })
