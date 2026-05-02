@@ -72,6 +72,7 @@
 | PRD-010 | `errorPolicy` must receive field event history through `field.wasBlurred`, `field.wasChanged`, `field.wasTouched`, and `field.wasErrored`.          | Current       |
 | PRD-011 | `errorPolicy` must receive form event history through `form.wasSubmitted`.                                                                          | Current       |
 | PRD-012 | `ErrorMessage` must accept an optional `renderChildren` prop for each visible error with the message content, CSS module class name, and error key. | Current       |
+| PRD-013 | `FieldRoot`, `Description`, and `ErrorMessage` must support root substitution through `as` without changing relationship wiring.                    | Current       |
 
 ## API Contract
 
@@ -112,6 +113,7 @@ type ErrorMessageItemProps = {
 }
 
 type ErrorMessageProps = {
+  as?: React.ElementType
   children?: never
   renderChildren?: (props: ErrorMessageItemProps) => React.ReactNode
 }
@@ -157,6 +159,7 @@ const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
 - Visible errors are active errors that `errorPolicy` allows. A key returned from `errorPolicy` is ignored when that key is not active.
 - `ErrorMessage` renders visible error messages by looking up visible error keys in `errorMap`.
 - `ErrorMessage` renders each visible error with a `p` element by default, and consumers can replace that element with `renderChildren`.
+- `FieldRoot`, `Description`, and `ErrorMessage` accept `as` for root substitution; `Label` does not, because the native `label` element provides the field association behaviour.
 - `field.wasBlurred`, `field.wasChanged`, and `field.wasTouched` are field-level event history flags, not value history flags.
 - `field.wasErrored` records whether the field has previously shown an error.
 - `form.wasSubmitted` is form-level event history when a form context exists, and otherwise defaults to `false`.

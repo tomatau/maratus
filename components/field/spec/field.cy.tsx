@@ -271,6 +271,104 @@ describe('Field', () => {
       .and('have.attr', 'data-render-key', 'valueMissing')
   })
 
+  it('PRD-013 supports root substitution for the field root', () => {
+    cy.mount(
+      <FieldRoot
+        as="section"
+        data-testid="field"
+        label="Email"
+        name="email"
+      >
+        <Control>
+          {(controlProps) => (
+            <input
+              data-testid="control"
+              {...controlProps}
+            />
+          )}
+        </Control>
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('field').should('match', 'section')
+    cy.getByTestId('control').should('have.attr', 'name', 'email')
+  })
+
+  it('REQ-005 REQ-006 PRD-013 supports root substitution for description relationship wiring', () => {
+    cy.mount(
+      <FieldRoot
+        description="Used for receipts."
+        label="Email"
+        name="email"
+      >
+        <Control>
+          {(controlProps) => (
+            <input
+              data-testid="control"
+              {...controlProps}
+            />
+          )}
+        </Control>
+        <Description
+          as="span"
+          data-testid="description"
+        />
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('description')
+      .should('match', 'span')
+      .and('have.text', 'Used for receipts.')
+      .and('have.attr', 'id')
+      .then((descriptionId) => {
+        cy.getByTestId('control').should(
+          'have.attr',
+          'aria-describedby',
+          descriptionId,
+        )
+      })
+  })
+
+  it('REQ-007 REQ-008 REQ-009 REQ-011 PRD-013 supports root substitution for error relationship wiring', () => {
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
+
+    cy.mount(
+      <FieldRoot
+        activeErrors={new Set(['valueMissing'])}
+        errorMap={errorMap}
+        label="Email"
+        name="email"
+      >
+        <Control>
+          {(controlProps) => (
+            <input
+              data-testid="control"
+              {...controlProps}
+            />
+          )}
+        </Control>
+        <ErrorMessage
+          as="section"
+          data-testid="error"
+        />
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('error')
+      .should('match', 'section')
+      .and('have.text', 'Enter an email address.')
+      .and('have.attr', 'role', 'alert')
+    cy.getByTestId('error')
+      .invoke('attr', 'id')
+      .then((errorId) => {
+        cy.getByTestId('control')
+          .should('have.attr', 'aria-invalid', 'true')
+          .and('have.attr', 'aria-errormessage', errorId)
+      })
+  })
+
   it('REQ-007 REQ-008 REQ-009 REQ-011 REQ-014 wires native validation errors to the field control', () => {
     const errorMap = new Map<ValidityErrorKey, string>([
       ['valueMissing', 'Enter an email address.'],
