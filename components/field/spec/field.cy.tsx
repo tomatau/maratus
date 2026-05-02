@@ -230,6 +230,47 @@ describe('Field', () => {
       })
   })
 
+  it('PRD-012 allows ErrorMessage to render visible errors with renderChildren', () => {
+    const errorMap = new Map<ValidityErrorKey, string>([
+      ['valueMissing', 'Enter an email address.'],
+    ])
+
+    cy.mount(
+      <FieldRoot
+        activeErrors={new Set(['valueMissing'])}
+        errorMap={errorMap}
+        label="Email"
+        name="email"
+      >
+        <ErrorMessage
+          data-testid="error"
+          renderChildren={({ children, className, errorKey, key }) => (
+            <span
+              className={className}
+              data-error-key={errorKey}
+              data-render-key={key}
+              data-testid="custom-error"
+              key={key}
+            >
+              {children}
+            </span>
+          )}
+        />
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('error')
+      .should('have.attr', 'role', 'alert')
+      .find('p')
+      .should('have.length', 0)
+    cy.getByTestId('custom-error')
+      .should('have.text', 'Enter an email address.')
+      .and('have.attr', 'class')
+    cy.getByTestId('custom-error')
+      .and('have.attr', 'data-error-key', 'valueMissing')
+      .and('have.attr', 'data-render-key', 'valueMissing')
+  })
+
   it('REQ-007 REQ-008 REQ-009 REQ-011 REQ-014 wires native validation errors to the field control', () => {
     const errorMap = new Map<ValidityErrorKey, string>([
       ['valueMissing', 'Enter an email address.'],
