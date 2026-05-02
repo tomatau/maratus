@@ -11,3 +11,4 @@ registry/*/*
 packages/maratus-cli-*/bin/*
 !packages/maratus-cli-*/bin/.gitkeep
 .envrc
+playground.cy.tsx
