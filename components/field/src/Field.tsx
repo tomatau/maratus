@@ -1,6 +1,11 @@
 import type { FieldErrorKey, FieldErrorPolicy } from './FieldContext'
 import type { ControlRenderProps, ErrorMessageItemProps } from './useField'
-import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react'
+import type {
+  ElementType,
+  HTMLAttributes,
+  LabelHTMLAttributes,
+  ReactNode,
+} from 'react'
 import clsx from 'clsx'
 import { FieldProvider } from './FieldContext'
 import {
@@ -13,6 +18,7 @@ import styles from './Field.module.css'
 
 export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
   activeErrors?: ReadonlySet<FieldErrorKey>
+  as?: ElementType
   controlId?: string
   description?: ReactNode
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
@@ -24,6 +30,7 @@ export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
 export function FieldRoot(props: FieldRootProps) {
   const {
     activeErrors,
+    as: Root = 'div',
     className,
     controlId,
     description,
@@ -43,7 +50,7 @@ export function FieldRoot(props: FieldRootProps) {
       label={label}
       name={name}
     >
-      <div
+      <Root
         {...rest}
         className={clsx(styles.field, className)}
       />
@@ -73,14 +80,16 @@ export function Control(props: ControlProps) {
   return props.children(useControl())
 }
 
-export type DescriptionProps = HTMLAttributes<HTMLDivElement>
+export type DescriptionProps = HTMLAttributes<HTMLDivElement> & {
+  as?: ElementType
+}
 
 export function Description(props: DescriptionProps) {
-  const { children, id, ...rest } = props
+  const { as: Root = 'div', children, id, ...rest } = props
   const descriptionProps = useDescription({ children, id })
 
   return (
-    <div
+    <Root
       {...rest}
       {...descriptionProps}
     />
@@ -91,15 +100,16 @@ export type ErrorMessageProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   'children'
 > & {
+  as?: ElementType
   renderChildren?: (props: ErrorMessageItemProps) => ReactNode
 }
 
 export function ErrorMessage(props: ErrorMessageProps) {
-  const { id, renderChildren, ...rest } = props
+  const { as: Root = 'div', id, renderChildren, ...rest } = props
   const { items, ...errorMessageProps } = useErrorMessage({ id })
 
   return (
-    <div
+    <Root
       {...rest}
       {...errorMessageProps}
     >
@@ -115,6 +125,6 @@ export function ErrorMessage(props: ErrorMessageProps) {
           </p>
         ),
       )}
-    </div>
+    </Root>
   )
 }
