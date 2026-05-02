@@ -1,5 +1,5 @@
 import type { FieldErrorKey, FieldErrorPolicy } from './FieldContext'
-import type { ControlRenderProps } from './useField'
+import type { ControlRenderProps, ErrorMessageItemProps } from './useField'
 import type { HTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'
 import { FieldProvider } from './FieldContext'
@@ -87,16 +87,34 @@ export function Description(props: DescriptionProps) {
   )
 }
 
-export type ErrorMessageProps = HTMLAttributes<HTMLDivElement>
+export type ErrorMessageProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'children'
+> & {
+  renderChildren?: (props: ErrorMessageItemProps) => ReactNode
+}
 
 export function ErrorMessage(props: ErrorMessageProps) {
-  const { children, id, ...rest } = props
-  const errorMessageProps = useErrorMessage({ children, id })
+  const { id, renderChildren, ...rest } = props
+  const { items, ...errorMessageProps } = useErrorMessage({ id })
 
   return (
     <div
       {...rest}
       {...errorMessageProps}
-    />
+    >
+      {items.map((item) =>
+        renderChildren ? (
+          renderChildren(item)
+        ) : (
+          <p
+            className={item.className}
+            key={item.key}
+          >
+            {item.children}
+          </p>
+        ),
+      )}
+    </div>
   )
 }

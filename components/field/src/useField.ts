@@ -1,6 +1,5 @@
 import type { FieldErrorKey } from './FieldContext'
 import type { InputHTMLAttributes, LabelHTMLAttributes, ReactNode } from 'react'
-import { createElement } from 'react'
 import { useFieldContext } from './FieldContext'
 import styles from './Field.module.css'
 
@@ -73,33 +72,36 @@ export function useDescription(options: UseDescriptionOptions) {
 }
 
 export type UseErrorMessageOptions = {
-  children?: ReactNode
   id?: string
 }
 
+export type ErrorMessageItemProps = {
+  children: ReactNode
+  className: string
+  errorKey: FieldErrorKey
+  key: FieldErrorKey
+}
+
 export function useErrorMessage(options: UseErrorMessageOptions) {
-  const { children, id } = options
+  const { id } = options
   const field = useFieldContext('ErrorMessage')
-  const errorMessages = field.visibleErrors
+  const items = field.visibleErrors
     .map((errorKey) => [errorKey, field.errorMap?.get(errorKey)] as const)
     .filter(
       (entry): entry is readonly [FieldErrorKey, ReactNode] => entry[1] != null,
     )
+    .map(
+      ([errorKey, message]): ErrorMessageItemProps => ({
+        children: message,
+        className: styles.errorMessage,
+        errorKey,
+        key: errorKey,
+      }),
+    )
 
   return {
-    children:
-      children ??
-      errorMessages.map(([errorKey, message]) =>
-        createElement(
-          'p',
-          {
-            className: styles.errorMessage,
-            key: errorKey,
-          },
-          message,
-        ),
-      ),
     id: id ?? field.errorId,
+    items,
     role: field.visibleErrors.length > 0 ? 'alert' : undefined,
   }
 }

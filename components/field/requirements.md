@@ -58,19 +58,20 @@
 
 ## Product Requirements
 
-| ID      | Requirement                                                                                                                                | Applicability |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| PRD-001 | Export `FieldRoot`, `Control`, `Label`, `Description`, and `ErrorMessage` from the field package entry point.                              | Current       |
-| PRD-002 | `FieldRoot` must accept `label`, `description`, and `errorMap` props as described in the API contract.                                     | Current       |
-| PRD-003 | `Label`, `Description`, and `ErrorMessage` must render the corresponding content from the closest ancestor `FieldRoot`.                    | Current       |
-| PRD-004 | `FieldRoot` must accept a `name` prop as the minimum field identity input for automatic relationship wiring.                               | Current       |
-| PRD-005 | Generated field ids must be consistent between server render and client hydration.                                                         | Current       |
-| PRD-006 | `FieldRoot` must accept `activeErrors` so external form state can provide the current error keys.                                          | Current       |
-| PRD-007 | `FieldRoot` must accept `errorPolicy` with the argument and return shapes described in the API contract.                                   | Current       |
-| PRD-008 | `errorPolicy` must receive the event that caused validation state to be evaluated.                                                         | Current       |
-| PRD-009 | `errorPolicy` must receive `isValid` and `isErrorVisible` values for the current evaluation.                                               | Current       |
-| PRD-010 | `errorPolicy` must receive field event history through `field.wasBlurred`, `field.wasChanged`, `field.wasTouched`, and `field.wasErrored`. | Current       |
-| PRD-011 | `errorPolicy` must receive form event history through `form.wasSubmitted`.                                                                 | Current       |
+| ID      | Requirement                                                                                                                                         | Applicability |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| PRD-001 | Export `FieldRoot`, `Control`, `Label`, `Description`, and `ErrorMessage` from the field package entry point.                                       | Current       |
+| PRD-002 | `FieldRoot` must accept `label`, `description`, and `errorMap` props as described in the API contract.                                              | Current       |
+| PRD-003 | `Label`, `Description`, and `ErrorMessage` must render the corresponding content from the closest ancestor `FieldRoot`.                             | Current       |
+| PRD-004 | `FieldRoot` must accept a `name` prop as the minimum field identity input for automatic relationship wiring.                                        | Current       |
+| PRD-005 | Generated field ids must be consistent between server render and client hydration.                                                                  | Current       |
+| PRD-006 | `FieldRoot` must accept `activeErrors` so external form state can provide the current error keys.                                                   | Current       |
+| PRD-007 | `FieldRoot` must accept `errorPolicy` with the argument and return shapes described in the API contract.                                            | Current       |
+| PRD-008 | `errorPolicy` must receive the event that caused validation state to be evaluated.                                                                  | Current       |
+| PRD-009 | `errorPolicy` must receive `isValid` and `isErrorVisible` values for the current evaluation.                                                        | Current       |
+| PRD-010 | `errorPolicy` must receive field event history through `field.wasBlurred`, `field.wasChanged`, `field.wasTouched`, and `field.wasErrored`.          | Current       |
+| PRD-011 | `errorPolicy` must receive form event history through `form.wasSubmitted`.                                                                          | Current       |
+| PRD-012 | `ErrorMessage` must accept an optional `renderChildren` prop for each visible error with the message content, CSS module class name, and error key. | Current       |
 
 ## API Contract
 
@@ -102,6 +103,18 @@ type FieldErrorPolicyArgs = {
 }
 
 type FieldErrorPolicyResult = false | true | readonly FieldErrorKey[]
+
+type ErrorMessageItemProps = {
+  children: React.ReactNode
+  className: string
+  errorKey: FieldErrorKey
+  key: FieldErrorKey
+}
+
+type ErrorMessageProps = {
+  children?: never
+  renderChildren?: (props: ErrorMessageItemProps) => React.ReactNode
+}
 
 const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
   if (args.isValid) return false
@@ -143,6 +156,7 @@ const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
 - `errorPolicy` receives the current error key set and returns `false` to show none, `true` to show all, or an ordered key list to show a subset.
 - Visible errors are active errors that `errorPolicy` allows. A key returned from `errorPolicy` is ignored when that key is not active.
 - `ErrorMessage` renders visible error messages by looking up visible error keys in `errorMap`.
+- `ErrorMessage` renders each visible error with a `p` element by default, and consumers can replace that element with `renderChildren`.
 - `field.wasBlurred`, `field.wasChanged`, and `field.wasTouched` are field-level event history flags, not value history flags.
 - `field.wasErrored` records whether the field has previously shown an error.
 - `form.wasSubmitted` is form-level event history when a form context exists, and otherwise defaults to `false`.
