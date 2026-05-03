@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.5.0
+
+### Minor Changes
+
+- 6635616: Adds field component
+
 ## 0.4.1
 
 ### Patch Changes
