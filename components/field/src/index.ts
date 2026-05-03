@@ -6,10 +6,20 @@ export type {
   LabelProps,
 } from './Field'
 export type {
+  ControlRenderArgs,
   ControlRenderProps,
+  ControlRole,
   UseDescriptionOptions,
+  UseDescriptionResult,
+  UseControlOptions,
+  UseControlResult,
   UseErrorMessageOptions,
+  UseErrorMessageResult,
+  UseFieldRootOptions,
+  UseFieldRootResult,
   UseLabelOptions,
+  UseLabelResult,
+  WithValidity,
 } from './useField'
 export type {
   FieldErrorKey,
@@ -23,5 +33,6 @@ export {
   useControl,
   useDescription,
   useErrorMessage,
+  useFieldRoot,
   useLabel,
 } from './useField'

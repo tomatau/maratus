@@ -19,7 +19,7 @@ describe(FieldRoot, () => {
       >
         <Label data-testid="label" />
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}

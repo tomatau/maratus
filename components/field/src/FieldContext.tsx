@@ -40,8 +40,10 @@ export type FieldContextValue = {
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
   evaluateNativeValidity(
     event: FieldErrorPolicyArgs['event'],
-    control: HTMLInputElement,
+    control: { validity: ValidityState },
   ): void
+  isReadOnly: boolean
+  isRequired: boolean
   label: ReactNode
   labelId: string
   name: string
@@ -55,6 +57,8 @@ export type FieldProviderProps = {
   description?: ReactNode
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
   errorPolicy?: FieldErrorPolicy
+  isReadOnly?: boolean
+  isRequired?: boolean
   label: ReactNode
   name: string
 }
@@ -103,6 +107,8 @@ function useFieldProviderValue({
   description,
   errorMap,
   errorPolicy = defaultErrorPolicy,
+  isReadOnly = false,
+  isRequired = false,
   label,
   name,
 }: UseFieldProviderValueOptions): FieldContextValue {
@@ -173,6 +179,8 @@ function useFieldProviderValue({
         isErrorVisible: currentNativeState.isErrorVisible,
       }))
     },
+    isReadOnly,
+    isRequired,
     label,
     labelId: `${generatedId}-label`,
     name,
