@@ -1,9 +1,10 @@
-import type { FieldErrorKey, FieldErrorPolicy } from './FieldContext'
 import type {
   ControlRenderArgs,
   ControlRole,
   ErrorMessageItemProps,
-} from './useField'
+  FieldErrorKey,
+  FieldErrorPolicy,
+} from './Field.types'
 import type {
   ElementType,
   HTMLAttributes,

@@ -1,4 +1,4 @@
-import type { ValidityErrorKey } from './FieldContext'
+import type { ValidityErrorKey } from './Field.types'
 import { describe, expect, test } from 'bun:test'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'

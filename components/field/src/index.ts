@@ -9,6 +9,10 @@ export type {
   ControlRenderArgs,
   ControlRenderProps,
   ControlRole,
+  FieldContextValue,
+  FieldErrorKey,
+  FieldErrorPolicy,
+  FieldProviderProps,
   UseDescriptionOptions,
   UseDescriptionResult,
   UseControlOptions,
@@ -19,14 +23,9 @@ export type {
   UseFieldRootResult,
   UseLabelOptions,
   UseLabelResult,
-  WithValidity,
-} from './useField'
-export type {
-  FieldErrorKey,
-  FieldErrorPolicy,
-  FieldProviderProps,
   ValidityErrorKey,
-} from './FieldContext'
+  WithValidity,
+} from './Field.types'
 export { Control, Description, ErrorMessage, FieldRoot, Label } from './Field'
 export { FieldProvider } from './FieldContext'
 export {
