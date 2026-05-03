@@ -1,9 +1,9 @@
 import type {
   ControlRenderArgs,
-  ControlRole,
   ErrorMessageItemProps,
   FieldErrorKey,
   FieldErrorPolicy,
+  UseControlOptions,
 } from './Field.types'
 import type {
   ElementType,
@@ -37,7 +37,6 @@ export function FieldRoot(props: FieldRootProps) {
   const {
     activeErrors,
     as: Root = 'div',
-    className,
     controlId,
     description,
     errorMap,
@@ -46,9 +45,9 @@ export function FieldRoot(props: FieldRootProps) {
     isRequired,
     label,
     name,
-    ...rest
+    ...hookProps
   } = props
-  const { fieldRootProps } = useFieldRoot({ className })
+  const { fieldRootProps } = useFieldRoot(hookProps)
 
   return (
     <FieldProvider
@@ -62,10 +61,7 @@ export function FieldRoot(props: FieldRootProps) {
       label={label}
       name={name}
     >
-      <Root
-        {...rest}
-        {...fieldRootProps}
-      />
+      <Root {...fieldRootProps} />
     </FieldProvider>
   )
 }
@@ -73,25 +69,18 @@ export function FieldRoot(props: FieldRootProps) {
 export type LabelProps = LabelHTMLAttributes<HTMLLabelElement>
 
 export function Label(props: LabelProps) {
-  const { children, htmlFor, id, ...rest } = props
-  const { labelProps } = useLabel({ children, htmlFor, id })
+  const { labelProps } = useLabel(props)
 
-  return (
-    <label
-      {...rest}
-      {...labelProps}
-    />
-  )
+  return <label {...labelProps} />
 }
 
-export type ControlProps = {
+export type ControlProps = UseControlOptions & {
   children: (props: ControlRenderArgs) => ReactNode
-  role?: ControlRole
 }
 
 export function Control(props: ControlProps) {
-  const { children, role } = props
-  const control = useControl({ role })
+  const { children, ...hookProps } = props
+  const control = useControl(hookProps)
 
   return children(control)
 }
@@ -101,15 +90,10 @@ export type DescriptionProps = HTMLAttributes<HTMLDivElement> & {
 }
 
 export function Description(props: DescriptionProps) {
-  const { as: Root = 'div', children, id, ...rest } = props
-  const { descriptionProps } = useDescription({ children, id })
+  const { as: Root = 'div', ...hookProps } = props
+  const { descriptionProps } = useDescription(hookProps)
 
-  return (
-    <Root
-      {...rest}
-      {...descriptionProps}
-    />
-  )
+  return <Root {...descriptionProps} />
 }
 
 export type ErrorMessageProps = Omit<
@@ -121,14 +105,11 @@ export type ErrorMessageProps = Omit<
 }
 
 export function ErrorMessage(props: ErrorMessageProps) {
-  const { as: Root = 'div', id, renderChildren, ...rest } = props
-  const { errorMessageProps, items } = useErrorMessage({ id })
+  const { as: Root = 'div', renderChildren, ...hookProps } = props
+  const { errorMessageProps, items } = useErrorMessage(hookProps)
 
   return (
-    <Root
-      {...rest}
-      {...errorMessageProps}
-    >
+    <Root {...errorMessageProps}>
       {items.map((item) =>
         renderChildren ? (
           renderChildren(item)

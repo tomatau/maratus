@@ -70,19 +70,13 @@ export type FieldProviderProps = {
   name: string
 }
 
-export type UseFieldRootOptions = Pick<
-  HTMLAttributes<HTMLDivElement>,
-  'className'
->
+export type UseFieldRootOptions = HTMLAttributes<HTMLDivElement>
 
 export type UseFieldRootResult = {
   fieldRootProps: HTMLAttributes<HTMLDivElement>
 }
 
-export type UseLabelOptions = Pick<
-  LabelHTMLAttributes<HTMLLabelElement>,
-  'children' | 'htmlFor' | 'id'
->
+export type UseLabelOptions = LabelHTMLAttributes<HTMLLabelElement>
 
 export type LabelRootProps = LabelHTMLAttributes<HTMLLabelElement> & {
   'data-readonly'?: ''
@@ -99,7 +93,12 @@ export type ControlElement =
   | HTMLSelectElement
   | HTMLTextAreaElement
 
-export type ControlRenderProps = {
+type ControlElementProps = Omit<
+  HTMLAttributes<ControlElement>,
+  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
+>
+
+export type ControlRenderProps = ControlElementProps & {
   'aria-describedby'?: AriaAttributes['aria-describedby']
   'aria-errormessage'?: AriaAttributes['aria-errormessage']
   'aria-invalid'?: AriaAttributes['aria-invalid']
@@ -130,7 +129,20 @@ export type ControlRole =
   | 'spinbutton'
   | 'textbox'
 
-export type UseControlOptions = {
+export type UseControlOptions = Omit<
+  ControlRenderProps,
+  | 'aria-describedby'
+  | 'aria-errormessage'
+  | 'aria-invalid'
+  | 'aria-readonly'
+  | 'aria-required'
+  | 'children'
+  | 'id'
+  | 'name'
+  | 'readOnly'
+  | 'required'
+  | 'role'
+> & {
   role?: ControlRole
 }
 
@@ -148,18 +160,16 @@ export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   }
 }
 
-export type UseDescriptionOptions = {
-  children?: ReactNode
-  id?: string
-}
+export type UseDescriptionOptions = HTMLAttributes<HTMLDivElement>
 
 export type UseDescriptionResult = {
   descriptionProps: HTMLAttributes<HTMLDivElement>
 }
 
-export type UseErrorMessageOptions = {
-  id?: string
-}
+export type UseErrorMessageOptions = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'children'
+>
 
 export type ErrorMessageItemProps = {
   children: ReactNode

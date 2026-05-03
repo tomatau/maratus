@@ -135,6 +135,7 @@
 | PRD-013 | `FieldRoot`, `Description`, and `ErrorMessage` must support root substitution through `as` without changing relationship wiring.                    | Current       |
 | PRD-015 | `FieldRoot` must accept `isRequired` and `isReadOnly` as field-level state inputs for label state hooks and native control props.                   | Current       |
 | PRD-016 | `Control` should support role-aware non-native widgets through an explicit supported role API.                                                      | Current       |
+| PRD-018 | Field elements must provide minimal default styles for foreground, spacing, required, readonly, and invalid states.                                  | Current       |
 
 ## API Contract
 
@@ -261,6 +262,7 @@ const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
 - Visible errors are active errors that `errorPolicy` allows. A key returned from `errorPolicy` is ignored when that key is not active.
 - `ErrorMessage` renders visible error messages by looking up visible error keys in `errorMap`.
 - `ErrorMessage` renders each visible error with a `p` element by default, and consumers can replace that element with `renderChildren`.
+- Field CSS uses component-scoped variables for minimal foreground, spacing, required, readonly, and invalid state styles.
 - `FieldRoot`, `Description`, and `ErrorMessage` accept `as` for root substitution; `Label` does not, because the native `label` element provides the field association behaviour.
 - Field hooks return named prop bags, such as `fieldRootProps`, `labelProps`, `controlProps`, `descriptionProps`, and `errorMessageProps`.
 - `isRequired` and `isReadOnly` are field-level state inputs. Native control render props translate them to `required` and `readOnly`; label props translate them to `data-required` and `data-readonly`.

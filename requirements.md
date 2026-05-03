@@ -19,6 +19,7 @@ These requirements cover shared product and non-functional expectations that sho
 | GPRD-002 | MUST  | A component `as` prop MUST accept either an intrinsic element name string or a React component value.                             | Library policy | Current       |
 | GPRD-003 | MUST  | Hooks that shape semantics differently for native and non-native roots MUST expose an `isNative` option and default it to `true`. | Library policy | Current       |
 | GPRD-004 | MUST  | Component hooks MUST return named prop bags so components keep root selection separate from prop composition.                     | Library policy | Current       |
+| GPRD-005 | MUST  | Component hooks MUST compose root props, expose default CSS module class names, and preserve consumer `className` values.         | Library policy | Current       |
 
 ## Non-Functional Requirements
 
