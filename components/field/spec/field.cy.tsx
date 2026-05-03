@@ -1,4 +1,11 @@
-import type { FieldErrorKey, FieldErrorPolicy, ValidityErrorKey } from '../src'
+import type {
+  ControlRenderArgs,
+  ControlRole,
+  FieldErrorKey,
+  FieldErrorPolicy,
+  ValidityErrorKey,
+} from '../src'
+import type { ReactNode } from 'react'
 import { Control, Description, ErrorMessage, FieldRoot, Label } from '../src'
 
 type Stub = sinon.SinonStub
@@ -13,10 +20,10 @@ describe('Field', () => {
       >
         <Label />
         <Control>
-          {(props) => (
+          {({ controlProps }) => (
             <input
               type="text"
-              {...props}
+              {...controlProps}
             />
           )}
         </Control>
@@ -52,7 +59,7 @@ describe('Field', () => {
         >
           <Label data-testid="first-label" />
           <Control>
-            {(controlProps) => (
+            {({ controlProps }) => (
               <input
                 data-testid="first-control"
                 {...controlProps}
@@ -71,7 +78,7 @@ describe('Field', () => {
         >
           <Label data-testid="second-label" />
           <Control>
-            {(controlProps) => (
+            {({ controlProps }) => (
               <input
                 data-testid="second-control"
                 {...controlProps}
@@ -119,7 +126,7 @@ describe('Field', () => {
       >
         <Label data-testid="label" />
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -145,7 +152,7 @@ describe('Field', () => {
       >
         <Label data-testid="label" />
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -171,7 +178,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -207,7 +214,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -280,7 +287,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -302,7 +309,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -342,7 +349,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -381,7 +388,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               required
@@ -422,7 +429,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               {...controlProps}
@@ -445,7 +452,7 @@ describe('Field', () => {
         name="age"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               autoComplete="bday-year"
@@ -484,6 +491,347 @@ describe('Field', () => {
     })
   })
 
+  it('REQ-016 REQ-018 PRD-015 exposes required state to the label and native control', () => {
+    cy.mount(
+      <FieldRoot
+        isRequired
+        label="Email"
+        name="email"
+      >
+        <Label data-testid="label" />
+        <Control>
+          {({ controlProps }) => (
+            <input
+              data-testid="control"
+              {...controlProps}
+            />
+          )}
+        </Control>
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('label').should('have.attr', 'data-required')
+    cy.getByTestId<HTMLInputElement>('control').then(($control) => {
+      const control = $control.get(0)
+
+      expect(control.required, 'required').to.equal(true)
+      expect(control.validity.valueMissing, 'valueMissing').to.equal(true)
+    })
+  })
+
+  it('REQ-017 REQ-019 PRD-015 exposes readonly state to the label and native control', () => {
+    cy.mount(
+      <FieldRoot
+        isReadOnly
+        label="Email"
+        name="email"
+      >
+        <Label data-testid="label" />
+        <Control>
+          {({ controlProps }) => (
+            <input
+              data-testid="control"
+              type="text"
+              {...controlProps}
+            />
+          )}
+        </Control>
+      </FieldRoot>,
+    )
+
+    cy.getByTestId('label').should('have.attr', 'data-readonly')
+    cy.getByTestId<HTMLInputElement>('control').then(($control) => {
+      const control = $control.get(0)
+
+      expect(control.readOnly, 'read only').to.equal(true)
+    })
+  })
+
+  describe('role-aware non-native controls', () => {
+    const roleCases: readonly {
+      attributes: Record<string, string>
+      role: ControlRole
+    }[] = [
+      {
+        attributes: {
+          contenteditable: 'true',
+          'aria-multiline': 'true',
+        },
+        role: 'textbox',
+      },
+      {
+        attributes: {
+          contenteditable: 'true',
+        },
+        role: 'searchbox',
+      },
+      {
+        attributes: {
+          'aria-valuemax': '10',
+          'aria-valuemin': '0',
+          'aria-valuenow': '5',
+        },
+        role: 'spinbutton',
+      },
+      {
+        attributes: {
+          'aria-controls': 'email-options',
+          'aria-expanded': 'false',
+          'aria-haspopup': 'listbox',
+        },
+        role: 'combobox',
+      },
+      {
+        attributes: {
+          'aria-activedescendant': 'email-option',
+        },
+        role: 'listbox',
+      },
+      {
+        attributes: {
+          'aria-checked': 'false',
+        },
+        role: 'checkbox',
+      },
+    ]
+
+    function mountRoleValidityField({
+      control,
+      errorPolicy,
+      role,
+    }: {
+      control: (args: ControlRenderArgs) => ReactNode
+      errorPolicy?: FieldErrorPolicy
+      role: ControlRole
+    }) {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Choose a valid value.'],
+      ])
+
+      cy.mount(
+        <FieldRoot
+          errorMap={errorMap}
+          errorPolicy={errorPolicy}
+          label="Email"
+          name="email"
+        >
+          <Control role={role}>{control}</Control>
+          <ErrorMessage data-testid="error" />
+        </FieldRoot>,
+      )
+    }
+
+    function expectNativeRoleValidityError(role: ControlRole) {
+      cy.getByTestId<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >('control').then(($control) => {
+        $control.get(0).checkValidity()
+      })
+      cy.getByTestId('control')
+        .should('have.attr', 'role', role)
+        .and('have.attr', 'aria-invalid', 'true')
+      cy.getByTestId('error').should('have.text', 'Choose a valid value.')
+    }
+
+    roleCases.forEach(({ attributes, role }) => {
+      it(`REQ-020 REQ-021 REQ-022 REQ-023 PRD-016 supports ${role} control props`, () => {
+        const errorMap = new Map<FieldErrorKey, string>([
+          ['customServerError', 'Choose a valid value.'],
+        ])
+
+        cy.mount(
+          <FieldRoot
+            activeErrors={new Set(['customServerError'])}
+            description="Used for receipts."
+            errorMap={errorMap}
+            isReadOnly
+            isRequired
+            label="Email"
+            name="email"
+          >
+            <Control role={role}>
+              {({ controlProps }) => (
+                <div
+                  data-testid="control"
+                  {...attributes}
+                  {...controlProps}
+                />
+              )}
+            </Control>
+            <Description data-testid="description" />
+            <ErrorMessage data-testid="error" />
+          </FieldRoot>,
+        )
+
+        cy.getByTestId('control')
+          .should('have.attr', 'role', role)
+          .and('have.attr', 'aria-required', 'true')
+          .and('have.attr', 'aria-readonly', 'true')
+          .and('have.attr', 'aria-invalid', 'true')
+        cy.getByTestId('control').should('not.have.attr', 'required')
+        cy.getByTestId('control').should('not.have.attr', 'readonly')
+        cy.getByTestId('control').should('not.have.attr', 'name')
+        Object.entries(attributes).forEach(([name, value]) => {
+          cy.getByTestId('control').should('have.attr', name, value)
+        })
+        cy.getByTestId('description')
+          .invoke('attr', 'id')
+          .then((descriptionId) => {
+            cy.getByTestId('control').should(
+              'have.attr',
+              'aria-describedby',
+              descriptionId,
+            )
+          })
+        cy.getByTestId('error')
+          .invoke('attr', 'id')
+          .then((errorId) => {
+            cy.getByTestId('control').should(
+              'have.attr',
+              'aria-errormessage',
+              errorId,
+            )
+          })
+      })
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps textarea validity handlers available for textbox controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <textarea
+            data-testid="control"
+            required
+            {...controlProps}
+          />
+        ),
+        role: 'textbox',
+      })
+
+      expectNativeRoleValidityError('textbox')
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps search input validity handlers available for searchbox controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <input
+            data-testid="control"
+            required
+            type="search"
+            {...controlProps}
+          />
+        ),
+        role: 'searchbox',
+      })
+
+      expectNativeRoleValidityError('searchbox')
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps number input validity handlers available for spinbutton controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <input
+            data-testid="control"
+            required
+            type="number"
+            {...controlProps}
+          />
+        ),
+        role: 'spinbutton',
+      })
+
+      expectNativeRoleValidityError('spinbutton')
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps select validity handlers available for combobox controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <select
+            data-testid="control"
+            required
+            {...controlProps}
+          >
+            <option value="">Choose one</option>
+            <option value="email">Email</option>
+          </select>
+        ),
+        role: 'combobox',
+      })
+
+      expectNativeRoleValidityError('combobox')
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps listbox select validity handlers available for listbox controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <select
+            data-testid="control"
+            required
+            size={2}
+            {...controlProps}
+          >
+            <option value="">Choose one</option>
+            <option value="email">Email</option>
+          </select>
+        ),
+        role: 'listbox',
+      })
+
+      expectNativeRoleValidityError('listbox')
+    })
+
+    it('REQ-014 REQ-029 PRD-016 keeps checkbox input validity handlers available for checkbox controls', () => {
+      mountRoleValidityField({
+        control: ({ controlProps }) => (
+          <input
+            data-testid="control"
+            required
+            type="checkbox"
+            {...controlProps}
+          />
+        ),
+        role: 'checkbox',
+      })
+
+      expectNativeRoleValidityError('checkbox')
+    })
+
+    it('REQ-030 PRD-016 lets custom controls wrap events with ValidityState', () => {
+      let isValid = false
+
+      mountRoleValidityField({
+        control: ({ controlProps, withValidity }) => (
+          <div
+            data-testid="control"
+            {...controlProps}
+            onInput={(event) =>
+              controlProps.onInput?.(
+                withValidity(event, {
+                  valid: isValid,
+                  valueMissing: !isValid,
+                }),
+              )
+            }
+          />
+        ),
+        errorPolicy: () => true,
+        role: 'textbox',
+      })
+
+      cy.getByTestId('control').trigger('input', { force: true })
+      cy.getByTestId('control')
+        .should('have.attr', 'role', 'textbox')
+        .and('have.attr', 'aria-invalid', 'true')
+      cy.getByTestId('error').should('have.text', 'Choose a valid value.')
+
+      cy.then(() => {
+        isValid = true
+      })
+      cy.getByTestId('control').trigger('input', { force: true })
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.getByTestId('error').find('p').should('have.length', 0)
+    })
+  })
+
   it('REQ-013 PRD-002 PRD-003 PRD-006 uses activeErrors as the current active error keys', () => {
     const errorMap = new Map<FieldErrorKey, string>([
       ['valueMissing', 'Enter an email address.'],
@@ -504,7 +852,7 @@ describe('Field', () => {
         name="email"
       >
         <Control>
-          {(controlProps) => (
+          {({ controlProps }) => (
             <input
               data-testid="control"
               required
@@ -561,7 +909,7 @@ describe('Field', () => {
           name={name}
         >
           <Control>
-            {(controlProps) => (
+            {({ controlProps }) => (
               <input
                 data-testid="control"
                 required={required}
