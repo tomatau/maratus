@@ -61,8 +61,16 @@ async function visitComponentSourceFile(
       extname(normalizedPath) === '.tsx' ? ScriptKind.TSX : ScriptKind.TS,
   })
 
-  for (const declaration of sourceFile.getImportDeclarations()) {
-    const specifier = declaration.getModuleSpecifierValue()
+  const moduleSpecifiers = [
+    ...sourceFile
+      .getImportDeclarations()
+      .map((declaration) => declaration.getModuleSpecifierValue()),
+    ...sourceFile
+      .getExportDeclarations()
+      .flatMap((declaration) => declaration.getModuleSpecifierValue() ?? []),
+  ]
+
+  for (const specifier of moduleSpecifiers) {
     if (!specifier.startsWith('.')) continue
 
     const resolvedImportPath = resolveRelativeSourceImport(

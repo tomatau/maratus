@@ -12,13 +12,11 @@ import type {
   ReactNode,
 } from 'react'
 import { FieldProvider } from './FieldContext'
-import {
-  useControl,
-  useDescription,
-  useErrorMessage,
-  useFieldRoot,
-  useLabel,
-} from './useField'
+import { useControl } from './useControl'
+import { useDescription } from './useDescription'
+import { useErrorMessage } from './useErrorMessage'
+import { useFieldRoot } from './useFieldRoot'
+import { useLabel } from './useLabel'
 
 export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
   activeErrors?: ReadonlySet<FieldErrorKey>

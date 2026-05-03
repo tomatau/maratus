@@ -1,6 +1,6 @@
 import type { ComponentMeta } from './component-meta'
 import type { ComponentSourceFile } from './component-source-file'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import {
   ConfigStyle,
@@ -22,7 +22,7 @@ export async function writeCssFilesArtifacts(
     componentName,
     styleDirFor(ConfigStyle.CssFiles),
   )
-  await mkdir(dir, { recursive: true })
+  await prepareArtifactDir(dir)
 
   const writtenPaths: string[] = []
 
@@ -53,7 +53,7 @@ export async function writeTailwindCssArtifacts(
     componentName,
     styleDirFor(ConfigStyle.TailwindCss),
   )
-  await mkdir(dir, { recursive: true })
+  await prepareArtifactDir(dir)
 
   const writtenPaths: string[] = []
 
@@ -84,7 +84,7 @@ export async function writeCssModulesArtifacts(
     componentName,
     styleDirFor(ConfigStyle.CssModules),
   )
-  await mkdir(dir, { recursive: true })
+  await prepareArtifactDir(dir)
 
   const writtenPaths: string[] = []
 
@@ -124,4 +124,12 @@ export async function writeRegistryComponentFiles(
   )
 
   return [metaPath, packagePath]
+}
+
+async function prepareArtifactDir(dir: string): Promise<void> {
+  await rm(dir, {
+    force: true,
+    recursive: true,
+  })
+  await mkdir(dir, { recursive: true })
 }

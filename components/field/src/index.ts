@@ -28,10 +28,8 @@ export type {
 } from './Field.types'
 export { Control, Description, ErrorMessage, FieldRoot, Label } from './Field'
 export { FieldProvider } from './FieldContext'
-export {
-  useControl,
-  useDescription,
-  useErrorMessage,
-  useFieldRoot,
-  useLabel,
-} from './useField'
+export { useControl } from './useControl'
+export { useDescription } from './useDescription'
+export { useErrorMessage } from './useErrorMessage'
+export { useFieldRoot } from './useFieldRoot'
+export { useLabel } from './useLabel'

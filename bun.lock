@@ -244,6 +244,15 @@
         "react-dom": "^19.0.0",
       },
     },
+    "registry/field": {
+      "name": "@maratus-registry/field",
+      "version": "0.0.0",
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
     "registry/link": {
       "name": "@maratus-registry/link",
       "version": "0.1.1",
@@ -542,6 +551,8 @@
     "@maratus-lib/store-runtime": ["@maratus-lib/store-runtime@workspace:lib/store-runtime"],
 
     "@maratus-registry/button": ["@maratus-registry/button@workspace:registry/button"],
+
+    "@maratus-registry/field": ["@maratus-registry/field@workspace:registry/field"],
 
     "@maratus-registry/link": ["@maratus-registry/link@workspace:registry/link"],
 
