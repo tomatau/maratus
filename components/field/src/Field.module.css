@@ -1,11 +1,69 @@
 :root {
-  --ara-field-detail: var(--ara-color-content-detail);
+  --ara-field-fg: var(--ara-color-content-detail);
+  --ara-field-spacing: var(--ara-spacing-x1);
+  --ara-field-control-bg: var(--ara-color-control-bg);
+  --ara-field-control-border-style: solid;
+  --ara-field-control-border-width: var(--ara-border-width-x1);
+  --ara-field-control-detail: var(--ara-color-control-detail);
+  --ara-field-control-detail--invalid: var(--ara-color-feedback-fg);
+  --ara-field-control-fg: var(--ara-color-control-fg);
+  --ara-field-control-fg--invalid: var(--ara-color-feedback-fg);
+  --ara-field-control-fg--readonly: var(--ara-color-control-fg--disabled);
+  --ara-field-control-padding-block: var(--ara-spacing-x1);
+  --ara-field-control-padding-inline: var(--ara-spacing-x1);
+  --ara-field-description-fg: var(--ara-color-content-detail);
   --ara-field-error-message-fg: var(--ara-color-feedback-fg);
   --ara-field-error-message-spacing: var(--ara-spacing-x1);
+  --ara-field-label-fg: var(--ara-color-content-fg);
+  --ara-field-label-fg--readonly: var(--ara-color-content-detail);
+  --ara-field-required-mark-fg: var(--ara-color-feedback-fg);
 }
 
 .field {
-  color: var(--ara-field-detail);
+  color: var(--ara-field-fg);
+  display: grid;
+  gap: var(--ara-field-spacing);
+}
+
+.label {
+  color: var(--ara-field-label-fg);
+}
+
+.label[data-required]::after {
+  color: var(--ara-field-required-mark-fg);
+  content: ' *';
+}
+
+.label[data-readonly] {
+  color: var(--ara-field-label-fg--readonly);
+}
+
+.control {
+  background-color: var(--ara-field-control-bg);
+  border-color: var(--ara-field-control-detail);
+  border-style: var(--ara-field-control-border-style);
+  border-width: var(--ara-field-control-border-width);
+  color: var(--ara-field-control-fg);
+  padding-block: var(--ara-field-control-padding-block);
+  padding-inline: var(--ara-field-control-padding-inline);
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--ara-field-control-detail--invalid);
+  color: var(--ara-field-control-fg--invalid);
+}
+
+.control:read-only,
+.control[aria-readonly='true'] {
+  color: var(--ara-field-control-fg--readonly);
+}
+
+.description {
+  color: var(--ara-field-description-fg);
+}
+
+.errorMessageRoot {
+  color: var(--ara-field-error-message-fg);
 }
 
 .errorMessage {

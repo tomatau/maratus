@@ -244,6 +244,65 @@ describe('Field', () => {
   })
 
   describe('rendering customisation', () => {
+    it('GPRD-005 applies default and consumer class names to field elements', () => {
+      const errorMap = new Map<ValidityErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+
+      cy.mount(
+        <FieldRoot
+          activeErrors={new Set(['valueMissing'])}
+          className="custom-field"
+          description="Used for receipts."
+          errorMap={errorMap}
+          label="Email"
+          name="email"
+        >
+          <Label
+            className="custom-label"
+            data-testid="label"
+          />
+          <Control className="custom-control">
+            {({ controlProps }) => (
+              <input
+                data-testid="control"
+                {...controlProps}
+              />
+            )}
+          </Control>
+          <Description
+            className="custom-description"
+            data-testid="description"
+          />
+          <ErrorMessage
+            className="custom-error"
+            data-testid="error"
+          />
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('label')
+        .should('have.attr', 'class')
+        .and('contain', 'label')
+        .and('contain', 'custom-label')
+      cy.getByTestId('control')
+        .should('have.attr', 'class')
+        .and('contain', 'control')
+        .and('contain', 'custom-control')
+      cy.getByTestId('description')
+        .should('have.attr', 'class')
+        .and('contain', 'description')
+        .and('contain', 'custom-description')
+      cy.getByTestId('error')
+        .should('have.attr', 'class')
+        .and('contain', 'errorMessageRoot')
+        .and('contain', 'custom-error')
+      cy.getByTestId('error')
+        .find('p')
+        .should('have.attr', 'class')
+        .and('contain', 'errorMessage')
+    })
+
     it('PRD-012 allows ErrorMessage to render visible errors with renderChildren', () => {
       const errorMap = new Map<ValidityErrorKey, string>([
         ['valueMissing', 'Enter an email address.'],

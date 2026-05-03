@@ -6,20 +6,27 @@ import type {
   UseControlResult,
   WithValidity,
 } from './Field.types'
+import clsx from 'clsx'
 import { useFieldContext as useRequiredFieldContext } from './useFieldContext'
+import styles from './Field.module.css'
 
 export function useControl(options: UseControlOptions = {}): UseControlResult {
-  const { role } = options
+  const { className, role, ...controlRootProps } = options
   const field = useRequiredFieldContext('Control')
   const relationshipProps = {
     'aria-describedby': field.description ? field.descriptionId : undefined,
     'aria-errormessage':
       field.visibleErrors.length > 0 ? field.errorId : undefined,
     'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
+    className: clsx(styles.control, className),
     id: field.controlId,
   } satisfies Pick<
     ControlRenderProps,
-    'aria-describedby' | 'aria-errormessage' | 'aria-invalid' | 'id'
+    | 'aria-describedby'
+    | 'aria-errormessage'
+    | 'aria-invalid'
+    | 'className'
+    | 'id'
   >
   const validityHandlerProps = getValidityHandlerProps(
     field.evaluateNativeValidity,
@@ -28,6 +35,7 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
   if (role) {
     return {
       controlProps: {
+        ...controlRootProps,
         ...relationshipProps,
         ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
         ...(field.isRequired ? { 'aria-required': true } : {}),
@@ -40,6 +48,7 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
 
   return {
     controlProps: {
+      ...controlRootProps,
       ...relationshipProps,
       name: field.name,
       ...validityHandlerProps,
