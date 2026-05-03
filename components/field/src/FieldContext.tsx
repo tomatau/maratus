@@ -42,6 +42,7 @@ function useFieldProviderValue({
   description,
   errorMap,
   errorPolicy = defaultErrorPolicy,
+  isLoading = false,
   isReadOnly = false,
   isRequired = false,
   label,
@@ -114,6 +115,7 @@ function useFieldProviderValue({
         isErrorVisible: currentNativeState.isErrorVisible,
       }))
     },
+    isLoading,
     isReadOnly,
     isRequired,
     label,

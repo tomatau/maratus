@@ -12,6 +12,7 @@ export function useLabel(options: UseLabelOptions): UseLabelResult {
       ...labelRootProps,
       children: children ?? field.label,
       className: clsx(styles.label, className),
+      'data-loading': field.isLoading ? '' : undefined,
       'data-readonly': field.isReadOnly ? '' : undefined,
       'data-required': field.isRequired ? '' : undefined,
       htmlFor: htmlFor ?? field.controlId,

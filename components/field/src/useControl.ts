@@ -14,18 +14,24 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
   const { className, role, ...controlRootProps } = options
   const field = useRequiredFieldContext('Control')
   const relationshipProps = {
+    'aria-busy': field.isLoading ? true : undefined,
     'aria-describedby': field.description ? field.descriptionId : undefined,
+    'aria-disabled': field.isLoading ? true : undefined,
     'aria-errormessage':
       field.visibleErrors.length > 0 ? field.errorId : undefined,
     'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
     className: clsx(styles.control, className),
+    'data-loading': field.isLoading ? '' : undefined,
     id: field.controlId,
   } satisfies Pick<
     ControlRenderProps,
+    | 'aria-busy'
     | 'aria-describedby'
+    | 'aria-disabled'
     | 'aria-errormessage'
     | 'aria-invalid'
     | 'className'
+    | 'data-loading'
     | 'id'
   >
   const validityHandlerProps = getValidityHandlerProps(
@@ -50,6 +56,7 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
     controlProps: {
       ...controlRootProps,
       ...relationshipProps,
+      ...(field.isLoading ? { disabled: true } : {}),
       name: field.name,
       ...validityHandlerProps,
       ...(field.isReadOnly ? { readOnly: true } : {}),

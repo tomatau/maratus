@@ -6,8 +6,10 @@
   --ara-field-control-border-width: var(--ara-border-width-x1);
   --ara-field-control-detail: var(--ara-color-control-detail);
   --ara-field-control-detail--invalid: var(--ara-color-feedback-fg);
+  --ara-field-control-detail--loading: var(--ara-color-control-detail--loading);
   --ara-field-control-fg: var(--ara-color-control-fg);
   --ara-field-control-fg--invalid: var(--ara-color-feedback-fg);
+  --ara-field-control-fg--loading: var(--ara-color-control-fg--loading);
   --ara-field-control-fg--readonly: var(--ara-color-control-fg--disabled);
   --ara-field-control-padding-block: var(--ara-spacing-x1);
   --ara-field-control-padding-inline: var(--ara-spacing-x1);
@@ -15,6 +17,7 @@
   --ara-field-error-message-fg: var(--ara-color-feedback-fg);
   --ara-field-error-message-spacing: var(--ara-spacing-x1);
   --ara-field-label-fg: var(--ara-color-content-fg);
+  --ara-field-label-fg--loading: var(--ara-color-content-detail);
   --ara-field-label-fg--readonly: var(--ara-color-content-detail);
   --ara-field-required-mark-fg: var(--ara-color-feedback-fg);
 }
@@ -38,6 +41,10 @@
   color: var(--ara-field-label-fg--readonly);
 }
 
+.label[data-loading] {
+  color: var(--ara-field-label-fg--loading);
+}
+
 .control {
   background-color: var(--ara-field-control-bg);
   border-color: var(--ara-field-control-detail);
@@ -51,6 +58,11 @@
 .control[aria-invalid='true'] {
   border-color: var(--ara-field-control-detail--invalid);
   color: var(--ara-field-control-fg--invalid);
+}
+
+.control[data-loading] {
+  border-color: var(--ara-field-control-detail--loading);
+  color: var(--ara-field-control-fg--loading);
 }
 
 .control:read-only,

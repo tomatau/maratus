@@ -616,6 +616,37 @@ describe('Field', () => {
         expect(control.readOnly, 'read only').to.equal(true)
       })
     })
+
+    it('REQ-031 PRD-019 exposes loading state to the field root, label, and native control', () => {
+      cy.mount(
+        <FieldRoot
+          data-testid="field"
+          isLoading
+          label="Email"
+          name="email"
+        >
+          <Label data-testid="label" />
+          <Control>
+            {({ controlProps }) => (
+              <input
+                data-testid="control"
+                {...controlProps}
+              />
+            )}
+          </Control>
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('field')
+        .should('have.attr', 'aria-busy', 'true')
+        .and('have.attr', 'data-loading')
+      cy.getByTestId('label').should('have.attr', 'data-loading')
+      cy.getByTestId('control')
+        .should('have.attr', 'aria-busy', 'true')
+        .and('have.attr', 'aria-disabled', 'true')
+        .and('have.attr', 'data-loading')
+      cy.getByTestId('control').should('be.disabled')
+    })
   })
 
   describe('role-aware non-native controls', () => {
@@ -715,6 +746,7 @@ describe('Field', () => {
             activeErrors={new Set(['customServerError'])}
             description="Used for receipts."
             errorMap={errorMap}
+            isLoading
             isReadOnly
             isRequired
             label="Email"
@@ -738,9 +770,13 @@ describe('Field', () => {
           .should('have.attr', 'role', role)
           .and('have.attr', 'aria-required', 'true')
           .and('have.attr', 'aria-readonly', 'true')
+          .and('have.attr', 'aria-busy', 'true')
+          .and('have.attr', 'aria-disabled', 'true')
           .and('have.attr', 'aria-invalid', 'true')
+          .and('have.attr', 'data-loading')
         cy.getByTestId('control').should('not.have.attr', 'required')
         cy.getByTestId('control').should('not.have.attr', 'readonly')
+        cy.getByTestId('control').should('not.have.attr', 'disabled')
         cy.getByTestId('control').should('not.have.attr', 'name')
         Object.entries(attributes).forEach(([name, value]) => {
           cy.getByTestId('control').should('have.attr', name, value)
