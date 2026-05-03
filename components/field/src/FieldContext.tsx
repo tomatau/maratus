@@ -1,67 +1,14 @@
-import type { ReactNode } from 'react'
-import { createContext, useContext, useId, useState } from 'react'
-
-export type ValidityErrorKey = Exclude<keyof ValidityState, 'valid'>
-
-export type FieldErrorKey = ValidityErrorKey | (string & {})
-
-export type FieldErrorPolicyFieldState = {
-  wasBlurred: boolean
-  wasChanged: boolean
-  wasTouched: boolean
-  wasErrored: boolean
-}
-
-export type FieldErrorPolicyFormState = {
-  wasSubmitted: boolean
-}
-
-export type FieldErrorPolicyArgs = {
-  event: 'invalid' | 'blur' | 'focus' | 'input' | 'change'
-  isValid: boolean
-  isErrorVisible: boolean
-  field: FieldErrorPolicyFieldState
-  form: FieldErrorPolicyFormState
-  activeErrors: ReadonlySet<FieldErrorKey>
-}
-
-export type FieldErrorPolicyResult = false | true | readonly FieldErrorKey[]
-
-export type FieldErrorPolicy = (
-  args: FieldErrorPolicyArgs,
-) => FieldErrorPolicyResult
-
-export type FieldContextValue = {
-  activeErrors?: ReadonlySet<FieldErrorKey>
-  controlId: string
-  description: ReactNode
-  descriptionId: string
-  errorId: string
-  errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
-  evaluateNativeValidity(
-    event: FieldErrorPolicyArgs['event'],
-    control: { validity: ValidityState },
-  ): void
-  isReadOnly: boolean
-  isRequired: boolean
-  label: ReactNode
-  labelId: string
-  name: string
-  visibleErrors: readonly FieldErrorKey[]
-}
-
-export type FieldProviderProps = {
-  activeErrors?: ReadonlySet<FieldErrorKey>
-  children: ReactNode
-  controlId?: string
-  description?: ReactNode
-  errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
-  errorPolicy?: FieldErrorPolicy
-  isReadOnly?: boolean
-  isRequired?: boolean
-  label: ReactNode
-  name: string
-}
+import type {
+  FieldContextValue,
+  FieldErrorKey,
+  FieldErrorPolicy,
+  FieldErrorPolicyArgs,
+  FieldErrorPolicyFieldState,
+  FieldErrorPolicyFormState,
+  FieldProviderProps,
+  ValidityErrorKey,
+} from './Field.types'
+import { createContext, useId, useState } from 'react'
 
 type FieldNativeState = {
   errors: readonly FieldErrorKey[]
@@ -81,18 +28,6 @@ export function FieldProvider(props: FieldProviderProps) {
       {children}
     </FieldContext.Provider>
   )
-}
-
-export function useFieldContext(componentName: string): FieldContextValue {
-  const context = useContext(FieldContext)
-
-  if (!context) {
-    throw new globalThis.Error(
-      `${componentName} must be rendered inside FieldRoot.`,
-    )
-  }
-
-  return context
 }
 
 type UseFieldProviderValueOptions = Omit<FieldProviderProps, 'children'>
