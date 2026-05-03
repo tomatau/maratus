@@ -8,6 +8,11 @@ expect.extend(matchers)
 
 Object.assign(globalThis, {
   document: window.document,
-  navigator: window.navigator,
   window,
 })
+
+if (!globalThis.navigator) {
+  Object.assign(globalThis, {
+    navigator: window.navigator,
+  })
+}
