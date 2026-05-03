@@ -49,6 +49,7 @@ export type FieldContextValue = {
     event: FieldErrorPolicyArgs['event'],
     control: { validity: ValidityState },
   ): void
+  isLoading: boolean
   isReadOnly: boolean
   isRequired: boolean
   label: ReactNode
@@ -64,21 +65,29 @@ export type FieldProviderProps = {
   description?: ReactNode
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
   errorPolicy?: FieldErrorPolicy
+  isLoading?: boolean
   isReadOnly?: boolean
   isRequired?: boolean
   label: ReactNode
   name: string
 }
 
-export type UseFieldRootOptions = HTMLAttributes<HTMLDivElement>
+export type UseFieldRootOptions = HTMLAttributes<HTMLDivElement> & {
+  isLoading?: boolean
+}
+
+export type FieldRootRenderProps = HTMLAttributes<HTMLDivElement> & {
+  'data-loading'?: ''
+}
 
 export type UseFieldRootResult = {
-  fieldRootProps: HTMLAttributes<HTMLDivElement>
+  fieldRootProps: FieldRootRenderProps
 }
 
 export type UseLabelOptions = LabelHTMLAttributes<HTMLLabelElement>
 
 export type LabelRootProps = LabelHTMLAttributes<HTMLLabelElement> & {
+  'data-loading'?: ''
   'data-readonly'?: ''
   'data-required'?: ''
 }
@@ -99,11 +108,15 @@ type ControlElementProps = Omit<
 >
 
 export type ControlRenderProps = ControlElementProps & {
+  'aria-busy'?: AriaAttributes['aria-busy']
   'aria-describedby'?: AriaAttributes['aria-describedby']
+  'aria-disabled'?: AriaAttributes['aria-disabled']
   'aria-errormessage'?: AriaAttributes['aria-errormessage']
   'aria-invalid'?: AriaAttributes['aria-invalid']
   'aria-readonly'?: AriaAttributes['aria-readonly']
   'aria-required'?: AriaAttributes['aria-required']
+  'data-loading'?: ''
+  disabled?: boolean
   id: string
   name?: string
   onBlur?: FocusEventHandler<ControlElement>
@@ -132,11 +145,15 @@ export type ControlRole =
 export type UseControlOptions = Omit<
   ControlRenderProps,
   | 'aria-describedby'
+  | 'aria-busy'
+  | 'aria-disabled'
   | 'aria-errormessage'
   | 'aria-invalid'
   | 'aria-readonly'
   | 'aria-required'
   | 'children'
+  | 'data-loading'
+  | 'disabled'
   | 'id'
   | 'name'
   | 'readOnly'

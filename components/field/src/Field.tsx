@@ -27,6 +27,7 @@ export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
   description?: ReactNode
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
   errorPolicy?: FieldErrorPolicy
+  isLoading?: boolean
   isReadOnly?: boolean
   isRequired?: boolean
   label: ReactNode
@@ -41,13 +42,14 @@ export function FieldRoot(props: FieldRootProps) {
     description,
     errorMap,
     errorPolicy,
+    isLoading,
     isReadOnly,
     isRequired,
     label,
     name,
     ...hookProps
   } = props
-  const { fieldRootProps } = useFieldRoot(hookProps)
+  const { fieldRootProps } = useFieldRoot({ ...hookProps, isLoading })
 
   return (
     <FieldProvider
@@ -56,6 +58,7 @@ export function FieldRoot(props: FieldRootProps) {
       description={description}
       errorMap={errorMap}
       errorPolicy={errorPolicy}
+      isLoading={isLoading}
       isReadOnly={isReadOnly}
       isRequired={isRequired}
       label={label}

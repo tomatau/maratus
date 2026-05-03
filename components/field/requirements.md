@@ -7,6 +7,8 @@
 - HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
 - WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
 - WAI-ARIA 1.2: [`aria-details`](https://www.w3.org/TR/wai-aria-1.2/#aria-details)
+- WAI-ARIA 1.2: [`aria-busy`](https://www.w3.org/TR/wai-aria-1.2/#aria-busy)
+- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
 - WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
 - WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
 - WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
@@ -35,6 +37,7 @@
 - Error message association
 - Invalid state wiring
 - Field-level required and readonly state for native controls
+- Field-level loading state for root and control busy semantics
 - Role-aware non-native controls for custom widgets
 
 ### Potential scope
@@ -80,6 +83,7 @@
 | REQ-028 | MUST   | When `Control` renders a non-native `checkbox`, it must require or pass through the checked state attributes listed for that role in [Role-specific control contracts](#role-specific-control-contracts).                                                    | WAI-ARIA 1.2 `checkbox`; WCAG 2.2 SC 4.1.2                                                   | Current       |
 | REQ-029 | SHOULD | When a role-aware control is rendered with a native element that exposes `ValidityState`, `Control` render props should keep native validity handlers available.                                                                                            | HTML Standard constraint validation; WCAG 2.2 SC 3.3.1                                       | Current       |
 | REQ-030 | SHOULD | When a role-aware control is rendered with a custom element that does not expose `ValidityState`, `Control` render props should expose a validity event wrapper that lets consumers pass custom validity state through the same validity handlers.           | HTML Standard constraint validation; WCAG 2.2 SC 3.3.1; WCAG 2.2 SC 4.1.2                   | Current       |
+| REQ-031 | SHOULD | When `FieldRoot` receives `isLoading`, the field root and control must expose busy semantics with `aria-busy="true"`, and the control must expose disabled semantics while loading.                                                                          | WAI-ARIA 1.2 `aria-busy`; WAI-ARIA 1.2 `aria-disabled`; WCAG 2.2 SC 4.1.2                   | Current       |
 
 ## Requirement Details
 
@@ -136,6 +140,7 @@
 | PRD-015 | `FieldRoot` must accept `isRequired` and `isReadOnly` as field-level state inputs for label state hooks and native control props.                   | Current       |
 | PRD-016 | `Control` should support role-aware non-native widgets through an explicit supported role API.                                                      | Current       |
 | PRD-018 | Field elements must provide minimal default styles for foreground, spacing, required, readonly, and invalid states.                                  | Current       |
+| PRD-019 | `FieldRoot` must accept `isLoading` as field-level state for root busy semantics, label state hooks, native control disabled props, and role-aware control disabled semantics. | Current       |
 
 ## API Contract
 
@@ -193,9 +198,12 @@ type ControlRenderProps = {
   id: string
   name?: string
   role?: ControlRole
+  disabled?: boolean
   required?: boolean
   readOnly?: boolean
+  'aria-busy'?: boolean
   'aria-describedby'?: string
+  'aria-disabled'?: boolean
   'aria-errormessage'?: string
   'aria-invalid'?: boolean
   'aria-required'?: boolean
