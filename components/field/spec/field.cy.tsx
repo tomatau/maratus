@@ -10,6 +10,60 @@ import { Control, Description, ErrorMessage, FieldRoot, Label } from '../src'
 
 type Stub = sinon.SinonStub
 
+const commonRootProps = {
+  className: 'common-root-class',
+  data: {
+    name: 'data-common-root-prop',
+    value: 'supported',
+  },
+  dir: 'rtl' as const,
+  eventHandlers: [
+    {
+      alias: 'commonRootFocus',
+      prop: 'onFocus',
+    },
+    {
+      alias: 'commonRootBlur',
+      prop: 'onBlur',
+    },
+    {
+      alias: 'commonRootClick',
+      prop: 'onClick',
+    },
+    {
+      alias: 'commonRootClickCapture',
+      prop: 'onClickCapture',
+    },
+    {
+      alias: 'commonRootKeyDown',
+      prop: 'onKeyDown',
+    },
+    {
+      alias: 'commonRootPointerDown',
+      prop: 'onPointerDown',
+    },
+    {
+      alias: 'commonRootMouseEnter',
+      prop: 'onMouseEnter',
+    },
+    {
+      alias: 'commonRootTouchStart',
+      prop: 'onTouchStart',
+    },
+  ],
+  id: 'common-root-id',
+  lang: 'en-GB',
+  ref: {
+    alias: 'commonRootRef',
+  },
+  style: {
+    name: '--common-root-prop',
+    value: 'supported',
+  },
+  tabIndex: 0,
+  title: 'Common root title',
+} satisfies Cypress.CommonRootProps
+
 describe('Field', () => {
   describe('accessibility and exports', () => {
     it('renders the minimum field contract with no automatic axe violations', () => {
@@ -301,6 +355,86 @@ describe('Field', () => {
         .find('p')
         .should('have.attr', 'class')
         .and('contain', 'errorMessage')
+    })
+
+    it('GPRD-005 supports common root props on FieldRoot', () => {
+      cy.mount(
+        <FieldRoot
+          {...createCommonRootProps(commonRootProps)}
+          label="Email"
+          name="email"
+        />,
+      )
+
+      cy.getRootElement().assertSupportsProps(commonRootProps)
+    })
+
+    it('GPRD-005 supports common root props on Label', () => {
+      cy.mount(
+        <FieldRoot
+          label="Email"
+          name="email"
+        >
+          <Label {...createCommonRootProps(commonRootProps)} />
+        </FieldRoot>,
+      )
+
+      cy.get('label').assertSupportsProps(commonRootProps)
+    })
+
+    it('GPRD-005 supports common root props on Control render props', () => {
+      cy.mount(
+        <FieldRoot
+          controlId="common-root-id"
+          label="Email"
+          name="email"
+        >
+          <Control {...createCommonRootProps(commonRootProps)}>
+            {({ controlProps }) => <input {...controlProps} />}
+          </Control>
+        </FieldRoot>,
+      )
+
+      cy.get('[data-common-root-prop="supported"]').assertSupportsProps(
+        commonRootProps,
+      )
+    })
+
+    it('GPRD-005 supports common root props on Description', () => {
+      cy.mount(
+        <FieldRoot
+          description="Used for receipts."
+          label="Email"
+          name="email"
+        >
+          <Description {...createCommonRootProps(commonRootProps)} />
+        </FieldRoot>,
+      )
+
+      cy.get('[data-common-root-prop="supported"]').assertSupportsProps(
+        commonRootProps,
+      )
+    })
+
+    it('GPRD-005 supports common root props on ErrorMessage', () => {
+      const errorMap = new Map<ValidityErrorKey, string>([
+        ['valueMissing', 'Enter an email address.'],
+      ])
+
+      cy.mount(
+        <FieldRoot
+          activeErrors={new Set(['valueMissing'])}
+          errorMap={errorMap}
+          label="Email"
+          name="email"
+        >
+          <ErrorMessage {...createCommonRootProps(commonRootProps)} />
+        </FieldRoot>,
+      )
+
+      cy.get('[data-common-root-prop="supported"]').assertSupportsProps(
+        commonRootProps,
+      )
     })
 
     it('PRD-012 allows ErrorMessage to render visible errors with renderChildren', () => {

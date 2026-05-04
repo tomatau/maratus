@@ -1,6 +1,60 @@
 import { useStoreRuntime } from '@maratus-lib/store-runtime'
 import { Link } from '../src'
 
+const commonRootProps = {
+  className: 'common-root-class',
+  data: {
+    name: 'data-common-root-prop',
+    value: 'supported',
+  },
+  dir: 'rtl' as const,
+  eventHandlers: [
+    {
+      alias: 'commonRootFocus',
+      prop: 'onFocus',
+    },
+    {
+      alias: 'commonRootBlur',
+      prop: 'onBlur',
+    },
+    {
+      alias: 'commonRootClick',
+      prop: 'onClick',
+    },
+    {
+      alias: 'commonRootClickCapture',
+      prop: 'onClickCapture',
+    },
+    {
+      alias: 'commonRootKeyDown',
+      prop: 'onKeyDown',
+    },
+    {
+      alias: 'commonRootPointerDown',
+      prop: 'onPointerDown',
+    },
+    {
+      alias: 'commonRootMouseEnter',
+      prop: 'onMouseEnter',
+    },
+    {
+      alias: 'commonRootTouchStart',
+      prop: 'onTouchStart',
+    },
+  ],
+  id: 'common-root-id',
+  lang: 'en-GB',
+  ref: {
+    alias: 'commonRootRef',
+  },
+  style: {
+    name: '--common-root-prop',
+    value: 'supported',
+  },
+  tabIndex: 0,
+  title: 'Common root title',
+} satisfies Cypress.CommonRootProps
+
 describe('Link', () => {
   beforeEach(() => {
     useStoreRuntime().reset()
@@ -20,6 +74,12 @@ describe('Link', () => {
       .should('match', 'a')
       .and('have.attr', 'href', '/settings')
       .and('have.text', 'Settings')
+  })
+
+  it('GPRD-005 supports common root props', () => {
+    cy.mount(<Link {...createCommonRootProps(commonRootProps)}>Settings</Link>)
+
+    cy.getRootElement().assertSupportsProps(commonRootProps)
   })
 
   it('REQ-002 REQ-004 exposes native link semantics and an accessible name from text content when href is present', () => {

@@ -1,15 +1,16 @@
-import type { HTMLAttributes } from 'react'
+import type { ComponentPropsWithRef, HTMLAttributes } from 'react'
 import clsx from 'clsx'
 import styles from './Separator.module.css'
 
-export type UseSeparatorProps = HTMLAttributes<HTMLHRElement> & {
+export type UseSeparatorProps = ComponentPropsWithRef<'hr'> & {
   isDecorative?: boolean
   isNative?: boolean
   orientation?: 'horizontal' | 'vertical'
 }
 
 export type UseSeparatorResult = {
-  separatorProps: HTMLAttributes<HTMLDivElement | HTMLHRElement>
+  separatorProps: HTMLAttributes<HTMLDivElement | HTMLHRElement> &
+    Pick<ComponentPropsWithRef<'hr'>, 'ref'>
 }
 
 export function useSeparator(props: UseSeparatorProps): UseSeparatorResult {

@@ -1,9 +1,9 @@
-import type { ComponentProps, KeyboardEventHandler } from 'react'
+import type { ComponentPropsWithRef, KeyboardEventHandler } from 'react'
 import { useIsFocusVisible } from '@maratus-lib/focus-modality'
 import clsx from 'clsx'
 import styles from './Link.module.css'
 
-export type LinkBaseProps = ComponentProps<'a'> & {
+export type LinkBaseProps = ComponentPropsWithRef<'a'> & {
   isLoading?: boolean
 }
 
@@ -53,7 +53,9 @@ function getRootSemanticsProps({
   tabIndex?: number
 }): RootSemanticsProps {
   if (isNative) {
-    return {}
+    return {
+      tabIndex,
+    }
   }
 
   return {

@@ -1,6 +1,60 @@
 import type { ComponentPropsWithoutRef } from 'react'
 import { Button } from '../src'
 
+const commonRootProps = {
+  className: 'common-root-class',
+  data: {
+    name: 'data-common-root-prop',
+    value: 'supported',
+  },
+  dir: 'rtl' as const,
+  eventHandlers: [
+    {
+      alias: 'commonRootFocus',
+      prop: 'onFocus',
+    },
+    {
+      alias: 'commonRootBlur',
+      prop: 'onBlur',
+    },
+    {
+      alias: 'commonRootClick',
+      prop: 'onClick',
+    },
+    {
+      alias: 'commonRootClickCapture',
+      prop: 'onClickCapture',
+    },
+    {
+      alias: 'commonRootKeyDown',
+      prop: 'onKeyDown',
+    },
+    {
+      alias: 'commonRootPointerDown',
+      prop: 'onPointerDown',
+    },
+    {
+      alias: 'commonRootMouseEnter',
+      prop: 'onMouseEnter',
+    },
+    {
+      alias: 'commonRootTouchStart',
+      prop: 'onTouchStart',
+    },
+  ],
+  id: 'common-root-id',
+  lang: 'en-GB',
+  ref: {
+    alias: 'commonRootRef',
+  },
+  style: {
+    name: '--common-root-prop',
+    value: 'supported',
+  },
+  tabIndex: 0,
+  title: 'Common root title',
+} satisfies Cypress.CommonRootProps
+
 describe('Button', () => {
   it('REQ-001 REQ-002 PRD-003 button renders native button semantics and has no automatic axe violations', () => {
     cy.mount(<Button>Press me</Button>)
@@ -15,6 +69,14 @@ describe('Button', () => {
     cy.mount(<Button type="button">Press me</Button>)
 
     cy.get('button').should('have.attr', 'type', 'button')
+  })
+
+  it('GPRD-005 supports common root props', () => {
+    cy.mount(
+      <Button {...createCommonRootProps(commonRootProps)}>Press me</Button>,
+    )
+
+    cy.getRootElement().assertSupportsProps(commonRootProps)
   })
 
   it('REQ-004 REQ-008 PRD-001 button sets loading accessibility state', () => {

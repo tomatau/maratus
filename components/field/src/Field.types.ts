@@ -1,11 +1,12 @@
 import type {
   AriaAttributes,
   ChangeEventHandler,
+  ComponentPropsWithRef,
   FocusEventHandler,
   HTMLAttributes,
-  LabelHTMLAttributes,
   ReactEventHandler,
   ReactNode,
+  Ref,
 } from 'react'
 
 export type ValidityErrorKey = Exclude<keyof ValidityState, 'valid'>
@@ -72,11 +73,11 @@ export type FieldProviderProps = {
   name: string
 }
 
-export type UseFieldRootOptions = HTMLAttributes<HTMLDivElement> & {
+export type UseFieldRootOptions = ComponentPropsWithRef<'div'> & {
   isLoading?: boolean
 }
 
-export type FieldRootRenderProps = HTMLAttributes<HTMLDivElement> & {
+export type FieldRootRenderProps = ComponentPropsWithRef<'div'> & {
   'data-loading'?: ''
 }
 
@@ -84,9 +85,9 @@ export type UseFieldRootResult = {
   fieldRootProps: FieldRootRenderProps
 }
 
-export type UseLabelOptions = LabelHTMLAttributes<HTMLLabelElement>
+export type UseLabelOptions = ComponentPropsWithRef<'label'>
 
-export type LabelRootProps = LabelHTMLAttributes<HTMLLabelElement> & {
+export type LabelRootProps = ComponentPropsWithRef<'label'> & {
   'data-loading'?: ''
   'data-readonly'?: ''
   'data-required'?: ''
@@ -125,6 +126,7 @@ export type ControlRenderProps = ControlElementProps & {
   onInput?: ReactEventHandler<ControlElement>
   onInvalid?: ReactEventHandler<ControlElement>
   readOnly?: boolean
+  ref?: Ref<any>
   required?: boolean
   role?: ControlRole
 }
@@ -177,14 +179,14 @@ export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   }
 }
 
-export type UseDescriptionOptions = HTMLAttributes<HTMLDivElement>
+export type UseDescriptionOptions = ComponentPropsWithRef<'div'>
 
 export type UseDescriptionResult = {
-  descriptionProps: HTMLAttributes<HTMLDivElement>
+  descriptionProps: ComponentPropsWithRef<'div'>
 }
 
 export type UseErrorMessageOptions = Omit<
-  HTMLAttributes<HTMLDivElement>,
+  ComponentPropsWithRef<'div'>,
   'children'
 >
 
@@ -196,6 +198,6 @@ export type ErrorMessageItemProps = {
 }
 
 export type UseErrorMessageResult = {
-  errorMessageProps: HTMLAttributes<HTMLDivElement>
+  errorMessageProps: ComponentPropsWithRef<'div'>
   items: readonly ErrorMessageItemProps[]
 }

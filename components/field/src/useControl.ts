@@ -11,7 +11,16 @@ import { useFieldContext as useRequiredFieldContext } from './useFieldContext'
 import styles from './Field.module.css'
 
 export function useControl(options: UseControlOptions = {}): UseControlResult {
-  const { className, role, ...controlRootProps } = options
+  const {
+    className,
+    onBlur,
+    onChange,
+    onFocus,
+    onInput,
+    onInvalid,
+    role,
+    ...controlRootProps
+  } = options
   const field = useRequiredFieldContext('Control')
   const relationshipProps = {
     'aria-busy': field.isLoading ? true : undefined,
@@ -34,7 +43,14 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
     | 'data-loading'
     | 'id'
   >
-  const validityHandlerProps = getValidityHandlerProps(
+  const validityHandlerProps = composeValidityHandlerProps(
+    {
+      onBlur,
+      onChange,
+      onFocus,
+      onInput,
+      onInvalid,
+    },
     field.evaluateNativeValidity,
   )
 
@@ -81,23 +97,37 @@ const withValidity: WithValidity = (event, validity) => {
   }
 }
 
-function getValidityHandlerProps(
+function composeValidityHandlerProps(
+  userHandlers: Pick<
+    UseControlOptions,
+    'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
+  >,
   evaluateNativeValidity: FieldContextValue['evaluateNativeValidity'],
 ): Pick<
   ControlRenderProps,
   'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
 > {
   return {
-    onBlur: (event) =>
-      evaluateNativeValidity('blur', getValidityControl(event)),
-    onChange: (event) =>
-      evaluateNativeValidity('change', getValidityControl(event)),
-    onFocus: (event) =>
-      evaluateNativeValidity('focus', getValidityControl(event)),
-    onInput: (event) =>
-      evaluateNativeValidity('input', getValidityControl(event)),
-    onInvalid: (event) =>
-      evaluateNativeValidity('invalid', getValidityControl(event)),
+    onBlur: (event) => {
+      userHandlers.onBlur?.(event)
+      evaluateNativeValidity('blur', getValidityControl(event))
+    },
+    onChange: (event) => {
+      userHandlers.onChange?.(event)
+      evaluateNativeValidity('change', getValidityControl(event))
+    },
+    onFocus: (event) => {
+      userHandlers.onFocus?.(event)
+      evaluateNativeValidity('focus', getValidityControl(event))
+    },
+    onInput: (event) => {
+      userHandlers.onInput?.(event)
+      evaluateNativeValidity('input', getValidityControl(event))
+    },
+    onInvalid: (event) => {
+      userHandlers.onInvalid?.(event)
+      evaluateNativeValidity('invalid', getValidityControl(event))
+    },
   }
 }
 

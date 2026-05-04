@@ -1,7 +1,7 @@
-import type { ElementType, HTMLAttributes } from 'react'
+import type { ComponentPropsWithRef, ElementType } from 'react'
 import { useSeparator } from './useSeparator'
 
-export type SeparatorProps = HTMLAttributes<HTMLHRElement> & {
+export type SeparatorProps = ComponentPropsWithRef<'hr'> & {
   as?: ElementType
   isDecorative?: boolean
   orientation?: 'horizontal' | 'vertical'
