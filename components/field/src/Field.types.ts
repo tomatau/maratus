@@ -85,7 +85,12 @@ export type UseFieldRootResult = {
   fieldRootProps: FieldRootRenderProps
 }
 
-export type UseLabelOptions = ComponentPropsWithRef<'label'>
+// GPRD-006, REQ-002 and REQ-004: Field owns label relationship wiring so
+// consumers cannot override the generated label id or control association.
+export type UseLabelOptions = Omit<
+  ComponentPropsWithRef<'label'>,
+  'htmlFor' | 'id'
+>
 
 export type LabelRootProps = ComponentPropsWithRef<'label'> & {
   'data-loading'?: ''
@@ -179,15 +184,19 @@ export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   }
 }
 
-export type UseDescriptionOptions = ComponentPropsWithRef<'div'>
+// GPRD-006 and REQ-005: Field owns the description id because Control uses it
+// for aria-describedby.
+export type UseDescriptionOptions = Omit<ComponentPropsWithRef<'div'>, 'id'>
 
 export type UseDescriptionResult = {
   descriptionProps: ComponentPropsWithRef<'div'>
 }
 
+// GPRD-006 and REQ-007: Field owns the error id because Control uses it for
+// aria-errormessage when errors are visible.
 export type UseErrorMessageOptions = Omit<
   ComponentPropsWithRef<'div'>,
-  'children'
+  'children' | 'id'
 >
 
 export type ErrorMessageItemProps = {

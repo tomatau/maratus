@@ -4,6 +4,9 @@ import type {
   FieldErrorKey,
   FieldErrorPolicy,
   UseControlOptions,
+  UseDescriptionOptions,
+  UseErrorMessageOptions,
+  UseLabelOptions,
 } from './Field.types'
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react'
 import { FieldProvider } from './FieldContext'
@@ -62,7 +65,7 @@ export function FieldRoot(props: FieldRootProps) {
   )
 }
 
-export type LabelProps = ComponentPropsWithRef<'label'>
+export type LabelProps = UseLabelOptions
 
 export function Label(props: LabelProps) {
   const { labelProps } = useLabel(props)
@@ -81,7 +84,7 @@ export function Control(props: ControlProps) {
   return children(control)
 }
 
-export type DescriptionProps = ComponentPropsWithRef<'div'> & {
+export type DescriptionProps = UseDescriptionOptions & {
   as?: ElementType
 }
 
@@ -92,10 +95,7 @@ export function Description(props: DescriptionProps) {
   return <Root {...descriptionProps} />
 }
 
-export type ErrorMessageProps = Omit<
-  ComponentPropsWithRef<'div'>,
-  'children'
-> & {
+export type ErrorMessageProps = UseErrorMessageOptions & {
   as?: ElementType
   renderChildren?: (props: ErrorMessageItemProps) => ReactNode
 }

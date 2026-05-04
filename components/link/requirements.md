@@ -20,6 +20,7 @@
 - Accessible naming inputs
 - Native hyperlink attribute passthrough
 - Focus-visible behaviour
+- Loading state semantics
 
 ### Potential scope
 
@@ -54,9 +55,9 @@
 
 ## Product Requirements
 
-| ID      | Requirement                                                                        | Applicability |
-| ------- | ---------------------------------------------------------------------------------- | ------------- |
-| PRD-001 | Keep native `<a>` as the default rendered element for `Link`.                      | Current       |
-| PRD-002 | Support the global `as` root substitution pattern for `Link`.                      | Current       |
-| PRD-003 | Expose a `data-focus-visible` state hook when keyboard focus is visibly indicated. | Current       |
-| PRD-004 | Expose a `data-loading` state hook when the link is in a loading state.            | Potential     |
+| ID      | Requirement                                                                                     | Applicability |
+| ------- | ----------------------------------------------------------------------------------------------- | ------------- |
+| PRD-001 | Keep native `<a>` as the default rendered element for `Link`.                                   | Current       |
+| PRD-002 | Support the global `as` root substitution pattern for `Link`.                                   | Current       |
+| PRD-003 | Expose a `data-focus-visible` state hook when keyboard focus is visibly indicated.              | Current       |
+| PRD-004 | Expose `data-loading`, `aria-busy`, and disabled semantics when the link is in a loading state. | Current       |

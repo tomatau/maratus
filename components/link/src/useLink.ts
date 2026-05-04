@@ -1,4 +1,8 @@
-import type { ComponentPropsWithRef, KeyboardEventHandler } from 'react'
+import type {
+  ComponentPropsWithRef,
+  KeyboardEventHandler,
+  MouseEventHandler,
+} from 'react'
 import { useIsFocusVisible } from '@maratus-lib/focus-modality'
 import clsx from 'clsx'
 import styles from './Link.module.css'
@@ -25,6 +29,7 @@ export function useLink(props: UseLinkProps): UseLinkResult {
     className,
     isLoading = false,
     isNative = true,
+    onClick,
     onKeyDown,
     tabIndex,
     ...rest
@@ -35,10 +40,17 @@ export function useLink(props: UseLinkProps): UseLinkResult {
     linkProps: {
       ...rest,
       className: clsx(styles.link, className),
+      'aria-busy': isLoading ? true : undefined,
+      'aria-disabled': isLoading ? true : undefined,
       'data-focus-visible': isFocusVisible ? '' : undefined,
       'data-loading': isLoading ? '' : undefined,
       ...getRootSemanticsProps({ isNative, tabIndex }),
-      onKeyDown: getKeyboardActivationHandler({ isNative, onKeyDown }),
+      onClick: getClickHandler({ isLoading, onClick }),
+      onKeyDown: getKeyboardActivationHandler({
+        isLoading,
+        isNative,
+        onKeyDown,
+      }),
     },
   }
 }
@@ -65,16 +77,14 @@ function getRootSemanticsProps({
 }
 
 function getKeyboardActivationHandler({
+  isLoading,
   isNative,
   onKeyDown,
 }: {
+  isLoading: boolean
   isNative: boolean
   onKeyDown?: KeyboardEventHandler<HTMLAnchorElement>
 }): KeyboardEventHandler<HTMLAnchorElement> | undefined {
-  if (isNative) {
-    return onKeyDown
-  }
-
   return (event) => {
     onKeyDown?.(event)
 
@@ -82,9 +92,38 @@ function getKeyboardActivationHandler({
       return
     }
 
+    if (isLoading) {
+      event.preventDefault()
+      return
+    }
+
+    if (isNative) {
+      return
+    }
+
     if (event.key === 'Enter') {
       event.preventDefault()
       event.currentTarget.click()
+    }
+  }
+}
+
+function getClickHandler({
+  isLoading,
+  onClick,
+}: {
+  isLoading: boolean
+  onClick?: MouseEventHandler<HTMLAnchorElement>
+}): MouseEventHandler<HTMLAnchorElement> | undefined {
+  return (event) => {
+    onClick?.(event)
+
+    if (event.defaultPrevented) {
+      return
+    }
+
+    if (isLoading) {
+      event.preventDefault()
     }
   }
 }

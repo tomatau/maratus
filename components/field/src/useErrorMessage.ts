@@ -12,7 +12,7 @@ import styles from './Field.module.css'
 export function useErrorMessage(
   options: UseErrorMessageOptions,
 ): UseErrorMessageResult {
-  const { className, id, ...errorMessageRootProps } = options
+  const { className, ...errorMessageRootProps } = options
   const field = useFieldContext('ErrorMessage')
   const items = field.visibleErrors
     .map((errorKey) => [errorKey, field.errorMap?.get(errorKey)] as const)
@@ -32,7 +32,7 @@ export function useErrorMessage(
     errorMessageProps: {
       ...errorMessageRootProps,
       className: clsx(styles.errorMessageRoot, className),
-      id: id ?? field.errorId,
+      id: field.errorId,
       role: field.visibleErrors.length > 0 ? 'alert' : undefined,
     },
     items,
