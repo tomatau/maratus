@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.6.0
+
+### Minor Changes
+
+- 5822c99: Support for common root props
+
 ## 0.5.0
 
 ### Minor Changes
