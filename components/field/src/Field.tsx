@@ -5,12 +5,7 @@ import type {
   FieldErrorPolicy,
   UseControlOptions,
 } from './Field.types'
-import type {
-  ElementType,
-  HTMLAttributes,
-  LabelHTMLAttributes,
-  ReactNode,
-} from 'react'
+import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react'
 import { FieldProvider } from './FieldContext'
 import { useControl } from './useControl'
 import { useDescription } from './useDescription'
@@ -18,7 +13,7 @@ import { useErrorMessage } from './useErrorMessage'
 import { useFieldRoot } from './useFieldRoot'
 import { useLabel } from './useLabel'
 
-export type FieldRootProps = HTMLAttributes<HTMLDivElement> & {
+export type FieldRootProps = ComponentPropsWithRef<'div'> & {
   activeErrors?: ReadonlySet<FieldErrorKey>
   as?: ElementType
   controlId?: string
@@ -67,7 +62,7 @@ export function FieldRoot(props: FieldRootProps) {
   )
 }
 
-export type LabelProps = LabelHTMLAttributes<HTMLLabelElement>
+export type LabelProps = ComponentPropsWithRef<'label'>
 
 export function Label(props: LabelProps) {
   const { labelProps } = useLabel(props)
@@ -86,7 +81,7 @@ export function Control(props: ControlProps) {
   return children(control)
 }
 
-export type DescriptionProps = HTMLAttributes<HTMLDivElement> & {
+export type DescriptionProps = ComponentPropsWithRef<'div'> & {
   as?: ElementType
 }
 
@@ -98,7 +93,7 @@ export function Description(props: DescriptionProps) {
 }
 
 export type ErrorMessageProps = Omit<
-  HTMLAttributes<HTMLDivElement>,
+  ComponentPropsWithRef<'div'>,
   'children'
 > & {
   as?: ElementType

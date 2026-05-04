@@ -1,5 +1,5 @@
 import type {
-  ButtonHTMLAttributes,
+  ComponentPropsWithRef,
   KeyboardEventHandler,
   MouseEventHandler,
   PointerEventHandler,
@@ -9,7 +9,7 @@ import { useIsFocusVisible } from '@maratus-lib/focus-modality'
 import clsx from 'clsx'
 import styles from './Button.module.css'
 
-type NativeButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
+type NativeButtonProps = ComponentPropsWithRef<'button'>
 
 type CommonButtonProps = Omit<NativeButtonProps, 'aria-pressed' | 'role'> & {
   disabledBehavior?: 'native' | 'focusable'
