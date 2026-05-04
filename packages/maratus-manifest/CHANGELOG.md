@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.7.0
+
+### Minor Changes
+
+- 3a83112: Consistent adherence to known patterns
+
 ## 0.6.0
 
 ### Minor Changes
