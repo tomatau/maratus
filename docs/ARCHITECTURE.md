@@ -1,5 +1,7 @@
 # Architecture
 
+Guiding principles live in [`docs/PRINCIPLES.md`](./PRINCIPLES.md). They inform architectural judgement without replacing package requirements.
+
 ## Styling
 
 - Source of truth: CSS Modules in component `src/`.
@@ -27,6 +29,18 @@
   - intrinsic element substitution
   - callback composition for advanced cases
 - Do not introduce a slot primitive until a component actually needs composition via props.
+- Use `isNative` in hooks that shape native and non-native semantics.
+- Native roots keep platform semantics and avoid redundant ARIA.
+- Non-native roots get the required role, focusability, and keyboard behaviour.
+- Root substitution must preserve ids, relationships, and owned semantics.
+
+## Compound Components
+
+- Keep context and provider definitions together.
+- Root components wire providers for normal usage.
+- Expose providers for advanced composition.
+- Descendant hooks throw when outside the root/provider.
+- Shared context owns cross-descendant ids and state.
 
 ## State
 

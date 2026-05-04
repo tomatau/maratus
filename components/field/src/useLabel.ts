@@ -4,7 +4,7 @@ import { useFieldContext } from './useFieldContext'
 import styles from './Field.module.css'
 
 export function useLabel(options: UseLabelOptions): UseLabelResult {
-  const { children, className, htmlFor, id, ...labelRootProps } = options
+  const { children, className, ...labelRootProps } = options
   const field = useFieldContext('Label')
 
   return {
@@ -15,8 +15,8 @@ export function useLabel(options: UseLabelOptions): UseLabelResult {
       'data-loading': field.isLoading ? '' : undefined,
       'data-readonly': field.isReadOnly ? '' : undefined,
       'data-required': field.isRequired ? '' : undefined,
-      htmlFor: htmlFor ?? field.controlId,
-      id: id ?? field.labelId,
+      htmlFor: field.controlId,
+      id: field.labelId,
     },
   }
 }

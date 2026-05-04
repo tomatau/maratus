@@ -6,7 +6,7 @@ import styles from './Field.module.css'
 export function useDescription(
   options: UseDescriptionOptions,
 ): UseDescriptionResult {
-  const { children, className, id, ...descriptionRootProps } = options
+  const { children, className, ...descriptionRootProps } = options
   const field = useFieldContext('Description')
 
   return {
@@ -14,7 +14,7 @@ export function useDescription(
       ...descriptionRootProps,
       children: children ?? field.description,
       className: clsx(styles.description, className),
-      id: id ?? field.descriptionId,
+      id: field.descriptionId,
     },
   }
 }

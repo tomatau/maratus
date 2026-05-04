@@ -6,7 +6,14 @@ import type {
   ValidityErrorKey,
 } from '../src'
 import type { ReactNode } from 'react'
-import { Control, Description, ErrorMessage, FieldRoot, Label } from '../src'
+import {
+  Control,
+  Description,
+  ErrorMessage,
+  FieldProvider,
+  FieldRoot,
+  Label,
+} from '../src'
 
 type Stub = sinon.SinonStub
 
@@ -64,6 +71,11 @@ const commonRootProps = {
   title: 'Common root title',
 } satisfies Cypress.CommonRootProps
 
+const relationshipRootProps = {
+  ...commonRootProps,
+  id: undefined,
+} satisfies Cypress.CommonRootProps
+
 describe('Field', () => {
   describe('accessibility and exports', () => {
     it('renders the minimum field contract with no automatic axe violations', () => {
@@ -92,10 +104,53 @@ describe('Field', () => {
 
     it('PRD-001 exports the initial field primitive set', () => {
       expect(FieldRoot).to.be.a('function')
+      expect(FieldProvider).to.be.a('function')
       expect(Control).to.be.a('function')
       expect(Label).to.be.a('function')
       expect(Description).to.be.a('function')
       expect(ErrorMessage).to.be.a('function')
+    })
+
+    it('GPRD-007 PRD-020 supports provider-driven advanced composition', () => {
+      cy.mount(
+        <FieldProvider
+          description="Used for receipts."
+          label="Email"
+          name="email"
+        >
+          <Label data-testid="label" />
+          <Control>
+            {({ controlProps }) => (
+              <input
+                data-testid="control"
+                {...controlProps}
+              />
+            )}
+          </Control>
+          <Description data-testid="description" />
+        </FieldProvider>,
+      )
+
+      cy.getByTestId('label')
+        .should('have.text', 'Email')
+        .invoke('attr', 'for')
+        .as('labelFor')
+      cy.getByTestId('control').invoke('attr', 'id').as('controlId')
+      cy.getByTestId('description')
+        .should('have.text', 'Used for receipts.')
+        .invoke('attr', 'id')
+        .as('descriptionId')
+
+      cy.then(function () {
+        expect(this.labelFor).to.equal(this.controlId)
+      })
+      cy.get('@descriptionId').then((descriptionId) => {
+        cy.getByTestId('control').should(
+          'have.attr',
+          'aria-describedby',
+          descriptionId,
+        )
+      })
     })
   })
 
@@ -369,17 +424,17 @@ describe('Field', () => {
       cy.getRootElement().assertSupportsProps(commonRootProps)
     })
 
-    it('GPRD-005 supports common root props on Label', () => {
+    it('GPRD-005 GPRD-006 supports common root props on Label without overriding relationship props', () => {
       cy.mount(
         <FieldRoot
           label="Email"
           name="email"
         >
-          <Label {...createCommonRootProps(commonRootProps)} />
+          <Label {...createCommonRootProps(relationshipRootProps)} />
         </FieldRoot>,
       )
 
-      cy.get('label').assertSupportsProps(commonRootProps)
+      cy.get('label').assertSupportsProps(relationshipRootProps)
     })
 
     it('GPRD-005 supports common root props on Control render props', () => {
@@ -400,23 +455,23 @@ describe('Field', () => {
       )
     })
 
-    it('GPRD-005 supports common root props on Description', () => {
+    it('GPRD-005 GPRD-006 supports common root props on Description without overriding relationship props', () => {
       cy.mount(
         <FieldRoot
           description="Used for receipts."
           label="Email"
           name="email"
         >
-          <Description {...createCommonRootProps(commonRootProps)} />
+          <Description {...createCommonRootProps(relationshipRootProps)} />
         </FieldRoot>,
       )
 
       cy.get('[data-common-root-prop="supported"]').assertSupportsProps(
-        commonRootProps,
+        relationshipRootProps,
       )
     })
 
-    it('GPRD-005 supports common root props on ErrorMessage', () => {
+    it('GPRD-005 GPRD-006 supports common root props on ErrorMessage without overriding relationship props', () => {
       const errorMap = new Map<ValidityErrorKey, string>([
         ['valueMissing', 'Enter an email address.'],
       ])
@@ -428,13 +483,29 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <ErrorMessage {...createCommonRootProps(commonRootProps)} />
+          <ErrorMessage {...createCommonRootProps(relationshipRootProps)} />
         </FieldRoot>,
       )
 
       cy.get('[data-common-root-prop="supported"]').assertSupportsProps(
-        commonRootProps,
+        relationshipRootProps,
       )
+    })
+
+    it('PRD-003 renders local label and description children before context fallback content', () => {
+      cy.mount(
+        <FieldRoot
+          description="Context description"
+          label="Context label"
+          name="email"
+        >
+          <Label data-testid="label">Local label</Label>
+          <Description data-testid="description">Local description</Description>
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('label').should('have.text', 'Local label')
+      cy.getByTestId('description').should('have.text', 'Local description')
     })
 
     it('PRD-012 allows ErrorMessage to render visible errors with renderChildren', () => {
