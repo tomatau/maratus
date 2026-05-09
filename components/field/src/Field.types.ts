@@ -46,7 +46,7 @@ export type FieldContextValue = {
   descriptionId: string
   errorId: string
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
-  evaluateNativeValidity(
+  updateValidityState(
     event: FieldErrorPolicyArgs['event'],
     control: { validity: ValidityState },
   ): void

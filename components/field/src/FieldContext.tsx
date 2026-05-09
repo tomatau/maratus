@@ -68,21 +68,7 @@ function useFieldProviderValue({
     form: defaultFormState,
     nativeState,
   })
-  const nextIsErrorVisible = visibleErrors.length > 0
-
-  if (
-    nativeState.isErrorVisible !== nextIsErrorVisible ||
-    (nextIsErrorVisible && !nativeState.field.wasErrored)
-  ) {
-    setNativeState({
-      ...nativeState,
-      field: {
-        ...nativeState.field,
-        wasErrored: nativeState.field.wasErrored || nextIsErrorVisible,
-      },
-      isErrorVisible: nextIsErrorVisible,
-    })
-  }
+  const isErrorVisible = visibleErrors.length > 0
 
   return {
     activeErrors,
@@ -91,29 +77,20 @@ function useFieldProviderValue({
     descriptionId: `${generatedId}-description`,
     errorId: `${generatedId}-error`,
     errorMap,
-    evaluateNativeValidity: (event, control) => {
+    updateValidityState: (event, control) => {
       const nextErrors = getValidityErrorKeys(control.validity)
+      const nextActiveErrors = activeErrors ?? new Set(nextErrors)
 
-      setNativeState((currentNativeState) => ({
-        errors: nextErrors,
-        event,
-        field: {
-          wasBlurred: currentNativeState.field.wasBlurred || event === 'blur',
-          wasChanged:
-            currentNativeState.field.wasChanged ||
-            event === 'change' ||
-            event === 'input',
-          wasErrored: currentNativeState.field.wasErrored,
-          wasTouched:
-            currentNativeState.field.wasTouched ||
-            event === 'focus' ||
-            event === 'blur' ||
-            event === 'change' ||
-            event === 'input' ||
-            event === 'invalid',
-        },
-        isErrorVisible: currentNativeState.isErrorVisible,
-      }))
+      setNativeState((currentNativeState) =>
+        getNextNativeState({
+          currentNativeState,
+          errorPolicy,
+          event,
+          isErrorVisible,
+          nextActiveErrors,
+          nextErrors,
+        }),
+      )
     },
     isLoading,
     isReadOnly,
@@ -122,6 +99,59 @@ function useFieldProviderValue({
     labelId: `${generatedId}-label`,
     name,
     visibleErrors,
+  }
+}
+
+function getNextNativeState({
+  currentNativeState,
+  errorPolicy,
+  event,
+  isErrorVisible,
+  nextActiveErrors,
+  nextErrors,
+}: {
+  currentNativeState: FieldNativeState
+  errorPolicy: FieldErrorPolicy
+  event: FieldErrorPolicyArgs['event']
+  isErrorVisible: boolean
+  nextActiveErrors: ReadonlySet<FieldErrorKey>
+  nextErrors: readonly FieldErrorKey[]
+}): FieldNativeState {
+  const eventNativeState: FieldNativeState = {
+    errors: nextErrors,
+    event,
+    field: {
+      wasBlurred: currentNativeState.field.wasBlurred || event === 'blur',
+      wasChanged:
+        currentNativeState.field.wasChanged ||
+        event === 'change' ||
+        event === 'input',
+      wasErrored: currentNativeState.field.wasErrored || isErrorVisible,
+      wasTouched:
+        currentNativeState.field.wasTouched ||
+        event === 'focus' ||
+        event === 'blur' ||
+        event === 'change' ||
+        event === 'input' ||
+        event === 'invalid',
+    },
+    isErrorVisible,
+  }
+  const nextVisibleErrors = resolveVisibleErrors({
+    activeErrors: nextActiveErrors,
+    errorPolicy,
+    form: defaultFormState,
+    nativeState: eventNativeState,
+  })
+  const nextIsErrorVisible = nextVisibleErrors.length > 0
+
+  return {
+    ...eventNativeState,
+    field: {
+      ...eventNativeState.field,
+      wasErrored: eventNativeState.field.wasErrored || nextIsErrorVisible,
+    },
+    isErrorVisible: nextIsErrorVisible,
   }
 }
 
