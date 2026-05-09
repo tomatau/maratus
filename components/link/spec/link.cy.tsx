@@ -216,7 +216,7 @@ describe('Link', () => {
         .and('have.attr', 'data-focus-visible', '')
     })
 
-    it('PRD-004 exposes loading state semantics when the link is loading', () => {
+    it('GPRD-008 PRD-004 exposes loading state semantics and suppresses activation when loading', () => {
       const onClick = cy.stub().as('onClick')
 
       cy.mount(<Link href="/settings">Settings</Link>)
@@ -241,7 +241,7 @@ describe('Link', () => {
         .and('have.attr', 'aria-busy', 'true')
         .and('have.attr', 'aria-disabled', 'true')
         .click()
-      cy.get('@onClick').should('have.been.calledOnce')
+      cy.get('@onClick').should('not.have.been.called')
       cy.location('hash').should('not.eq', '#loading-link')
     })
   })
@@ -258,7 +258,7 @@ describe('Link', () => {
         .and('not.have.attr', 'aria-orientation')
     })
 
-    it('REQ-013 supports keyboard activation through Enter for non-native roots', () => {
+    it('GPRD-010 REQ-013 supports keyboard activation through Enter for non-native roots', () => {
       cy.mount(<Link as="span">Settings</Link>)
 
       cy.getRootElement().then(($link) => {
@@ -267,6 +267,30 @@ describe('Link', () => {
         cy.wrap($link).focus().trigger('keydown', { key: 'Enter' })
 
         cy.wrap(clickSpy).should('have.been.calledOnce')
+      })
+    })
+
+    it('GPRD-009 GPRD-010 does not synthesize keyboard activation when the consumer handler prevents default', () => {
+      const onKeyDown = cy.stub().callsFake((event) => {
+        event.preventDefault()
+      })
+
+      cy.mount(
+        <Link
+          as="span"
+          onKeyDown={onKeyDown}
+        >
+          Settings
+        </Link>,
+      )
+
+      cy.getRootElement().then(($link) => {
+        const clickSpy = cy.spy($link.get(0), 'click')
+
+        cy.wrap($link).focus().trigger('keydown', { key: 'Enter' })
+
+        cy.wrap(onKeyDown).should('have.been.calledOnce')
+        cy.wrap(clickSpy).should('not.have.been.called')
       })
     })
   })

@@ -11,6 +11,7 @@ function createKeyboardEvent(
   key: string,
   options: {
     currentTarget?: Pick<HTMLButtonElement, 'click'>
+    defaultPrevented?: boolean
     preventDefault?: () => void
   } = {},
 ) {
@@ -18,6 +19,7 @@ function createKeyboardEvent(
     currentTarget: options.currentTarget ?? {
       click: () => undefined,
     },
+    defaultPrevented: options.defaultPrevented ?? false,
     key,
     preventDefault: options.preventDefault ?? (() => undefined),
   } as unknown as KeyboardEvent<HTMLButtonElement>
@@ -292,7 +294,7 @@ describe(useButton, () => {
       expect(result.current.buttonProps.type).toBe(undefined)
     })
 
-    test('synthesises click activation for Enter and Space', () => {
+    test('GPRD-010 synthesises click activation for Enter and Space', () => {
       let clicks = 0
 
       const { result } = renderHook(() =>
@@ -325,7 +327,32 @@ describe(useButton, () => {
       expect(clicks).toBe(2)
     })
 
-    test('calls non-native keyboard handlers once', () => {
+    test('GPRD-010 does not synthesise click activation when the consumer handler prevents default', () => {
+      let clicks = 0
+
+      const { result } = renderHook(() =>
+        useButton({
+          children: 'Save',
+          isNative: false,
+          onKeyDown: () => undefined,
+        }),
+      )
+
+      result.current.buttonProps.onKeyDown?.(
+        createKeyboardEvent('Enter', {
+          currentTarget: {
+            click: () => {
+              clicks += 1
+            },
+          },
+          defaultPrevented: true,
+        }),
+      )
+
+      expect(clicks).toBe(0)
+    })
+
+    test('GPRD-009 calls non-native keyboard handlers once', () => {
       let keyDownCalls = 0
       let keyUpCalls = 0
 

@@ -1142,6 +1142,50 @@ describe('Field', () => {
       cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
       cy.getByTestId('error').find('p').should('have.length', 0)
     })
+
+    it('GPRD-010 keeps validity bookkeeping after a consumer handler prevents default', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Choose a valid value.'],
+      ])
+      const onInput = cy.stub()
+
+      cy.mount(
+        <FieldRoot
+          errorMap={errorMap}
+          errorPolicy={() => true}
+          label="Email"
+          name="email"
+        >
+          <Control
+            role="textbox"
+            onInput={onInput}
+          >
+            {({ controlProps, withValidity }) => (
+              <div
+                data-testid="control"
+                {...controlProps}
+                onInput={(event) => {
+                  event.preventDefault()
+                  controlProps.onInput?.(
+                    withValidity(event, {
+                      valid: false,
+                      valueMissing: true,
+                    }),
+                  )
+                }}
+              />
+            )}
+          </Control>
+          <ErrorMessage data-testid="error" />
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('control').trigger('input', { force: true })
+
+      cy.wrap(onInput).should('have.been.calledOnce')
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+      cy.getByTestId('error').should('have.text', 'Choose a valid value.')
+    })
   })
 
   describe('controlled errors', () => {

@@ -116,14 +116,11 @@ function getClickHandler({
   onClick?: MouseEventHandler<HTMLAnchorElement>
 }): MouseEventHandler<HTMLAnchorElement> | undefined {
   return (event) => {
-    onClick?.(event)
-
-    if (event.defaultPrevented) {
+    if (isLoading) {
+      event.preventDefault()
       return
     }
 
-    if (isLoading) {
-      event.preventDefault()
-    }
+    onClick?.(event)
   }
 }
