@@ -84,7 +84,7 @@ describe('Button', () => {
       cy.get('button').should('have.attr', 'type', 'button')
     })
 
-    it('REQ-004 REQ-008 PRD-001 button sets loading accessibility state', () => {
+    it('GPRD-008 REQ-004 REQ-008 PRD-001 button sets loading accessibility state', () => {
       cy.mount(<Button isLoading>Saving</Button>)
 
       cy.get('button')
@@ -217,6 +217,39 @@ describe('Button', () => {
           onClick={onClick}
         >
           Press me
+        </Button>,
+      )
+
+      cy.get('button').focus().realPress('Enter').realPress('Space')
+      cy.get('@onClick').should('not.have.been.called')
+    })
+
+    it('GPRD-008 loading buttons do not call consumer activation handlers', () => {
+      const onClick = cy.stub().as('onClick')
+
+      cy.mount(
+        <Button
+          isLoading
+          onClick={onClick}
+        >
+          Saving
+        </Button>,
+      )
+
+      cy.get('button').click({ force: true })
+      cy.get('@onClick').should('not.have.been.called')
+    })
+
+    it('GPRD-008 focusable loading buttons suppress keyboard activation handlers', () => {
+      const onClick = cy.stub().as('onClick')
+
+      cy.mount(
+        <Button
+          disabledBehavior="focusable"
+          isLoading
+          onClick={onClick}
+        >
+          Saving
         </Button>,
       )
 
