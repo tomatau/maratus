@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.7.1
+
+### Patch Changes
+
+- 5d9b6d2: Remove Field's setState on render
+
 ## 0.7.0
 
 ### Minor Changes
