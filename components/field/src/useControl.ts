@@ -51,7 +51,7 @@ export function useControl(options: UseControlOptions = {}): UseControlResult {
       onInput,
       onInvalid,
     },
-    field.evaluateNativeValidity,
+    field.updateValidityState,
   )
 
   if (role) {
@@ -102,7 +102,7 @@ function composeValidityHandlerProps(
     UseControlOptions,
     'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
   >,
-  evaluateNativeValidity: FieldContextValue['evaluateNativeValidity'],
+  updateValidityState: FieldContextValue['updateValidityState'],
 ): Pick<
   ControlRenderProps,
   'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
@@ -110,23 +110,23 @@ function composeValidityHandlerProps(
   return {
     onBlur: (event) => {
       userHandlers.onBlur?.(event)
-      evaluateNativeValidity('blur', getValidityControl(event))
+      updateValidityState('blur', getValidityControl(event))
     },
     onChange: (event) => {
       userHandlers.onChange?.(event)
-      evaluateNativeValidity('change', getValidityControl(event))
+      updateValidityState('change', getValidityControl(event))
     },
     onFocus: (event) => {
       userHandlers.onFocus?.(event)
-      evaluateNativeValidity('focus', getValidityControl(event))
+      updateValidityState('focus', getValidityControl(event))
     },
     onInput: (event) => {
       userHandlers.onInput?.(event)
-      evaluateNativeValidity('input', getValidityControl(event))
+      updateValidityState('input', getValidityControl(event))
     },
     onInvalid: (event) => {
       userHandlers.onInvalid?.(event)
-      evaluateNativeValidity('invalid', getValidityControl(event))
+      updateValidityState('invalid', getValidityControl(event))
     },
   }
 }
