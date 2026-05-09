@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.7.2
+
+### Patch Changes
+
+- f72077f: Implements event composition contract
+
 ## 0.7.1
 
 ### Patch Changes
