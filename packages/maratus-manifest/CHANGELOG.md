@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.7.3
+
+### Patch Changes
+
+- c0860f6: Linting and formatting changes
+
 ## 0.7.2
 
 ### Patch Changes
