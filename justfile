@@ -35,7 +35,7 @@ test workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}}; \
   elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace test {{workspace}}; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace test; \
   else \
@@ -48,7 +48,7 @@ cypress-open workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}} cypress:open; \
   elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace cypress:open "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace cypress:open {{workspace}}; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace cypress:open; \
   else \
@@ -61,7 +61,7 @@ test-unit workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _test-package {{workspace}} {{package}} test:unit; \
   elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
-    just _run-workspace test:unit "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace test:unit {{workspace}}; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     just _run-workspace test:unit; \
   else \
@@ -83,35 +83,70 @@ test-integration workspace='' package='':
     exit 1; \
   fi
 
-# workspace=registry|codemods|packages
+[group('lint')]
+lint workspace='' package='':
+  @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
+    just _run-package lint {{workspace}} {{package}}; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace lint {{workspace}}; \
+  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace lint; \
+  else \
+    echo "expected workspace" >&2; \
+    exit 1; \
+  fi
+
+[group('lint')]
+format workspace='' package='':
+  @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
+    just _run-package format {{workspace}} {{package}}; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace format {{workspace}}; \
+  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace format; \
+  else \
+    echo "expected workspace" >&2; \
+    exit 1; \
+  fi
+
+[group('lint')]
+format-check workspace='' package='':
+  @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
+    just _run-package format:check {{workspace}} {{package}}; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace format:check {{workspace}}; \
+  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace format:check; \
+  else \
+    echo "expected workspace" >&2; \
+    exit 1; \
+  fi
+
+# workspace=codemods|packages|tools
 [group('build')]
 build workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _build-package tools build-registry && \
-    just _run-workspace build "$(just _workspace-filter codemods)" && \
-    just _run-workspace build "$(just _workspace-filter packages)"; \
-  elif [ "{{workspace}}" = "registry" ]; then \
-    just _build-package tools build-registry; \
+    just _run-workspace build codemods && \
+    just _run-workspace build packages; \
   elif [ -n "{{package}}" ]; then \
     just _build-package {{workspace}} {{package}}; \
   else \
-    just _run-workspace build "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace build {{workspace}}; \
   fi
 
 
-# workspace=registry|codemods|packages
+# workspace=codemods|packages|tools
 [group('build')]
 clean workspace='' package='':
   @if [ -z "{{workspace}}" ]; then \
     just _clean-package tools build-registry && \
-    just _run-workspace clean "$(just _workspace-filter codemods)" && \
-    just _run-workspace clean "$(just _workspace-filter packages)"; \
-  elif [ "{{workspace}}" = "registry" ]; then \
-    just _clean-package tools build-registry; \
+    just _run-workspace clean codemods && \
+    just _run-workspace clean packages; \
   elif [ -n "{{package}}" ]; then \
     just _clean-package {{workspace}} {{package}}; \
   else \
-    just _run-workspace build "$(just _workspace-filter {{workspace}})"; \
+    just _run-workspace clean {{workspace}}; \
   fi
 
 [group('tmp')]
@@ -155,14 +190,16 @@ _consumer-config-file name:
 @_platform-cli-bin-path package binary='maratus':
   echo "packages/{{package}}/bin/{{binary}}"
 
-_run-workspace command workspace='"*"':
-  bunx bun-workspaces run {{command}} {{workspace}}
+_run-workspace command workspace='':
+  @if [ -n "{{workspace}}" ]; then \
+    bunx bun-workspaces run {{command}} "$(just _workspace-filter {{workspace}})"; \
+  else \
+    bunx bun-workspaces run {{command}}; \
+  fi
 
 _workspace-scope workspace:
   @if [ "{{workspace}}" = "codemods" ]; then \
     echo "@maratus-codemod/"; \
-  elif [ "{{workspace}}" = "registry" ]; then \
-    echo "@maratus-registry/"; \
   elif [ "{{workspace}}" = "components" ]; then \
     echo "@maratus-component/"; \
   elif [ "{{workspace}}" = "consumers" ]; then \
@@ -170,14 +207,19 @@ _workspace-scope workspace:
   elif [ "{{workspace}}" = "lib" ]; then \
     echo "@maratus-lib/"; \
   else \
-    echo "@maratus/"; \
+    echo "unknown workspace: {{workspace}}" >&2; \
+    exit 1; \
   fi
 
-@_workspace-filter workspace:
-  echo "$(just _workspace-scope {{workspace}})*"
+_workspace-filter workspace:
+  @if [ "{{workspace}}" = "packages" ] || [ "{{workspace}}" = "tools" ]; then \
+    echo "path:{{workspace}}/*"; \
+  else \
+    echo "$(just _workspace-scope {{workspace}})*"; \
+  fi
 
 @_run-package command workspace package:
-  just _run-workspace {{command}} "$(just _package-name {{workspace}} {{package}})"
+  bunx bun-workspaces run {{command}} "$(just _package-name {{workspace}} {{package}})"
 
 @_clean-package workspace package command='clean':
   just _run-package {{command}} {{workspace}} {{package}}

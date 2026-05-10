@@ -9,6 +9,11 @@
     "./tsconfig/bun": "./tsconfig/bun.json",
     "./tsconfig/cypress": "./tsconfig/cypress.json"
   },
+  "scripts": {
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.8.0"
   }

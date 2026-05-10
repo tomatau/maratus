@@ -12,7 +12,10 @@
   },
   "scripts": {
     "build": "bun build ./src/cli.ts --target=node --outfile ./dist/cli.mjs",
-    "clean": "rm -rf ./dist"
+    "clean": "rm -rf ./dist",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
     "ts-morph": "^25.0.1"

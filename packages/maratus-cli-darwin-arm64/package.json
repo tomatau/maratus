@@ -11,5 +11,10 @@
   "cpu": [
     "arm64"
   ],
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  }
 }

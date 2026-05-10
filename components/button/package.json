@@ -6,7 +6,10 @@
   "scripts": {
     "test": "cypress run --component --config-file cypress.config.mjs",
     "cypress:open": "cypress open --component --config-file cypress.config.mjs",
-    "test:unit": "bun test --preload @maratus/bun/unit-test src/**"
+    "test:unit": "bun test --preload @maratus/bun/unit-test src/**",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "dependencies": {
     "@maratus-lib/focus-modality": "workspace:*"

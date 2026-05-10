@@ -1,7 +1,7 @@
+import { afterEach, expect, test } from 'bun:test'
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { afterEach, expect, test } from 'bun:test'
 import { collectComponentSourceGraph } from './component-source-graph'
 
 const fixtureDirs: string[] = []
@@ -44,7 +44,10 @@ test('collectComponentSourceGraph follows relative barrel re-exports', async () 
     "export { useControl } from './useControl'\n",
   )
 
-  const files = await collectComponentSourceGraph(join(srcDir, 'Field.tsx'), srcDir)
+  const files = await collectComponentSourceGraph(
+    join(srcDir, 'Field.tsx'),
+    srcDir,
+  )
 
   expect(files.map((file) => file.fileName).sort()).toEqual([
     'Field.tsx',

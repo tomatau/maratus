@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "cypress run --component --config-file cypress.config.mjs",
-    "cypress:open": "cypress open --component --config-file cypress.config.mjs"
+    "cypress:open": "cypress open --component --config-file cypress.config.mjs",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
     "@maratus/cypress": "workspace:*",

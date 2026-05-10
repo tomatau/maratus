@@ -9,6 +9,11 @@
     "bin"
   ],
   "type": "module",
+  "scripts": {
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
   "dependencies": {
     "@maratus/codemod-runner": "0.1.1"
   },
