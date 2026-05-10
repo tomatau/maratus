@@ -1,7 +1,14 @@
-import type { FileNameKind, InternalImportTarget } from './options'
+import type {
+  FileNameKind,
+  FileNamesConfig,
+  InternalImportTarget,
+} from './options'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import { rewriteSourcePath } from '@maratus/codemod-runner'
+import {
+  internalLibPackageName,
+  rewriteSourcePath,
+} from '@maratus/codemod-runner'
 import { Project } from 'ts-morph'
 
 export type ResolveInternalImportTargetsOptions = {
@@ -11,7 +18,8 @@ export type ResolveInternalImportTargetsOptions = {
     sourceDir: string
     destinationDir: string
     barrel: boolean
-    fileNameKind: FileNameKind
+    fileNames: FileNamesConfig
+    importPackageName?: string
   }>
 }
 
@@ -23,7 +31,9 @@ export function resolveInternalImportTargets(
   const targets: ResolvedInternalImportTargets = {}
 
   for (const internalPackage of options.packages) {
-    const packageName = `@maratus-lib/${internalPackage.packageName}`
+    const packageName =
+      internalPackage.importPackageName ??
+      internalLibPackageName(internalPackage.packageName)
 
     if (internalPackage.barrel) {
       targets[packageName] = {
@@ -62,7 +72,10 @@ export function resolveInternalImportTargets(
       )
       const destinationFilePath = path.join(
         internalPackage.destinationDir,
-        rewriteSourcePath(relativeSourcePath, internalPackage.fileNameKind),
+        rewriteSourcePath(
+          relativeSourcePath,
+          resolveFileNameKind(internalPackage.fileNames, exportName),
+        ),
       )
 
       namedPaths[exportName] = relativeModuleSpecifier(
@@ -77,6 +90,21 @@ export function resolveInternalImportTargets(
   }
 
   return targets
+}
+
+function resolveFileNameKind(
+  fileNames: FileNamesConfig,
+  exportName: string,
+): FileNameKind {
+  if (fileNames.hooks && isHookExportName(exportName)) {
+    return fileNames.hooks
+  }
+
+  return fileNames.components ?? fileNames.lib ?? 'kebab-case'
+}
+
+function isHookExportName(exportName: string) {
+  return /^use[A-Z0-9_]\w*$/.test(exportName)
 }
 
 function resolvePackageIndexFile(sourceDir: string) {

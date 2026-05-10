@@ -11,10 +11,12 @@ import (
 )
 
 type InstallResult struct {
-	Component    string
-	InstalledAs  string
-	Files        []string
-	Dependencies []string
+	Component             string
+	InstalledAs           string
+	Style                 config.Style
+	Files                 []string
+	LibDependencies       []string
+	ComponentDependencies []string
 }
 
 type DependencyInstallResult struct {
@@ -85,7 +87,9 @@ func installBuiltSourceGraph(
 				proj,
 				result.Component,
 				installPaths.ComponentDir,
-				result.Dependencies,
+				result.Style,
+				result.LibDependencies,
+				result.ComponentDependencies,
 				sourceGraph,
 				prepared.SourceTextByPath,
 				prepared.RewriteablePaths,
@@ -144,7 +148,7 @@ func InstallDependencies(
 		if err != nil {
 			return nil, err
 		}
-		internalDeps, err := registry.LoadInternalDependencies(
+		libDeps, err := registry.LoadLibDependencies(
 			project.ResolveInstalledLibPackageRoot(proj, packageName),
 		)
 		if err != nil {
@@ -156,7 +160,7 @@ func InstallDependencies(
 			Package: packageName,
 			Files:   installedFiles,
 		})
-		for _, dependencyName := range internalDeps {
+		for _, dependencyName := range libDeps {
 			if _, ok := installed[dependencyName]; ok {
 				continue
 			}
@@ -177,7 +181,7 @@ func installDependencySourceGraph(
 		return nil, err
 	}
 	packageName := filepath.Base(filepath.Dir(sourceBaseDir))
-	internalDeps, err := registry.LoadInternalDependencies(
+	libDeps, err := registry.LoadLibDependencies(
 		project.ResolveInstalledLibPackageRoot(proj, packageName),
 	)
 	if err != nil {
@@ -221,7 +225,7 @@ func installDependencySourceGraph(
 			return rewriteLibSources(
 				proj,
 				destinationDir,
-				internalDeps,
+				libDeps,
 				sourceGraph,
 				prepared.SourceTextByPath,
 				prepared.RewriteablePaths,

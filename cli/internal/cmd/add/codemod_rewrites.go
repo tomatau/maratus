@@ -29,7 +29,9 @@ func rewriteInternalDependencyImports(
 				SourceDir:      filepath.Join(proj.RootDir, "lib", dependency, "src"),
 				DestinationDir: project.ResolveLibPackageDir(proj, dependency),
 				Barrel:         proj.Config.Layout.Barrel,
-				FileNameKind:   string(proj.Config.FileNames.Lib),
+				FileNames: codemods.RewriteImportsFileNames{
+					Lib: string(proj.Config.FileNames.Lib),
+				},
 			},
 		)
 	}

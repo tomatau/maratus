@@ -8,6 +8,7 @@ export { runCodemod } from './run-codemod'
 export {
   basename,
   dirname,
+  internalLibPackageName,
   joinPath,
   moduleSpecifierBetween,
   normalizePath,
