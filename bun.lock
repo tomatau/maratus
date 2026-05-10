@@ -35,6 +35,28 @@
         "@types/bun": "^1.3.10",
       },
     },
+    "components/boolean-control": {
+      "name": "@maratus-component/boolean-control",
+      "version": "0.0.0",
+      "dependencies": {
+        "@maratus-component/field": "workspace:*",
+      },
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
+        "clsx": "^2.1.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
     "components/button": {
       "name": "@maratus-component/button",
       "version": "0.0.0",
@@ -105,6 +127,28 @@
         "@maratus/dotfiles": "workspace:*",
         "@types/react": "^19.2.14",
         "@vitejs/plugin-react": "^5.0.2",
+        "clsx": "^2.1.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
+    "components/text-control": {
+      "name": "@maratus-component/text-control",
+      "version": "0.0.0",
+      "dependencies": {
+        "@maratus-component/field": "workspace:*",
+      },
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
         "clsx": "^2.1.1",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
@@ -532,6 +576,8 @@
 
     "@maratus-codemod/rewrite-relative-imports": ["@maratus-codemod/rewrite-relative-imports@workspace:codemods/rewrite-relative-imports"],
 
+    "@maratus-component/boolean-control": ["@maratus-component/boolean-control@workspace:components/boolean-control"],
+
     "@maratus-component/button": ["@maratus-component/button@workspace:components/button"],
 
     "@maratus-component/field": ["@maratus-component/field@workspace:components/field"],
@@ -539,6 +585,8 @@
     "@maratus-component/link": ["@maratus-component/link@workspace:components/link"],
 
     "@maratus-component/separator": ["@maratus-component/separator@workspace:components/separator"],
+
+    "@maratus-component/text-control": ["@maratus-component/text-control@workspace:components/text-control"],
 
     "@maratus-consumer/next-tailwind": ["@maratus-consumer/next-tailwind@workspace:consumers/next-tailwind"],
 

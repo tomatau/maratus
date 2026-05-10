@@ -1,24 +1,23 @@
 export type {
-  ControlProps,
   DescriptionProps,
   ErrorMessageProps,
+  FieldControlProps,
   FieldRootProps,
   LabelProps,
 } from './Field'
 export type {
-  ControlRenderArgs,
-  ControlRenderProps,
-  ControlRole,
   FieldContextValue,
+  FieldControlRenderArgs,
+  FieldControlRenderProps,
   FieldErrorKey,
   FieldErrorPolicy,
   FieldProviderProps,
   UseDescriptionOptions,
   UseDescriptionResult,
-  UseControlOptions,
-  UseControlResult,
   UseErrorMessageOptions,
   UseErrorMessageResult,
+  UseFieldControlOptions,
+  UseFieldControlResult,
   UseFieldRootOptions,
   UseFieldRootResult,
   UseLabelOptions,
@@ -26,10 +25,17 @@ export type {
   ValidityErrorKey,
   WithValidity,
 } from './Field.types'
-export { Control, Description, ErrorMessage, FieldRoot, Label } from './Field'
+export {
+  Description,
+  ErrorMessage,
+  FieldControl,
+  FieldRoot,
+  Label,
+} from './Field'
 export { FieldProvider } from './FieldContext'
-export { useControl } from './useControl'
 export { useDescription } from './useDescription'
 export { useErrorMessage } from './useErrorMessage'
+export { useFieldContext } from './useFieldContext'
+export { useFieldControl } from './useFieldControl'
 export { useFieldRoot } from './useFieldRoot'
 export { useLabel } from './useLabel'

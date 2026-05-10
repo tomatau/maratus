@@ -12,12 +12,19 @@ export type RewriteInternalImportsOptions = {
   targets: Record<string, InternalImportTarget>
 }
 
+export type FileNamesConfig = {
+  lib?: FileNameKind
+  hooks?: FileNameKind
+  components?: FileNameKind
+}
+
 export type RewriteInternalPackageImportsOptions = {
   packages: Array<{
     packageName: string
+    importPackageName?: string
     sourceDir: string
     destinationDir: string
     barrel: boolean
-    fileNameKind: FileNameKind
+    fileNames: FileNamesConfig
   }>
 }

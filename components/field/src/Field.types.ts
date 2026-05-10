@@ -6,7 +6,6 @@ import type {
   HTMLAttributes,
   ReactEventHandler,
   ReactNode,
-  Ref,
 } from 'react'
 
 export type ValidityErrorKey = Exclude<keyof ValidityState, 'valid'>
@@ -108,12 +107,12 @@ export type ControlElement =
   | HTMLSelectElement
   | HTMLTextAreaElement
 
-type ControlElementProps = Omit<
+type FieldControlElementProps = Omit<
   HTMLAttributes<ControlElement>,
-  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
+  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid' | 'role'
 >
 
-export type ControlRenderProps = ControlElementProps & {
+export type FieldControlRenderProps = FieldControlElementProps & {
   'aria-busy'?: AriaAttributes['aria-busy']
   'aria-describedby'?: AriaAttributes['aria-describedby']
   'aria-disabled'?: AriaAttributes['aria-disabled']
@@ -122,35 +121,21 @@ export type ControlRenderProps = ControlElementProps & {
   'aria-readonly'?: AriaAttributes['aria-readonly']
   'aria-required'?: AriaAttributes['aria-required']
   'data-loading'?: ''
-  disabled?: boolean
   id: string
-  name?: string
   onBlur?: FocusEventHandler<ControlElement>
   onChange?: ChangeEventHandler<ControlElement>
   onFocus?: FocusEventHandler<ControlElement>
   onInput?: ReactEventHandler<ControlElement>
   onInvalid?: ReactEventHandler<ControlElement>
-  readOnly?: boolean
-  ref?: Ref<any>
-  required?: boolean
-  role?: ControlRole
 }
 
-export type ControlRenderArgs = {
-  controlProps: ControlRenderProps
+export type FieldControlRenderArgs = {
+  fieldControlProps: FieldControlRenderProps
   withValidity: WithValidity
 }
 
-export type ControlRole =
-  | 'checkbox'
-  | 'combobox'
-  | 'listbox'
-  | 'searchbox'
-  | 'spinbutton'
-  | 'textbox'
-
-export type UseControlOptions = Omit<
-  ControlRenderProps,
+export type UseFieldControlOptions = Omit<
+  FieldControlRenderProps,
   | 'aria-describedby'
   | 'aria-busy'
   | 'aria-disabled'
@@ -160,18 +145,11 @@ export type UseControlOptions = Omit<
   | 'aria-required'
   | 'children'
   | 'data-loading'
-  | 'disabled'
   | 'id'
-  | 'name'
-  | 'readOnly'
-  | 'required'
-  | 'role'
-> & {
-  role?: ControlRole
-}
+>
 
-export type UseControlResult = {
-  controlProps: ControlRenderProps
+export type UseFieldControlResult = {
+  fieldControlProps: FieldControlRenderProps
   withValidity: WithValidity
 }
 
@@ -184,16 +162,16 @@ export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   }
 }
 
-// GPRD-006 and REQ-005: Field owns the description id because Control uses it
-// for aria-describedby.
+// GPRD-006 and REQ-005: Field owns the description id because FieldControl
+// uses it for aria-describedby.
 export type UseDescriptionOptions = Omit<ComponentPropsWithRef<'div'>, 'id'>
 
 export type UseDescriptionResult = {
   descriptionProps: ComponentPropsWithRef<'div'>
 }
 
-// GPRD-006 and REQ-007: Field owns the error id because Control uses it for
-// aria-errormessage when errors are visible.
+// GPRD-006 and REQ-007: Field owns the error id because FieldControl uses it
+// for aria-errormessage when errors are visible.
 export type UseErrorMessageOptions = Omit<
   ComponentPropsWithRef<'div'>,
   'children' | 'id'

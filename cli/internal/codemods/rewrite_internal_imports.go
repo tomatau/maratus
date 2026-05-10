@@ -6,12 +6,19 @@ type RewriteInternalImportsOptions struct {
 	Packages []RewriteInternalImportsPackage `json:"packages"`
 }
 
+type RewriteImportsFileNames struct {
+	Lib        string `json:"lib,omitempty"`
+	Hooks      string `json:"hooks,omitempty"`
+	Components string `json:"components,omitempty"`
+}
+
 type RewriteInternalImportsPackage struct {
-	PackageName    string `json:"packageName"`
-	SourceDir      string `json:"sourceDir"`
-	DestinationDir string `json:"destinationDir"`
-	Barrel         bool   `json:"barrel"`
-	FileNameKind   string `json:"fileNameKind"`
+	PackageName       string                  `json:"packageName"`
+	ImportPackageName string                  `json:"importPackageName,omitempty"`
+	SourceDir         string                  `json:"sourceDir"`
+	DestinationDir    string                  `json:"destinationDir"`
+	Barrel            bool                    `json:"barrel"`
+	FileNames         RewriteImportsFileNames `json:"fileNames"`
 }
 
 func RewriteInternalImports(

@@ -8,19 +8,46 @@ import (
 	"strings"
 )
 
-const internalPackagePrefix = "@maratus-lib/"
+const internalLibPackagePrefix = "@maratus-lib/"
+const registryComponentPackagePrefix = "@maratus-registry/"
+const sourceComponentPackagePrefix = "@maratus-component/"
 
-func InternalDependencies(dependencies map[string]string) []string {
+func SourceComponentPackageName(componentName string) string {
+	return sourceComponentPackagePrefix + componentName
+}
+
+func RegistryComponentPackageName(componentName string) string {
+	return registryComponentPackagePrefix + componentName
+}
+
+func LibDependencies(dependencies map[string]string) []string {
 	if len(dependencies) == 0 {
 		return nil
 	}
 
 	result := make([]string, 0, len(dependencies))
 	for packageName := range dependencies {
-		if !strings.HasPrefix(packageName, internalPackagePrefix) {
+		if !strings.HasPrefix(packageName, internalLibPackagePrefix) {
 			continue
 		}
-		result = append(result, strings.TrimPrefix(packageName, internalPackagePrefix))
+		result = append(result, strings.TrimPrefix(packageName, internalLibPackagePrefix))
+	}
+
+	sort.Strings(result)
+	return result
+}
+
+func ComponentDependencies(dependencies map[string]string) []string {
+	if len(dependencies) == 0 {
+		return nil
+	}
+
+	result := make([]string, 0, len(dependencies))
+	for packageName := range dependencies {
+		if !strings.HasPrefix(packageName, registryComponentPackagePrefix) {
+			continue
+		}
+		result = append(result, strings.TrimPrefix(packageName, registryComponentPackagePrefix))
 	}
 
 	sort.Strings(result)
@@ -46,7 +73,7 @@ func DedupePackageNames(packageNames []string) []string {
 	return result
 }
 
-func LoadInternalDependencies(packageRoot string) ([]string, error) {
+func LoadLibDependencies(packageRoot string) ([]string, error) {
 	data, err := os.ReadFile(filepath.Join(packageRoot, PackageFileName))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -60,14 +87,23 @@ func LoadInternalDependencies(packageRoot string) ([]string, error) {
 		return nil, err
 	}
 
-	return InternalDependencies(manifest.Dependencies), nil
+	return LibDependencies(manifest.Dependencies), nil
 }
 
-func LoadComponentInternalDependencies(componentPackageRoot string) ([]string, error) {
+func LoadComponentLibDependencies(componentPackageRoot string) ([]string, error) {
 	manifest, err := LoadPackageManifest(componentPackageRoot)
 	if err != nil {
 		return nil, err
 	}
 
-	return InternalDependencies(manifest.Dependencies), nil
+	return LibDependencies(manifest.Dependencies), nil
+}
+
+func LoadComponentDependencies(componentPackageRoot string) ([]string, error) {
+	manifest, err := LoadPackageManifest(componentPackageRoot)
+	if err != nil {
+		return nil, err
+	}
+
+	return ComponentDependencies(manifest.Dependencies), nil
 }

@@ -1,0 +1,20 @@
+{
+  "name": "@maratus-registry/boolean-control",
+  "version": "0.0.0",
+  "private": false,
+  "files": [
+    "css-files",
+    "css-modules",
+    "tailwind-css",
+    "meta.json"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@maratus-registry/field": "0.2.1"
+  },
+  "peerDependencies": {
+    "clsx": "^2.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

@@ -61,6 +61,12 @@ export function trimSuffix(value: string, suffix: string) {
   return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value
 }
 
+const internalLibPackageScope = '@maratus-lib'
+
+export function internalLibPackageName(packageName: string) {
+  return `${internalLibPackageScope}/${packageName}`
+}
+
 export function relativePathBetween(fromDir: string, toPath: string) {
   const normalizedFrom = normalizePath(fromDir)
   const normalizedTo = normalizePath(toPath)
