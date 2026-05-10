@@ -4,3 +4,7 @@ dependsOn:
   - 'packages/maratus-cli-darwin-x64'
   - 'packages/maratus-cli-linux-x64'
   - 'packages/maratus-cli-win32-x64'
+
+toolchains:
+  javascript:
+    syncProjectWorkspaceDependencies: false

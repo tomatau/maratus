@@ -33,6 +33,13 @@ jobs:
       head-sha: ${{ github.event.pull_request.head.sha }}
       pr-number: ${{ github.event.pull_request.number }}
 
+  lint-format:
+    needs: ci-context
+    uses: ./.github/workflows/_lint-format.yml
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
   test-unit:
     needs: ci-context
     if: ${{ needs.ci-context.outputs.test_unit_affected == 'true' }}
@@ -102,6 +109,7 @@ jobs:
       - build-cli
       - build-manifest
       - test-integration
+      - lint-format
       - test-unit
       - test-functional
       - cli-smoke
@@ -115,6 +123,7 @@ jobs:
         contains(fromJson('["success","skipped"]'), needs.build-cli.result) &&
         contains(fromJson('["success","skipped"]'), needs.build-manifest.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-integration.result) &&
+        contains(fromJson('["success","skipped"]'), needs.lint-format.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-unit.result) &&
         contains(fromJson('["success","skipped"]'), needs.test-functional.result) &&
         contains(fromJson('["success","skipped"]'), needs.cli-smoke.result)

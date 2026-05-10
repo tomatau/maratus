@@ -227,14 +227,14 @@
     },
     "packages/maratus-manifest": {
       "name": "@maratus/manifest",
-      "version": "0.4.1",
+      "version": "0.7.2",
       "devDependencies": {
         "@maratus/utils": "workspace:*",
       },
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.4.1",
+      "version": "0.6.1",
       "dependencies": {
         "@maratus-lib/focus-modality": "workspace:*",
       },
@@ -246,7 +246,7 @@
     },
     "registry/field": {
       "name": "@maratus-registry/field",
-      "version": "0.0.0",
+      "version": "0.2.1",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -255,7 +255,7 @@
     },
     "registry/link": {
       "name": "@maratus-registry/link",
-      "version": "0.1.1",
+      "version": "0.3.1",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -264,7 +264,7 @@
     },
     "registry/separator": {
       "name": "@maratus-registry/separator",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
