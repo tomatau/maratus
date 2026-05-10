@@ -1,4 +1,6 @@
 {
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["**/dist/**"],
   "plugins": ["import"],
   "rules": {
     "typescript/consistent-type-imports": [

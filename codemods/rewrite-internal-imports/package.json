@@ -12,7 +12,10 @@
   "scripts": {
     "build": "bun build ./src/index.ts --target=node --outfile ./dist/index.mjs",
     "clean": "rm -rf ./dist",
-    "test:unit": "bun test"
+    "test:unit": "bun test",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "dependencies": {
     "@maratus/codemod-runner": "0.1.1"

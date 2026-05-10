@@ -9,7 +9,10 @@ function ValueProbe() {
   )
   const [value, setValue] = useState(store.get('value'))
 
-  useEffect(() => store.subscribeKey('value', () => setValue(store.get('value'))), [store])
+  useEffect(
+    () => store.subscribeKey('value', () => setValue(store.get('value'))),
+    [store],
+  )
 
   return (
     <>
