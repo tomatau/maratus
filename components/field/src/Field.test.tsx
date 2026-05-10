@@ -2,7 +2,13 @@ import type { ValidityErrorKey } from './Field.types'
 import { describe, expect, test } from 'bun:test'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
-import { Control, Description, ErrorMessage, FieldRoot, Label } from './Field'
+import {
+  TextControl,
+  Description,
+  ErrorMessage,
+  FieldRoot,
+  Label,
+} from './Field'
 
 describe(FieldRoot, () => {
   test('PRD-005 keeps generated field ids consistent between server render and client hydration', async () => {
@@ -18,14 +24,14 @@ describe(FieldRoot, () => {
         name="email"
       >
         <Label data-testid="label" />
-        <Control>
-          {({ controlProps }) => (
+        <TextControl>
+          {({ textControlProps }) => (
             <input
               data-testid="control"
-              {...controlProps}
+              {...textControlProps}
             />
           )}
-        </Control>
+        </TextControl>
         <Description data-testid="description" />
         <ErrorMessage data-testid="error" />
       </FieldRoot>

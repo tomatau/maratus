@@ -1,15 +1,16 @@
 import type {
-  ControlRenderArgs,
-  ControlRole,
   FieldErrorKey,
   FieldErrorPolicy,
+  TextControlRenderArgs,
+  TextControlRole,
   ValidityErrorKey,
 } from '../src'
 import type { ReactNode } from 'react'
 import {
-  Control,
+  TextControl,
   Description,
   ErrorMessage,
+  FieldControl,
   FieldProvider,
   FieldRoot,
   Label,
@@ -86,14 +87,14 @@ describe('Field', () => {
           description="Email description"
         >
           <Label />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 type="text"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <Description />
         </FieldRoot>,
       )
@@ -105,7 +106,8 @@ describe('Field', () => {
     it('PRD-001 exports the initial field primitive set', () => {
       expect(FieldRoot).to.be.a('function')
       expect(FieldProvider).to.be.a('function')
-      expect(Control).to.be.a('function')
+      expect(FieldControl).to.be.a('function')
+      expect(TextControl).to.be.a('function')
       expect(Label).to.be.a('function')
       expect(Description).to.be.a('function')
       expect(ErrorMessage).to.be.a('function')
@@ -119,14 +121,14 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <Description data-testid="description" />
         </FieldProvider>,
       )
@@ -170,14 +172,14 @@ describe('Field', () => {
             name="email"
           >
             <Label data-testid="first-label" />
-            <Control>
-              {({ controlProps }) => (
+            <TextControl>
+              {({ textControlProps }) => (
                 <input
                   data-testid="first-control"
-                  {...controlProps}
+                  {...textControlProps}
                 />
               )}
-            </Control>
+            </TextControl>
             <Description data-testid="first-desc" />
             <ErrorMessage data-testid="first-error" />
           </FieldRoot>
@@ -189,14 +191,14 @@ describe('Field', () => {
             name="backupEmail"
           >
             <Label data-testid="second-label" />
-            <Control>
-              {({ controlProps }) => (
+            <TextControl>
+              {({ textControlProps }) => (
                 <input
                   data-testid="second-control"
-                  {...controlProps}
+                  {...textControlProps}
                 />
               )}
-            </Control>
+            </TextControl>
             <Description data-testid="second-desc" />
             <ErrorMessage data-testid="second-error" />
           </FieldRoot>
@@ -239,14 +241,14 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -265,14 +267,14 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -291,14 +293,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <Description data-testid="description" />
         </FieldRoot>,
       )
@@ -327,14 +329,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
@@ -371,14 +373,14 @@ describe('Field', () => {
             className="custom-label"
             data-testid="label"
           />
-          <Control className="custom-control">
-            {({ controlProps }) => (
+          <TextControl className="custom-control">
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <Description
             className="custom-description"
             data-testid="description"
@@ -437,16 +439,16 @@ describe('Field', () => {
       cy.get('label').assertSupportsProps(relationshipRootProps)
     })
 
-    it('GPRD-005 supports common root props on Control render props', () => {
+    it('GPRD-005 supports common root props on TextControl render props', () => {
       cy.mount(
         <FieldRoot
           controlId="common-root-id"
           label="Email"
           name="email"
         >
-          <Control {...createCommonRootProps(commonRootProps)}>
-            {({ controlProps }) => <input {...controlProps} />}
-          </Control>
+          <TextControl {...createCommonRootProps(commonRootProps)}>
+            {({ textControlProps }) => <input {...textControlProps} />}
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -557,14 +559,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -579,14 +581,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <Description
             as="span"
             data-testid="description"
@@ -619,14 +621,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage
             as="section"
             data-testid="error"
@@ -660,15 +662,15 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
                 required
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
@@ -701,14 +703,14 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
@@ -724,8 +726,8 @@ describe('Field', () => {
           label="Age"
           name="age"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
                 autoComplete="bday-year"
@@ -738,10 +740,10 @@ describe('Field', () => {
                 readOnly={false}
                 required
                 type="number"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -774,14 +776,14 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -802,15 +804,15 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
                 type="text"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -831,14 +833,14 @@ describe('Field', () => {
           name="email"
         >
           <Label data-testid="label" />
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
         </FieldRoot>,
       )
 
@@ -854,10 +856,10 @@ describe('Field', () => {
     })
   })
 
-  describe('role-aware non-native controls', () => {
+  describe('role-aware text controls', () => {
     const roleCases: readonly {
       attributes: Record<string, string>
-      role: ControlRole
+      role: TextControlRole
     }[] = [
       {
         attributes: {
@@ -874,31 +876,11 @@ describe('Field', () => {
       },
       {
         attributes: {
-          'aria-valuemax': '10',
-          'aria-valuemin': '0',
-          'aria-valuenow': '5',
-        },
-        role: 'spinbutton',
-      },
-      {
-        attributes: {
           'aria-controls': 'email-options',
           'aria-expanded': 'false',
           'aria-haspopup': 'listbox',
         },
         role: 'combobox',
-      },
-      {
-        attributes: {
-          'aria-activedescendant': 'email-option',
-        },
-        role: 'listbox',
-      },
-      {
-        attributes: {
-          'aria-checked': 'false',
-        },
-        role: 'checkbox',
       },
     ]
 
@@ -907,9 +889,9 @@ describe('Field', () => {
       errorPolicy,
       role,
     }: {
-      control: (args: ControlRenderArgs) => ReactNode
+      control: (args: TextControlRenderArgs) => ReactNode
       errorPolicy?: FieldErrorPolicy
-      role: ControlRole
+      role: TextControlRole
     }) {
       const errorMap = new Map<FieldErrorKey, string>([
         ['valueMissing', 'Choose a valid value.'],
@@ -922,13 +904,13 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control role={role}>{control}</Control>
+          <TextControl role={role}>{control}</TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
     }
 
-    function expectNativeRoleValidityError(role: ControlRole) {
+    function expectNativeRoleValidityError(role: TextControlRole) {
       cy.getByTestId<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >('control').then(($control) => {
@@ -941,7 +923,7 @@ describe('Field', () => {
     }
 
     roleCases.forEach(({ attributes, role }) => {
-      it(`REQ-020 REQ-021 REQ-022 REQ-023 PRD-016 supports ${role} control props`, () => {
+      it(`REQ-020 REQ-021 REQ-022 REQ-023 PRD-016 supports ${role} text control props`, () => {
         const errorMap = new Map<FieldErrorKey, string>([
           ['customServerError', 'Choose a valid value.'],
         ])
@@ -957,15 +939,15 @@ describe('Field', () => {
             label="Email"
             name="email"
           >
-            <Control role={role}>
-              {({ controlProps }) => (
+            <TextControl role={role}>
+              {({ textControlProps }) => (
                 <div
                   data-testid="control"
                   {...attributes}
-                  {...controlProps}
+                  {...textControlProps}
                 />
               )}
-            </Control>
+            </TextControl>
             <Description data-testid="description" />
             <ErrorMessage data-testid="error" />
           </FieldRoot>,
@@ -1009,11 +991,11 @@ describe('Field', () => {
 
     it('REQ-014 REQ-029 PRD-016 keeps textarea validity handlers available for textbox controls', () => {
       mountRoleValidityField({
-        control: ({ controlProps }) => (
+        control: ({ textControlProps }) => (
           <textarea
             data-testid="control"
             required
-            {...controlProps}
+            {...textControlProps}
           />
         ),
         role: 'textbox',
@@ -1024,12 +1006,12 @@ describe('Field', () => {
 
     it('REQ-014 REQ-029 PRD-016 keeps search input validity handlers available for searchbox controls', () => {
       mountRoleValidityField({
-        control: ({ controlProps }) => (
+        control: ({ textControlProps }) => (
           <input
             data-testid="control"
             required
             type="search"
-            {...controlProps}
+            {...textControlProps}
           />
         ),
         role: 'searchbox',
@@ -1038,29 +1020,13 @@ describe('Field', () => {
       expectNativeRoleValidityError('searchbox')
     })
 
-    it('REQ-014 REQ-029 PRD-016 keeps number input validity handlers available for spinbutton controls', () => {
-      mountRoleValidityField({
-        control: ({ controlProps }) => (
-          <input
-            data-testid="control"
-            required
-            type="number"
-            {...controlProps}
-          />
-        ),
-        role: 'spinbutton',
-      })
-
-      expectNativeRoleValidityError('spinbutton')
-    })
-
     it('REQ-014 REQ-029 PRD-016 keeps select validity handlers available for combobox controls', () => {
       mountRoleValidityField({
-        control: ({ controlProps }) => (
+        control: ({ textControlProps }) => (
           <select
             data-testid="control"
             required
-            {...controlProps}
+            {...textControlProps}
           >
             <option value="">Choose one</option>
             <option value="email">Email</option>
@@ -1072,51 +1038,16 @@ describe('Field', () => {
       expectNativeRoleValidityError('combobox')
     })
 
-    it('REQ-014 REQ-029 PRD-016 keeps listbox select validity handlers available for listbox controls', () => {
-      mountRoleValidityField({
-        control: ({ controlProps }) => (
-          <select
-            data-testid="control"
-            required
-            size={2}
-            {...controlProps}
-          >
-            <option value="">Choose one</option>
-            <option value="email">Email</option>
-          </select>
-        ),
-        role: 'listbox',
-      })
-
-      expectNativeRoleValidityError('listbox')
-    })
-
-    it('REQ-014 REQ-029 PRD-016 keeps checkbox input validity handlers available for checkbox controls', () => {
-      mountRoleValidityField({
-        control: ({ controlProps }) => (
-          <input
-            data-testid="control"
-            required
-            type="checkbox"
-            {...controlProps}
-          />
-        ),
-        role: 'checkbox',
-      })
-
-      expectNativeRoleValidityError('checkbox')
-    })
-
     it('REQ-030 PRD-016 lets custom controls wrap events with ValidityState', () => {
       let isValid = false
 
       mountRoleValidityField({
-        control: ({ controlProps, withValidity }) => (
+        control: ({ textControlProps, withValidity }) => (
           <div
             data-testid="control"
-            {...controlProps}
+            {...textControlProps}
             onInput={(event) =>
-              controlProps.onInput?.(
+              textControlProps.onInput?.(
                 withValidity(event, {
                   valid: isValid,
                   valueMissing: !isValid,
@@ -1156,17 +1087,17 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control
+          <TextControl
             role="textbox"
             onInput={onInput}
           >
-            {({ controlProps, withValidity }) => (
+            {({ textControlProps, withValidity }) => (
               <div
                 data-testid="control"
-                {...controlProps}
+                {...textControlProps}
                 onInput={(event) => {
                   event.preventDefault()
-                  controlProps.onInput?.(
+                  textControlProps.onInput?.(
                     withValidity(event, {
                       valid: false,
                       valueMissing: true,
@@ -1175,7 +1106,7 @@ describe('Field', () => {
                 }}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
@@ -1208,16 +1139,16 @@ describe('Field', () => {
           label="Email"
           name="email"
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
                 required
                 type="email"
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )
@@ -1266,16 +1197,16 @@ describe('Field', () => {
           label={label}
           name={name}
         >
-          <Control>
-            {({ controlProps }) => (
+          <TextControl>
+            {({ textControlProps }) => (
               <input
                 data-testid="control"
                 required={required}
                 type={type}
-                {...controlProps}
+                {...textControlProps}
               />
             )}
-          </Control>
+          </TextControl>
           <ErrorMessage data-testid="error" />
         </FieldRoot>,
       )

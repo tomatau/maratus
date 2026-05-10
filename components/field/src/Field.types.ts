@@ -108,12 +108,12 @@ export type ControlElement =
   | HTMLSelectElement
   | HTMLTextAreaElement
 
-type ControlElementProps = Omit<
+type FieldControlElementProps = Omit<
   HTMLAttributes<ControlElement>,
-  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
+  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid' | 'role'
 >
 
-export type ControlRenderProps = ControlElementProps & {
+export type FieldControlRenderProps = FieldControlElementProps & {
   'aria-busy'?: AriaAttributes['aria-busy']
   'aria-describedby'?: AriaAttributes['aria-describedby']
   'aria-disabled'?: AriaAttributes['aria-disabled']
@@ -122,35 +122,56 @@ export type ControlRenderProps = ControlElementProps & {
   'aria-readonly'?: AriaAttributes['aria-readonly']
   'aria-required'?: AriaAttributes['aria-required']
   'data-loading'?: ''
-  disabled?: boolean
   id: string
-  name?: string
   onBlur?: FocusEventHandler<ControlElement>
   onChange?: ChangeEventHandler<ControlElement>
   onFocus?: FocusEventHandler<ControlElement>
   onInput?: ReactEventHandler<ControlElement>
   onInvalid?: ReactEventHandler<ControlElement>
-  readOnly?: boolean
-  ref?: Ref<any>
-  required?: boolean
-  role?: ControlRole
+  ref?: Ref<ControlElement>
 }
 
-export type ControlRenderArgs = {
-  controlProps: ControlRenderProps
+export type FieldControlRenderArgs = {
+  fieldControlProps: FieldControlRenderProps
   withValidity: WithValidity
 }
 
-export type ControlRole =
-  | 'checkbox'
-  | 'combobox'
-  | 'listbox'
-  | 'searchbox'
-  | 'spinbutton'
-  | 'textbox'
+export type UseFieldControlOptions = Omit<
+  FieldControlRenderProps,
+  | 'aria-describedby'
+  | 'aria-busy'
+  | 'aria-disabled'
+  | 'aria-errormessage'
+  | 'aria-invalid'
+  | 'aria-readonly'
+  | 'aria-required'
+  | 'children'
+  | 'data-loading'
+  | 'id'
+>
 
-export type UseControlOptions = Omit<
-  ControlRenderProps,
+export type UseFieldControlResult = {
+  fieldControlProps: FieldControlRenderProps
+  withValidity: WithValidity
+}
+
+export type TextControlRole = 'combobox' | 'searchbox' | 'textbox'
+
+export type TextControlRenderProps = FieldControlRenderProps & {
+  disabled?: boolean
+  name?: string
+  readOnly?: boolean
+  required?: boolean
+  role?: TextControlRole
+}
+
+export type TextControlRenderArgs = {
+  textControlProps: TextControlRenderProps
+  withValidity: WithValidity
+}
+
+export type UseTextControlOptions = Omit<
+  TextControlRenderProps,
   | 'aria-describedby'
   | 'aria-busy'
   | 'aria-disabled'
@@ -167,11 +188,11 @@ export type UseControlOptions = Omit<
   | 'required'
   | 'role'
 > & {
-  role?: ControlRole
+  role?: TextControlRole
 }
 
-export type UseControlResult = {
-  controlProps: ControlRenderProps
+export type UseTextControlResult = {
+  textControlProps: TextControlRenderProps
   withValidity: WithValidity
 }
 
@@ -184,16 +205,16 @@ export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   }
 }
 
-// GPRD-006 and REQ-005: Field owns the description id because Control uses it
-// for aria-describedby.
+// GPRD-006 and REQ-005: Field owns the description id because FieldControl
+// uses it for aria-describedby.
 export type UseDescriptionOptions = Omit<ComponentPropsWithRef<'div'>, 'id'>
 
 export type UseDescriptionResult = {
   descriptionProps: ComponentPropsWithRef<'div'>
 }
 
-// GPRD-006 and REQ-007: Field owns the error id because Control uses it for
-// aria-errormessage when errors are visible.
+// GPRD-006 and REQ-007: Field owns the error id because FieldControl uses it
+// for aria-errormessage when errors are visible.
 export type UseErrorMessageOptions = Omit<
   ComponentPropsWithRef<'div'>,
   'children' | 'id'
