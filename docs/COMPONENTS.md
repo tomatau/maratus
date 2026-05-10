@@ -12,6 +12,11 @@ A component package is complete when it satisfies these checks:
 - Formatting and linting pass.
 - Documentation records component requirements, supported behaviours, and known limits.
 
+## Tests
+
+- Test fixtures should use role-based names when the real component identity is not part of the behaviour under test, such as `dependent component` and `dependency component`.
+- Use real component names in fixtures only when the test covers that component's own contract.
+
 ## Component Anatomy
 
 - Components select the root, split component-only props, call the hook, and render named prop bags.

@@ -22,7 +22,10 @@ func resolveComponentInstall(
 	componentName string,
 	style config.Style,
 ) (componentInstallSetup, error) {
-	result := InstallResult{Component: componentName}
+	result := InstallResult{
+		Component: componentName,
+		Style:     style,
+	}
 
 	sourceStyleDir, err := config.SourceStyleDirFor(style)
 	if err != nil {
@@ -64,7 +67,13 @@ func resolveComponentInstall(
 		return componentInstallSetup{}, err
 	}
 
-	result.Dependencies, err = registry.LoadComponentInternalDependencies(
+	result.LibDependencies, err = registry.LoadComponentLibDependencies(
+		project.ResolveRegistryComponentPackageRoot(proj, componentName),
+	)
+	if err != nil {
+		return componentInstallSetup{}, err
+	}
+	result.ComponentDependencies, err = registry.LoadComponentDependencies(
 		project.ResolveRegistryComponentPackageRoot(proj, componentName),
 	)
 	if err != nil {

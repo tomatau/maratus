@@ -2,7 +2,9 @@ package addcmd
 
 import (
 	"maratus/cli/internal/codemods"
+	"maratus/cli/internal/config"
 	"maratus/cli/internal/project"
+	"maratus/cli/internal/registry"
 	"path/filepath"
 )
 
@@ -10,7 +12,9 @@ func rewriteComponentSources(
 	proj project.Project,
 	componentName string,
 	destinationDir string,
-	dependencies []string,
+	style config.Style,
+	libDependencies []string,
+	componentDependencies []string,
 	sourceGraph map[string]string,
 	sourceTextByRelativePath map[string]string,
 	rewriteablePaths []string,
@@ -18,9 +22,9 @@ func rewriteComponentSources(
 	rewritten := cloneSourceTextMap(sourceTextByRelativePath)
 
 	internalRewriteOptions := codemods.RewriteInternalImportsOptions{
-		Packages: make([]codemods.RewriteInternalImportsPackage, 0, len(dependencies)),
+		Packages: make([]codemods.RewriteInternalImportsPackage, 0, len(libDependencies)+len(componentDependencies)),
 	}
-	for _, dependency := range dependencies {
+	for _, dependency := range libDependencies {
 		internalRewriteOptions.Packages = append(
 			internalRewriteOptions.Packages,
 			codemods.RewriteInternalImportsPackage{
@@ -28,7 +32,34 @@ func rewriteComponentSources(
 				SourceDir:      filepath.Join(proj.RootDir, "lib", dependency, "src"),
 				DestinationDir: project.ResolveLibPackageDir(proj, dependency),
 				Barrel:         proj.Config.Layout.Barrel,
-				FileNameKind:   string(proj.Config.FileNames.Lib),
+				FileNames: codemods.RewriteImportsFileNames{
+					Lib: string(proj.Config.FileNames.Lib),
+				},
+			},
+		)
+	}
+	for _, dependency := range componentDependencies {
+		sourceStyleDir, err := config.SourceStyleDirFor(style)
+		if err != nil {
+			return nil, err
+		}
+		componentInstallPaths := ResolveInstallPaths(proj, dependency, style)
+		internalRewriteOptions.Packages = append(
+			internalRewriteOptions.Packages,
+			codemods.RewriteInternalImportsPackage{
+				PackageName:       dependency,
+				ImportPackageName: registry.SourceComponentPackageName(dependency),
+				SourceDir: project.ResolveRegistryComponentSourceBaseDir(
+					proj,
+					dependency,
+					sourceStyleDir,
+				),
+				DestinationDir: componentInstallPaths.ComponentDir,
+				Barrel:         shouldKeepComponentBarrel(proj),
+				FileNames: codemods.RewriteImportsFileNames{
+					Components: string(proj.Config.FileNames.Components),
+					Hooks:      string(proj.Config.FileNames.Hooks),
+				},
 			},
 		)
 	}

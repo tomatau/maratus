@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { readRepoContext } from '@maratus/utils'
+import { readRepoContext, RepoContext } from '@maratus/utils'
 import { ConfigStyle, REGISTRY_META_FILENAME, styleDirFor } from './config'
 
 export type RegistryPackageManifest = {
@@ -66,26 +66,22 @@ async function resolveRegistryDependencyVersions(
   }
 
   const { repoRoot, repoConfig } = await readRepoContext(fromFileUrl)
-  const libRoot = join(repoRoot, repoConfig.workspaces.lib.path)
-  const libScopePrefix = repoConfig.workspaces.lib.scope
 
   const resolvedEntries = await Promise.all(
     Object.entries(dependencies).map(async ([packageName, version]) => {
-      if (
-        version !== 'workspace:*' ||
-        !packageName.startsWith(libScopePrefix)
-      ) {
+      if (version !== 'workspace:*') {
         return [packageName, version] as const
       }
 
-      const packageDirName = packageName.slice(libScopePrefix.length)
-      const source = await readFile(
-        join(libRoot, packageDirName, 'package.json'),
-        'utf8',
-      )
-      const manifest = JSON.parse(source) as SourcePackageManifest
+      if (packageName.startsWith(repoConfig.workspaces.components.scope)) {
+        return resolveComponentEntries(packageName, { repoRoot, repoConfig })
+      }
 
-      return [packageName, manifest.version ?? '0.0.0'] as const
+      if (packageName.startsWith(repoConfig.workspaces.lib.scope)) {
+        return resolveLibEntries(packageName, { repoRoot, repoConfig })
+      }
+
+      return [packageName, version] as const
     }),
   )
 
@@ -105,4 +101,45 @@ async function readOptionalPackageManifest(
 
     throw error
   }
+}
+
+async function resolveComponentEntries(
+  packageName: string,
+  { repoRoot, repoConfig }: RepoContext,
+) {
+  const componentScopePrefix = repoConfig.workspaces.components.scope
+  const registryScopePrefix = repoConfig.workspaces.registry.scope
+  const registryRoot = join(repoRoot, repoConfig.workspaces.registry.path)
+  const componentsRoot = join(repoRoot, repoConfig.workspaces.components.path)
+  const packageDirName = packageName.slice(componentScopePrefix.length)
+
+  const registryManifest = await readOptionalPackageManifest(
+    join(registryRoot, packageDirName, 'package.json'),
+  )
+  const source = await readFile(
+    join(componentsRoot, packageDirName, 'package.json'),
+    'utf8',
+  )
+  const manifest = JSON.parse(source) as SourcePackageManifest
+
+  return [
+    `${registryScopePrefix}${packageDirName}`,
+    registryManifest?.version ?? manifest.version ?? '0.0.0',
+  ] as const
+}
+
+async function resolveLibEntries(
+  packageName: string,
+  { repoRoot, repoConfig }: RepoContext,
+) {
+  const libScopePrefix = repoConfig.workspaces.lib.scope
+  const libRoot = join(repoRoot, repoConfig.workspaces.lib.path)
+  const packageDirName = packageName.slice(libScopePrefix.length)
+  const source = await readFile(
+    join(libRoot, packageDirName, 'package.json'),
+    'utf8',
+  )
+  const manifest = JSON.parse(source) as SourcePackageManifest
+
+  return [packageName, manifest.version ?? '0.0.0'] as const
 }

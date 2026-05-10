@@ -6,6 +6,7 @@ import (
 	addcmd "maratus/cli/internal/cmd/add"
 	"maratus/cli/internal/config"
 	"maratus/cli/internal/project"
+	"maratus/cli/internal/registry"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -654,11 +655,11 @@ func TestInstallComponentDiscoversInternalDependencies(t *testing.T) {
 		t.Fatalf("install component: %v", err)
 	}
 
-	if len(result.Dependencies) != 1 {
-		t.Fatalf("expected 1 internal dependency, got %d (%v)", len(result.Dependencies), result.Dependencies)
+	if len(result.LibDependencies) != 1 {
+		t.Fatalf("expected 1 internal dependency, got %d (%v)", len(result.LibDependencies), result.LibDependencies)
 	}
-	if result.Dependencies[0] != singleLevelLibDependencyName {
-		t.Fatalf("expected dependency to be %s, got %q", singleLevelLibDependencyName, result.Dependencies[0])
+	if result.LibDependencies[0] != singleLevelLibDependencyName {
+		t.Fatalf("expected dependency to be %s, got %q", singleLevelLibDependencyName, result.LibDependencies[0])
 	}
 }
 
@@ -714,6 +715,86 @@ func TestAddCopiesOneLevelInternalDependenciesToLibDir(t *testing.T) {
 		t,
 		filepath.Join(wd, "tmp", "src", "components", componentTypeName(componentWithHookName)+".tsx"),
 		`from '../lib/`+singleLevelLibDependencyName+`'`,
+	)
+}
+
+func TestAddCopiesComponentDependenciesToComponentsDir(t *testing.T) {
+	wd := t.TempDir()
+	dependentComponentName := "dependent-component"
+	dependentComponentFileName := "DependentComponent.tsx"
+	dependencyComponentName := "dependency-component"
+	dependencyComponentFileName := "DependencyComponent.tsx"
+	dependencyHookFileName := "useDependencyHook.ts"
+	dependencyExportName := "DependencyRoot"
+	dependencyHookExportName := "useDependencyHook"
+	sourceText := "import { " + dependencyHookExportName + " } from '" + registry.SourceComponentPackageName(dependencyComponentName) + "'\nexport function DependentComponent() { " + dependencyHookExportName + "(); return null }\n"
+	writeRegistryFixture(t, wd, registryFixture{
+		name: dependentComponentName,
+		dependencies: map[string]string{
+			registry.RegistryComponentPackageName(dependencyComponentName): "0.2.1",
+		},
+		cssFiles: map[string]string{
+			dependentComponentFileName: sourceText,
+		},
+		cssModules: map[string]string{
+			dependentComponentFileName: sourceText,
+		},
+		tailwindCSS: map[string]string{
+			dependentComponentFileName: sourceText,
+		},
+	})
+	writeRegistryFixture(t, wd, registryFixture{
+		name: dependencyComponentName,
+		cssFiles: map[string]string{
+			dependencyComponentFileName: "export function " + dependencyExportName + "() { return null }\n",
+			dependencyHookFileName:      "export function " + dependencyHookExportName + "() { return null }\n",
+			"index.ts":                  "export { " + dependencyHookExportName + " } from './useDependencyHook'\nexport { " + dependencyExportName + " } from './DependencyComponent'\n",
+		},
+		cssModules: map[string]string{
+			dependencyComponentFileName: "export function " + dependencyExportName + "() { return null }\n",
+			dependencyHookFileName:      "export function " + dependencyHookExportName + "() { return null }\n",
+			"index.ts":                  "export { " + dependencyHookExportName + " } from './useDependencyHook'\nexport { " + dependencyExportName + " } from './DependencyComponent'\n",
+		},
+		tailwindCSS: map[string]string{
+			dependencyComponentFileName: "export function " + dependencyExportName + "() { return null }\n",
+			dependencyHookFileName:      "export function " + dependencyHookExportName + "() { return null }\n",
+			"index.ts":                  "export { " + dependencyHookExportName + " } from './useDependencyHook'\nexport { " + dependencyExportName + " } from './DependencyComponent'\n",
+		},
+	})
+	writeConfig(t, wd, `{
+  "srcDir": "./tmp/src",
+  "componentsDir": "components",
+  "libDir": "lib",
+  "layout": {
+    "kind": "flat",
+    "barrel": false
+  }
+}`)
+
+	root := NewRootCmd()
+	root.SetArgs([]string{"add", dependentComponentName, "--style", "css-files"})
+	root.SetOut(&bytes.Buffer{})
+	root.SetErr(&bytes.Buffer{})
+
+	previous, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previous) })
+
+	if err := os.Chdir(wd); err != nil {
+		t.Fatalf("chdir temp dir: %v", err)
+	}
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("execute add with component dependency: %v", err)
+	}
+
+	assertFileExists(t, filepath.Join(wd, "tmp", "src", "components", dependencyComponentFileName))
+	assertFileContains(
+		t,
+		filepath.Join(wd, "tmp", "src", "components", dependentComponentFileName),
+		`from './use-dependency-hook'`,
 	)
 }
 
@@ -1562,7 +1643,9 @@ func writeStubCodemodRunnerFixture(t *testing.T, wd string) {
 			"    const sourceText = fs.readFileSync(sourcePath, 'utf8')",
 			"    const match = sourceText.match(/['\"]\\.\\/([^'\"]+)['\"]/) || sourceText.match(/['\"]\\.\\.\\/([^'\"]+)['\"]/) ",
 			"    if (!match) continue",
-			"    const rewrittenBase = pkg.fileNameKind === 'kebab-case' ? toKebabCase(match[1]) : match[1]",
+			"    const fileNames = pkg.fileNames || {}",
+			"    const fileNameKind = fileNames.hooks && match[1].startsWith('use') ? fileNames.hooks : (fileNames.components || fileNames.lib || 'kebab-case')",
+			"    const rewrittenBase = fileNameKind === 'kebab-case' ? toKebabCase(match[1]) : match[1]",
 			"    return norm(posix.join(norm(pkg.destinationDir), rewrittenBase))",
 			"  }",
 			"  return norm(posix.join(norm(pkg.destinationDir), 'dependency'))",
@@ -1600,6 +1683,10 @@ func writeStubCodemodRunnerFixture(t *testing.T, wd string) {
 			"      sourceText = sourceText.replaceAll(`\"${packageName}\"`, `\"${specifier}\"`)",
 			"      sourceText = sourceText.replaceAll(`'${scopedPackageName}'`, `'${specifier}'`)",
 			"      sourceText = sourceText.replaceAll(`\"${scopedPackageName}\"`, `\"${specifier}\"`)",
+			"      if (pkg.importPackageName) {",
+			"        sourceText = sourceText.replaceAll(`'${pkg.importPackageName}'`, `'${specifier}'`)",
+			"        sourceText = sourceText.replaceAll(`\"${pkg.importPackageName}\"`, `\"${specifier}\"`)",
+			"      }",
 			"    }",
 			"    return { path: filePath, sourceText }",
 			"  })",

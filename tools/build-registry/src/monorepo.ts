@@ -51,7 +51,13 @@ export async function collectComponentInputs(
 }
 
 export function componentSourceFileName(componentName: string): string {
-  const baseName = `${componentName[0]?.toUpperCase() ?? ''}${componentName.slice(1)}`
+  const baseName = componentName
+    .split('-')
+    .map(
+      (namePart) => `${namePart[0]?.toUpperCase() ?? ''}${namePart.slice(1)}`,
+    )
+    .join('')
+
   return `${baseName}${TSX_EXT}`
 }
 

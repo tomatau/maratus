@@ -6,6 +6,7 @@ import (
 	"maratus/cli/internal/config"
 	"maratus/cli/internal/manifest"
 	"maratus/cli/internal/project"
+	"maratus/cli/internal/registry"
 	"maratus/cli/internal/tui"
 	"time"
 
@@ -46,13 +47,9 @@ func installWithFeedback(
 	}
 
 	if !tui.IsInteractiveSession(cmd) {
-		results := make([]InstallResult, 0, len(components))
-		for _, component := range components {
-			result, err := InstallComponent(proj, component, selectedStyle)
-			if err != nil {
-				return nil, nil, err
-			}
-			results = append(results, result)
+		results, err := installComponentGraph(proj, components, selectedStyle)
+		if err != nil {
+			return nil, nil, err
 		}
 		dependencyResults, err := InstallDependencies(proj, collectDependencies(results))
 		if err != nil {
@@ -162,6 +159,10 @@ func (m *installSpinnerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.steps.Finish(msg.err)
 		}
 		m.results = append(m.results, msg.result)
+		m.components = queueComponentDependencies(
+			m.components,
+			msg.result.ComponentDependencies,
+		)
 		m.componentIndex += 1
 		return m, m.nextInstallCmd()
 	case installDependenciesDoneMsg:
@@ -207,10 +208,61 @@ func (m *installSpinnerModel) nextInstallCmd() tea.Cmd {
 	}
 }
 
+func installComponentGraph(
+	proj project.Project,
+	components []string,
+	selectedStyle config.Style,
+) ([]InstallResult, error) {
+	pending := registry.DedupePackageNames(components)
+	installed := map[string]struct{}{}
+	results := make([]InstallResult, 0, len(pending))
+
+	for len(pending) > 0 {
+		component := pending[0]
+		pending = pending[1:]
+		if _, ok := installed[component]; ok {
+			continue
+		}
+
+		result, err := InstallComponent(proj, component, selectedStyle)
+		if err != nil {
+			return nil, err
+		}
+		installed[component] = struct{}{}
+		results = append(results, result)
+
+		for _, dependency := range result.ComponentDependencies {
+			if _, ok := installed[dependency]; ok {
+				continue
+			}
+			pending = append(pending, dependency)
+		}
+		pending = registry.DedupePackageNames(pending)
+	}
+
+	return results, nil
+}
+
 func collectDependencies(results []InstallResult) []string {
 	dependencies := make([]string, 0)
 	for _, result := range results {
-		dependencies = append(dependencies, result.Dependencies...)
+		dependencies = append(dependencies, result.LibDependencies...)
 	}
 	return dependencies
+}
+
+func queueComponentDependencies(components []string, dependencies []string) []string {
+	seen := make(map[string]struct{}, len(components))
+	for _, component := range components {
+		seen[component] = struct{}{}
+	}
+	for _, dependency := range dependencies {
+		if _, ok := seen[dependency]; ok {
+			continue
+		}
+		seen[dependency] = struct{}{}
+		components = append(components, dependency)
+	}
+
+	return components
 }
