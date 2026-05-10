@@ -1,0 +1,38 @@
+name: _Lint & Format Check
+
+on:
+  workflow_call:
+    inputs:
+      base-sha:
+        required: true
+        type: string
+      head-sha:
+        required: true
+        type: string
+
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Moon toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+          auto-setup: true
+
+      - name: Run affected lint and format checks
+        run: |
+          moon ci :lint :format-check \
+            --base "${{ inputs.base-sha }}" \
+            --head "${{ inputs.head-sha }}" \
+            --include-relations
