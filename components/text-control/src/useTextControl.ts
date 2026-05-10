@@ -1,17 +1,19 @@
 import type {
-  FieldControlRenderProps,
   TextControlRenderProps,
   UseTextControlOptions,
   UseTextControlResult,
-} from './Field.types'
-import { useFieldContext as useRequiredFieldContext } from './useFieldContext'
-import { useFieldControl } from './useFieldControl'
+} from './TextControl.types'
+import type {
+  FieldContextValue,
+  FieldControlRenderProps,
+} from '@maratus-component/field'
+import { useFieldContext, useFieldControl } from '@maratus-component/field'
 
 export function useTextControl(
   options: UseTextControlOptions = {},
 ): UseTextControlResult {
   const { role, ...fieldControlOptions } = options
-  const field = useRequiredFieldContext('TextControl')
+  const field = useFieldContext('TextControl')
   const { fieldControlProps, withValidity } =
     useFieldControl(fieldControlOptions)
 
@@ -33,7 +35,7 @@ export function useTextControl(
 
 function getNativeTextControlProps(
   fieldControlProps: FieldControlRenderProps,
-  field: ReturnType<typeof useRequiredFieldContext>,
+  field: FieldContextValue,
 ): TextControlRenderProps {
   const textControlProps = { ...fieldControlProps }
 

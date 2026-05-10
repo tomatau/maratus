@@ -6,7 +6,6 @@ import type {
   HTMLAttributes,
   ReactEventHandler,
   ReactNode,
-  Ref,
 } from 'react'
 
 export type ValidityErrorKey = Exclude<keyof ValidityState, 'valid'>
@@ -128,7 +127,6 @@ export type FieldControlRenderProps = FieldControlElementProps & {
   onFocus?: FocusEventHandler<ControlElement>
   onInput?: ReactEventHandler<ControlElement>
   onInvalid?: ReactEventHandler<ControlElement>
-  ref?: Ref<ControlElement>
 }
 
 export type FieldControlRenderArgs = {
@@ -152,47 +150,6 @@ export type UseFieldControlOptions = Omit<
 
 export type UseFieldControlResult = {
   fieldControlProps: FieldControlRenderProps
-  withValidity: WithValidity
-}
-
-export type TextControlRole = 'combobox' | 'searchbox' | 'textbox'
-
-export type TextControlRenderProps = FieldControlRenderProps & {
-  disabled?: boolean
-  name?: string
-  readOnly?: boolean
-  required?: boolean
-  role?: TextControlRole
-}
-
-export type TextControlRenderArgs = {
-  textControlProps: TextControlRenderProps
-  withValidity: WithValidity
-}
-
-export type UseTextControlOptions = Omit<
-  TextControlRenderProps,
-  | 'aria-describedby'
-  | 'aria-busy'
-  | 'aria-disabled'
-  | 'aria-errormessage'
-  | 'aria-invalid'
-  | 'aria-readonly'
-  | 'aria-required'
-  | 'children'
-  | 'data-loading'
-  | 'disabled'
-  | 'id'
-  | 'name'
-  | 'readOnly'
-  | 'required'
-  | 'role'
-> & {
-  role?: TextControlRole
-}
-
-export type UseTextControlResult = {
-  textControlProps: TextControlRenderProps
   withValidity: WithValidity
 }
 

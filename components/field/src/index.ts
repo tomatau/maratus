@@ -4,7 +4,6 @@ export type {
   FieldControlProps,
   FieldRootProps,
   LabelProps,
-  TextControlProps,
 } from './Field'
 export type {
   FieldContextValue,
@@ -13,9 +12,6 @@ export type {
   FieldErrorKey,
   FieldErrorPolicy,
   FieldProviderProps,
-  TextControlRenderArgs,
-  TextControlRenderProps,
-  TextControlRole,
   UseDescriptionOptions,
   UseDescriptionResult,
   UseErrorMessageOptions,
@@ -26,8 +22,6 @@ export type {
   UseFieldRootResult,
   UseLabelOptions,
   UseLabelResult,
-  UseTextControlOptions,
-  UseTextControlResult,
   ValidityErrorKey,
   WithValidity,
 } from './Field.types'
@@ -37,12 +31,11 @@ export {
   FieldControl,
   FieldRoot,
   Label,
-  TextControl,
 } from './Field'
 export { FieldProvider } from './FieldContext'
 export { useDescription } from './useDescription'
 export { useErrorMessage } from './useErrorMessage'
+export { useFieldContext } from './useFieldContext'
 export { useFieldControl } from './useFieldControl'
 export { useFieldRoot } from './useFieldRoot'
 export { useLabel } from './useLabel'
-export { useTextControl } from './useTextControl'
