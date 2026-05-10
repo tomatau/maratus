@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 import {
-  TextControl,
+  FieldControl,
   Description,
   ErrorMessage,
   FieldRoot,
@@ -24,14 +24,14 @@ describe(FieldRoot, () => {
         name="email"
       >
         <Label data-testid="label" />
-        <TextControl>
-          {({ textControlProps }) => (
+        <FieldControl>
+          {({ fieldControlProps }) => (
             <input
               data-testid="control"
-              {...textControlProps}
+              {...fieldControlProps}
             />
           )}
-        </TextControl>
+        </FieldControl>
         <Description data-testid="description" />
         <ErrorMessage data-testid="error" />
       </FieldRoot>

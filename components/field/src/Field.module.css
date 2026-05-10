@@ -45,7 +45,7 @@
   color: var(--ara-field-label-fg--loading);
 }
 
-.control {
+.fieldControl {
   background-color: var(--ara-field-control-bg);
   border-color: var(--ara-field-control-detail);
   border-style: var(--ara-field-control-border-style);
@@ -55,18 +55,18 @@
   padding-inline: var(--ara-field-control-padding-inline);
 }
 
-.control[aria-invalid='true'] {
+.fieldControl[aria-invalid='true'] {
   border-color: var(--ara-field-control-detail--invalid);
   color: var(--ara-field-control-fg--invalid);
 }
 
-.control[data-loading] {
+.fieldControl[data-loading] {
   border-color: var(--ara-field-control-detail--loading);
   color: var(--ara-field-control-fg--loading);
 }
 
-.control:read-only,
-.control[aria-readonly='true'] {
+.fieldControl:read-only,
+.fieldControl[aria-readonly='true'] {
   color: var(--ara-field-control-fg--readonly);
 }
 

@@ -3,12 +3,10 @@ import type {
   FieldErrorKey,
   FieldControlRenderArgs,
   FieldErrorPolicy,
-  TextControlRenderArgs,
   UseDescriptionOptions,
   UseErrorMessageOptions,
   UseFieldControlOptions,
   UseLabelOptions,
-  UseTextControlOptions,
 } from './Field.types'
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react'
 import { FieldProvider } from './FieldContext'
@@ -17,7 +15,6 @@ import { useErrorMessage } from './useErrorMessage'
 import { useFieldControl } from './useFieldControl'
 import { useFieldRoot } from './useFieldRoot'
 import { useLabel } from './useLabel'
-import { useTextControl } from './useTextControl'
 
 export type FieldRootProps = ComponentPropsWithRef<'div'> & {
   activeErrors?: ReadonlySet<FieldErrorKey>
@@ -83,17 +80,6 @@ export type FieldControlProps = UseFieldControlOptions & {
 export function FieldControl(props: FieldControlProps) {
   const { children, ...hookProps } = props
   const control = useFieldControl(hookProps)
-
-  return children(control)
-}
-
-export type TextControlProps = UseTextControlOptions & {
-  children: (props: TextControlRenderArgs) => ReactNode
-}
-
-export function TextControl(props: TextControlProps) {
-  const { children, ...hookProps } = props
-  const control = useTextControl(hookProps)
 
   return children(control)
 }

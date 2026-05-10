@@ -30,7 +30,7 @@ export function useFieldControl(
     'aria-errormessage':
       field.visibleErrors.length > 0 ? field.errorId : undefined,
     'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
-    className: clsx(styles.control, className),
+    className: clsx(styles.fieldControl, className),
     'data-loading': field.isLoading ? '' : undefined,
     id: field.controlId,
     ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
