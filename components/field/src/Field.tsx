@@ -1,20 +1,23 @@
 import type {
-  ControlRenderArgs,
   ErrorMessageItemProps,
   FieldErrorKey,
+  FieldControlRenderArgs,
   FieldErrorPolicy,
-  UseControlOptions,
+  TextControlRenderArgs,
   UseDescriptionOptions,
   UseErrorMessageOptions,
+  UseFieldControlOptions,
   UseLabelOptions,
+  UseTextControlOptions,
 } from './Field.types'
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react'
 import { FieldProvider } from './FieldContext'
-import { useControl } from './useControl'
 import { useDescription } from './useDescription'
 import { useErrorMessage } from './useErrorMessage'
+import { useFieldControl } from './useFieldControl'
 import { useFieldRoot } from './useFieldRoot'
 import { useLabel } from './useLabel'
+import { useTextControl } from './useTextControl'
 
 export type FieldRootProps = ComponentPropsWithRef<'div'> & {
   activeErrors?: ReadonlySet<FieldErrorKey>
@@ -73,13 +76,24 @@ export function Label(props: LabelProps) {
   return <label {...labelProps} />
 }
 
-export type ControlProps = UseControlOptions & {
-  children: (props: ControlRenderArgs) => ReactNode
+export type FieldControlProps = UseFieldControlOptions & {
+  children: (props: FieldControlRenderArgs) => ReactNode
 }
 
-export function Control(props: ControlProps) {
+export function FieldControl(props: FieldControlProps) {
   const { children, ...hookProps } = props
-  const control = useControl(hookProps)
+  const control = useFieldControl(hookProps)
+
+  return children(control)
+}
+
+export type TextControlProps = UseTextControlOptions & {
+  children: (props: TextControlRenderArgs) => ReactNode
+}
+
+export function TextControl(props: TextControlProps) {
+  const { children, ...hookProps } = props
+  const control = useTextControl(hookProps)
 
   return children(control)
 }
