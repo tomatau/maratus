@@ -1,6 +1,6 @@
 {
   "name": "@maratus-registry/text-control",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "files": [
     "css-files",
@@ -10,8 +10,8 @@
   ],
   "type": "module",
   "dependencies": {
-    "@maratus-lib/props": "0.0.0",
-    "@maratus-registry/field": "0.2.1"
+    "@maratus-lib/props": "0.1.0",
+    "@maratus-registry/field": "0.3.0"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",

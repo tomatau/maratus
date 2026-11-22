@@ -1,5 +1,11 @@
 # @maratus/manifest
 
+## 0.8.0
+
+### Minor Changes
+
+- 9e9ec15: Adds choice-control and choices-control, and updates field, text-control, boolean-control, button, link, and separator
+
 ## 0.7.3
 
 ### Patch Changes
