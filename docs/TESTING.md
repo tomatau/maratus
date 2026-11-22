@@ -5,6 +5,8 @@
 - `just test` runs package-level functional test tasks.
 - `just test-unit` runs package-level unit test tasks.
 - `just test-integration` runs package-level integration test tasks.
+- `just typecheck` runs package-level type checks with `tsgo`, including type test files.
+- `just traceability` checks that every current requirement is cited by a test.
 
 ## Component Test Structure
 
@@ -13,6 +15,7 @@
 - Keep requirement IDs in test names for traceability.
 - Avoid long flat specs when groups improve navigation or failure diagnosis.
 - Keep tests focused on one behaviour path unless a short sequence proves the behaviour.
+- `spec/playground.cy.tsx` files are git-ignored experiments. They cite no requirement IDs, and CI and the traceability check never see them.
 
 ## Common Root Prop Tests
 
@@ -30,6 +33,10 @@
 - `test-functional` runs Moon `:test` tasks and executes Cypress component tests.
 - `test-integration` runs Moon `:test-integration` tasks.
 - `cli-smoke` validates the packaged CLI after CLI artefacts build.
+
+## CI Checks
+
+- `lint-format` runs Moon `:lint`, `:format-check`, and `:typecheck` tasks, then the traceability check, which reports without blocking for now.
 
 ## CI Gating
 

@@ -97,6 +97,23 @@ lint workspace='' package='':
   fi
 
 [group('lint')]
+typecheck workspace='' package='':
+  @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
+    just _run-package typecheck {{workspace}} {{package}}; \
+  elif [ -n "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace typecheck {{workspace}}; \
+  elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
+    just _run-workspace typecheck; \
+  else \
+    echo "expected workspace" >&2; \
+    exit 1; \
+  fi
+
+[group('lint')]
+traceability:
+  python3 .checks/traceability.py
+
+[group('lint')]
 format workspace='' package='':
   @if [ -n "{{workspace}}" ] && [ -n "{{package}}" ]; then \
     just _run-package format {{workspace}} {{package}}; \

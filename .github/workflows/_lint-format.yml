@@ -1,4 +1,4 @@
-name: _Lint & Format Check
+name: _Lint, Format & Type Check
 
 on:
   workflow_call:
@@ -30,9 +30,15 @@ jobs:
           auto-install: true
           auto-setup: true
 
-      - name: Run affected lint and format checks
+      - name: Run affected lint, format, and type checks
         run: |
-          moon ci :lint :format-check \
+          moon ci :lint :format-check :typecheck \
             --base "${{ inputs.base-sha }}" \
             --head "${{ inputs.head-sha }}" \
             --include-relations
+
+      # Reports only until the existing findings are cleared; then remove
+      # continue-on-error so new gaps block.
+      - name: Check requirements traceability
+        continue-on-error: true
+        run: python3 .checks/traceability.py
