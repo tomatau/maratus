@@ -10,7 +10,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@maratus-lib/props": "0.1.0"
+    "@maratus-lib/props": "0.0.0"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",
