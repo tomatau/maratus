@@ -1,8 +1,8 @@
 import type {
-  FieldControlRenderProps,
   FieldContextValue,
   UseFieldControlOptions,
   UseFieldControlResult,
+  ValidityHandlerProps,
   WithValidity,
 } from './Field.types'
 import clsx from 'clsx'
@@ -22,33 +22,26 @@ export function useFieldControl(
     ...fieldControlRootProps
   } = options
   const field = useFieldContext('FieldControl')
-  const fieldControlProps = {
-    ...fieldControlRootProps,
-    'aria-busy': field.isLoading ? true : undefined,
-    'aria-describedby': field.description ? field.descriptionId : undefined,
-    'aria-disabled': field.isLoading ? true : undefined,
-    'aria-errormessage':
-      field.visibleErrors.length > 0 ? field.errorId : undefined,
-    'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
-    className: clsx(styles.fieldControl, className),
-    'data-loading': field.isLoading ? '' : undefined,
-    id: field.controlId,
-    ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
-    ...(field.isRequired ? { 'aria-required': true } : {}),
-    ...composeValidityHandlerProps(
-      {
-        onBlur,
-        onChange,
-        onFocus,
-        onInput,
-        onInvalid,
-      },
-      field.updateValidityState,
-    ),
-  } satisfies FieldControlRenderProps
 
   return {
-    fieldControlProps,
+    fieldControlProps: {
+      ...fieldControlRootProps,
+      'aria-busy': field.isLoading ? true : undefined,
+      'aria-describedby': field.description ? field.descriptionId : undefined,
+      'aria-disabled': field.isLoading ? true : undefined,
+      'aria-errormessage':
+        field.visibleErrors.length > 0 ? field.errorId : undefined,
+      'aria-invalid': field.visibleErrors.length > 0 ? true : undefined,
+      className: clsx(styles.fieldControl, className),
+      'data-loading': field.isLoading ? '' : undefined,
+      id: field.controlId,
+      ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
+      ...(field.isRequired ? { 'aria-required': true } : {}),
+    },
+    validityHandlerProps: composeValidityHandlerProps(
+      { onBlur, onChange, onFocus, onInput, onInvalid },
+      field.updateValidityState,
+    ),
     withValidity,
   }
 }
@@ -69,15 +62,9 @@ const withValidity: WithValidity = (event, validity) => {
 }
 
 function composeValidityHandlerProps(
-  userHandlers: Pick<
-    UseFieldControlOptions,
-    'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
-  >,
+  userHandlers: Partial<ValidityHandlerProps>,
   updateValidityState: FieldContextValue['updateValidityState'],
-): Pick<
-  FieldControlRenderProps,
-  'onBlur' | 'onChange' | 'onFocus' | 'onInput' | 'onInvalid'
-> {
+): ValidityHandlerProps {
   return {
     onBlur: (event) => {
       userHandlers.onBlur?.(event)

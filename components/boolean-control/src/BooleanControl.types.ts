@@ -1,20 +1,22 @@
 import type {
   FieldControlRenderProps,
+  ValidityHandlerProps,
   WithValidity,
 } from '@maratus-component/field'
 import type { AriaAttributes, ReactNode } from 'react'
 
 export type BooleanControlRole = 'checkbox' | 'switch'
 
-export type BooleanControlRenderProps = FieldControlRenderProps & {
-  'aria-checked'?: AriaAttributes['aria-checked']
-  checked?: boolean
-  disabled?: boolean
-  name?: string
-  required?: boolean
-  role?: BooleanControlRole
-  type?: 'checkbox'
-}
+export type BooleanControlRenderProps = FieldControlRenderProps &
+  ValidityHandlerProps & {
+    'aria-checked'?: AriaAttributes['aria-checked']
+    checked?: boolean
+    disabled?: boolean
+    name?: string
+    required?: boolean
+    role?: BooleanControlRole
+    type?: 'checkbox'
+  }
 
 export type BooleanControlRenderArgs = {
   booleanControlProps: BooleanControlRenderProps
@@ -39,9 +41,11 @@ export type UseBooleanControlOptions = Omit<
   | 'required'
   | 'role'
   | 'type'
-> & {
-  role?: BooleanControlRole
-}
+  | keyof ValidityHandlerProps
+> &
+  Partial<ValidityHandlerProps> & {
+    role?: BooleanControlRole
+  }
 
 export type UseBooleanControlResult = {
   booleanControlProps: BooleanControlRenderProps

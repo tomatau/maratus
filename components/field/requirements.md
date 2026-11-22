@@ -83,6 +83,7 @@
 | PRD-011 | `errorPolicy` must receive form event history through `form.wasSubmitted`.                                                                                                                                                              | Current       |
 | PRD-012 | `ErrorMessage` must accept an optional `renderChildren` prop for each visible error with the message content, CSS module class name, and error key.                                                                                     | Current       |
 | PRD-013 | `FieldRoot`, `Description`, and `ErrorMessage` must support root substitution through `as` without changing relationship wiring.                                                                                                        | Current       |
+| PRD-014 | `FieldControl` must support controls made of grouped native inputs, where each input reports validity as described in [Validity Reporting](#validity-reporting).                                                                        | Current       |
 | PRD-015 | `FieldRoot` must accept `isRequired` and `isReadOnly` as field-level state inputs for label and field-control state hooks.                                                                                                              | Current       |
 | PRD-016 | When `FieldRoot` receives `isRequired`, `Label` must expose a `data-required` state hook.                                                                                                                                               | Current       |
 | PRD-017 | When `FieldRoot` receives `isReadOnly`, `Label` must expose a `data-readonly` state hook.                                                                                                                                               | Current       |
@@ -143,11 +144,14 @@ type FieldControlRenderProps = {
   'aria-invalid'?: boolean
   'aria-required'?: boolean
   'aria-readonly'?: boolean
-  onBlur?: React.FocusEventHandler
-  onChange?: React.ChangeEventHandler
-  onFocus?: React.FocusEventHandler
-  onInput?: React.ReactEventHandler
-  onInvalid?: React.ReactEventHandler
+}
+
+type ValidityHandlerProps = {
+  onBlur: React.FocusEventHandler
+  onChange: React.ChangeEventHandler
+  onFocus: React.FocusEventHandler
+  onInput: React.ReactEventHandler
+  onInvalid: React.ReactEventHandler
 }
 
 type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
@@ -161,6 +165,7 @@ type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
 
 type FieldControlRenderArgs = {
   fieldControlProps: FieldControlRenderProps
+  validityHandlerProps: ValidityHandlerProps
   withValidity: WithValidity
 }
 
@@ -210,8 +215,21 @@ const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
 - Field hooks return named prop bags, such as `fieldRootProps`, `labelProps`, `fieldControlProps`, `descriptionProps`, and `errorMessageProps`.
 - `isRequired` and `isReadOnly` are field-level state inputs. `FieldControl` props translate them to ARIA state and label props translate them to `data-required` and `data-readonly`.
 - `FieldControl` owns field-level relationship wiring for custom widget roots without selecting a widget role.
+- `FieldControl` render props expose `validityHandlerProps` next to `fieldControlProps`. A single control spreads both on one element. A grouped control spreads `fieldControlProps` on its container and `validityHandlerProps` on each native input.
 - `FieldControl` render props expose `withValidity` next to `fieldControlProps` so value-control packages can wrap events with a `ValidityState`-compatible object and still call the same validity handlers as native controls.
 - `field.wasBlurred`, `field.wasChanged`, and `field.wasTouched` are field-level event history flags, not value history flags.
 - `field.wasErrored` records whether the field has previously shown an error.
 - `form.wasSubmitted` is form-level event history when a form context exists, and otherwise defaults to `false`.
 - The default policy hides errors while valid, shows errors for validation events, keeps errors visible after the field has previously shown one, and shows errors after an invalid blurred field.
+
+### Validity Reporting
+
+Each reporting input sends these browser events to the field. For each event, the field reads the `ValidityState` of the input the event fired at, and its true flags become the error keys.
+
+| Browser event | Fired at the input when (HTML Standard)                                                                     | Field history event (PRD-010) |
+| ------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `focus`       | the input gains focus (focus update steps)                                                                  | `wasTouched`                  |
+| `blur`        | the input loses focus (focus update steps)                                                                  | `wasBlurred`, `wasTouched`    |
+| `input`       | the user changes its value or checkedness (common input element events)                                     | `wasChanged`, `wasTouched`    |
+| `change`      | the user commits that change (common input element events)                                                  | `wasChanged`, `wasTouched`    |
+| `invalid`     | constraint validation finds the input invalid: on form submission, `checkValidity()`, or `reportValidity()` | `wasTouched`                  |

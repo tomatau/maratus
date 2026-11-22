@@ -6,6 +6,7 @@ import type {
 import type {
   FieldContextValue,
   FieldControlRenderProps,
+  ValidityHandlerProps,
 } from '@maratus-component/field'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
 
@@ -14,13 +15,14 @@ export function useBooleanControl(
 ): UseBooleanControlResult {
   const { role, ...fieldControlOptions } = options
   const field = useFieldContext('BooleanControl')
-  const { fieldControlProps, withValidity } =
+  const { fieldControlProps, validityHandlerProps, withValidity } =
     useFieldControl(fieldControlOptions)
+  const controlProps = { ...fieldControlProps, ...validityHandlerProps }
 
   if (role) {
     return {
       booleanControlProps: {
-        ...fieldControlProps,
+        ...controlProps,
         ...(field.isRequired ? { 'aria-required': true } : {}),
         role,
       },
@@ -29,13 +31,13 @@ export function useBooleanControl(
   }
 
   return {
-    booleanControlProps: getNativeBooleanControlProps(fieldControlProps, field),
+    booleanControlProps: getNativeBooleanControlProps(controlProps, field),
     withValidity,
   }
 }
 
 function getNativeBooleanControlProps(
-  fieldControlProps: FieldControlRenderProps,
+  fieldControlProps: FieldControlRenderProps & ValidityHandlerProps,
   field: FieldContextValue,
 ): BooleanControlRenderProps {
   const booleanControlProps = { ...fieldControlProps }

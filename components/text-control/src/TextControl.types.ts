@@ -1,18 +1,20 @@
 import type {
   FieldControlRenderProps,
+  ValidityHandlerProps,
   WithValidity,
 } from '@maratus-component/field'
 import type { ReactNode } from 'react'
 
 export type TextControlRole = 'combobox' | 'searchbox' | 'textbox'
 
-export type TextControlRenderProps = FieldControlRenderProps & {
-  disabled?: boolean
-  name?: string
-  readOnly?: boolean
-  required?: boolean
-  role?: TextControlRole
-}
+export type TextControlRenderProps = FieldControlRenderProps &
+  ValidityHandlerProps & {
+    disabled?: boolean
+    name?: string
+    readOnly?: boolean
+    required?: boolean
+    role?: TextControlRole
+  }
 
 export type TextControlRenderArgs = {
   textControlProps: TextControlRenderProps
@@ -36,9 +38,11 @@ export type UseTextControlOptions = Omit<
   | 'readOnly'
   | 'required'
   | 'role'
-> & {
-  role?: TextControlRole
-}
+  | keyof ValidityHandlerProps
+> &
+  Partial<ValidityHandlerProps> & {
+    role?: TextControlRole
+  }
 
 export type UseTextControlResult = {
   textControlProps: TextControlRenderProps
