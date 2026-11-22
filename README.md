@@ -108,6 +108,8 @@ The file contains instructions for how to ensure you don't lose changes when add
 
 ## Contributors
 
+See [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) for local workflows: creating packages, rebuilding the registry, trying components in a consumer, and changesets.
+
 Getting set up
 
 1. Clone the repo
@@ -136,15 +138,15 @@ just test components
 # a specific component's test
 just test components button
 # all tests of a workspace
-just test-unit codemods
-just test-unit lib
+just test codemods
+just test lib
 ```
 
 Run unit tests
 
 ```sh
 # all tests
-just test
+just test-unit
 # all component tests
 just test-unit components
 # a specific component's test
@@ -158,6 +160,13 @@ Run cli tests
 
 ```sh
 just test-integration cli
+```
+
+Type check and check requirement coverage
+
+```sh
+just typecheck
+just traceability
 ```
 
 Build the registry

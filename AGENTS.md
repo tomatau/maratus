@@ -11,6 +11,7 @@
 - Architecture decisions: [`docs/ARCHITECTURE.md`](/Users/tomatao/Code/tomatao/maratus/docs/ARCHITECTURE.md)
 - Runtime/store decisions: [`docs/RUNTIME.md`](/Users/tomatao/Code/tomatao/maratus/docs/RUNTIME.md)
 - Component conventions: [`docs/COMPONENTS.md`](/Users/tomatao/Code/tomatao/maratus/docs/COMPONENTS.md)
+- Local development: [`docs/DEVELOPMENT.md`](/Users/tomatao/Code/tomatao/maratus/docs/DEVELOPMENT.md)
 
 ## Accessibility Baseline
 
