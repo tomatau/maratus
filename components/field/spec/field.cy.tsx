@@ -69,6 +69,22 @@ const relationshipRootProps = {
   id: undefined,
 } satisfies Cypress.CommonRootProps
 
+const GROUPED_NAME = 'grouped-inputs'
+const FIRST_RADIO = 'first-radio'
+const SECOND_RADIO = 'second-radio'
+const REQUIRED_INPUT = 'required-input'
+const OPTIONAL_INPUT = 'optional-input'
+const VALUE_MISSING_MESSAGE = 'Value missing.'
+
+const GROUPED_ERROR_MAP = new Map<ValidityErrorKey, string>([
+  ['valueMissing', VALUE_MISSING_MESSAGE],
+])
+
+const GROUP_ROLES = {
+  checkbox: 'group',
+  radio: 'radiogroup',
+} as const
+
 describe('Field', () => {
   describe('accessibility and exports', () => {
     it('renders the minimum field contract with no automatic axe violations', () => {
@@ -778,55 +794,126 @@ describe('Field', () => {
       })
     })
 
-    it('PRD-014 reports validity from each native input in a grouped control', () => {
-      const errorMap = new Map<ValidityErrorKey, string>([
-        ['valueMissing', 'Choose a drink.'],
-      ])
+    describe('grouped native inputs', () => {
+      it('PRD-014 reports validity from each native input in a grouped control', () => {
+        mountGroupedInputs('radio', [
+          { isRequired: true, value: FIRST_RADIO },
+          { isRequired: true, value: SECOND_RADIO },
+        ])
+        submitGroupedForm()
 
-      cy.mount(
-        <form data-testid="form">
-          <FieldRoot
-            errorMap={errorMap}
-            label="Drink"
-            name="drink"
-          >
-            <FieldControl>
-              {({ fieldControlProps, validityHandlerProps }) => (
-                <div
-                  data-testid="control"
-                  role="radiogroup"
-                  {...fieldControlProps}
-                >
-                  {['tea', 'coffee'].map((drink) => (
-                    <input
-                      aria-label={drink}
-                      key={drink}
-                      name="drink"
-                      required
-                      type="radio"
-                      value={drink}
-                      {...validityHandlerProps}
-                    />
-                  ))}
-                </div>
-              )}
-            </FieldControl>
-            <ErrorMessage data-testid="error" />
-          </FieldRoot>
-        </form>,
-      )
+        expectGroupedError(VALUE_MISSING_MESSAGE)
 
-      cy.getByTestId<HTMLFormElement>('form').then(($form) => {
-        $form.get(0).checkValidity()
+        cy.get(`input[value="${FIRST_RADIO}"]`).check()
+
+        expectNoGroupedError()
       })
 
-      cy.getByTestId('error').should('have.text', 'Choose a drink.')
-      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+      it('PRD-014 keeps an error from a required input when an optional input reports valid', () => {
+        mountGroupedInputs('checkbox', [
+          { isRequired: true, value: REQUIRED_INPUT },
+          { isRequired: false, value: OPTIONAL_INPUT },
+        ])
+        submitGroupedForm()
 
-      cy.get('input[value="tea"]').check()
+        cy.get(`input[value="${OPTIONAL_INPUT}"]`).focus()
 
-      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
-      cy.getByTestId('error').find('p').should('have.length', 0)
+        expectGroupedError(VALUE_MISSING_MESSAGE)
+      })
+
+      it('PRD-014 drops errors from an input that leaves the group', () => {
+        mountGroupedInputs('checkbox', [
+          { isRequired: true, value: REQUIRED_INPUT },
+          { isRequired: false, value: OPTIONAL_INPUT },
+        ]).then(({ rerender }) => {
+          submitGroupedForm()
+          expectGroupedError(VALUE_MISSING_MESSAGE)
+
+          rerender(
+            <GroupedInputs
+              inputs={[{ isRequired: false, value: OPTIONAL_INPUT }]}
+              type="checkbox"
+            />,
+          )
+          cy.get(`input[value="${REQUIRED_INPUT}"]`).should('not.exist')
+          cy.get(`input[value="${OPTIONAL_INPUT}"]`).focus()
+
+          expectNoGroupedError()
+        })
+      })
+
+      type GroupedInputType = 'checkbox' | 'radio'
+
+      type GroupedInput = {
+        isRequired: boolean
+        value: string
+      }
+
+      function GroupedInputs(props: {
+        inputs: readonly GroupedInput[]
+        type: GroupedInputType
+      }) {
+        return (
+          <form data-testid="form">
+            <FieldRoot
+              errorMap={GROUPED_ERROR_MAP}
+              label="Grouped inputs"
+              name={GROUPED_NAME}
+            >
+              <FieldControl>
+                {({ fieldControlProps, validityHandlerProps }) => (
+                  <div
+                    data-testid="control"
+                    role={GROUP_ROLES[props.type]}
+                    {...fieldControlProps}
+                  >
+                    {props.inputs.map((input) => (
+                      <input
+                        aria-label={input.value}
+                        key={input.value}
+                        name={GROUPED_NAME}
+                        required={input.isRequired}
+                        type={props.type}
+                        value={input.value}
+                        {...validityHandlerProps}
+                      />
+                    ))}
+                  </div>
+                )}
+              </FieldControl>
+              <ErrorMessage data-testid="error" />
+            </FieldRoot>
+          </form>
+        )
+      }
+
+      function mountGroupedInputs(
+        type: GroupedInputType,
+        inputs: readonly GroupedInput[],
+      ) {
+        return cy.mount(
+          <GroupedInputs
+            inputs={inputs}
+            type={type}
+          />,
+        )
+      }
+
+      function submitGroupedForm() {
+        cy.getByTestId<HTMLFormElement>('form').then(($form) => {
+          $form.get(0).checkValidity()
+        })
+      }
+
+      function expectGroupedError(message: string) {
+        cy.getByTestId('error').should('have.text', message)
+        cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+      }
+
+      function expectNoGroupedError() {
+        cy.getByTestId('error').find('p').should('have.length', 0)
+        cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      }
     })
 
     it('REQ-016 PRD-015 PRD-016 exposes required state to the label and field control', () => {

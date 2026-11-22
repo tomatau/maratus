@@ -6,9 +6,10 @@ import type {
   FieldErrorPolicyFieldState,
   FieldErrorPolicyFormState,
   FieldProviderProps,
-  ValidityErrorKey,
 } from './Field.types'
-import { createContext, useId, useState } from 'react'
+import type { ValidityReports } from './fieldValidity'
+import { createContext, useId, useRef, useState } from 'react'
+import { getReportedErrorKeys, recordValidityReport } from './fieldValidity'
 
 type FieldNativeState = {
   errors: readonly FieldErrorKey[]
@@ -59,6 +60,7 @@ function useFieldProviderValue({
     },
     isErrorVisible: false,
   })
+  const validityReports = useRef<ValidityReports>(new Map())
   const generatedId = useId()
   const resolvedControlId = controlId ?? `${generatedId}-control`
   const currentErrors = activeErrors ?? new Set(nativeState.errors)
@@ -77,20 +79,25 @@ function useFieldProviderValue({
     descriptionId: `${generatedId}-description`,
     errorId: `${generatedId}-error`,
     errorMap,
-    updateValidityState: (event, control) => {
-      const nextErrors = getValidityErrorKeys(control.validity)
+    updateValidityState: (event, report) => {
+      recordValidityReport(validityReports.current, report)
+      const nextErrors = getReportedErrorKeys(validityReports.current)
       const nextActiveErrors = activeErrors ?? new Set(nextErrors)
 
-      setNativeState((currentNativeState) =>
-        getNextNativeState({
+      setNativeState((currentNativeState) => {
+        const nextNativeState = getNextNativeState({
           currentNativeState,
           errorPolicy,
           event,
           isErrorVisible,
           nextActiveErrors,
           nextErrors,
-        }),
-      )
+        })
+
+        return isSameNativeState(currentNativeState, nextNativeState)
+          ? currentNativeState
+          : nextNativeState
+      })
     },
     isLoading,
     isReadOnly,
@@ -155,23 +162,21 @@ function getNextNativeState({
   }
 }
 
-const validityErrorKeys = [
-  'badInput',
-  'customError',
-  'patternMismatch',
-  'rangeOverflow',
-  'rangeUnderflow',
-  'stepMismatch',
-  'tooLong',
-  'tooShort',
-  'typeMismatch',
-  'valueMissing',
-] as const satisfies readonly ValidityErrorKey[]
+function isSameNativeState(
+  current: FieldNativeState,
+  next: FieldNativeState,
+): boolean {
+  const fieldKeys = Object.keys(
+    current.field,
+  ) as (keyof FieldErrorPolicyFieldState)[]
 
-function getValidityErrorKeys(
-  validity: ValidityState,
-): readonly ValidityErrorKey[] {
-  return validity.valid ? [] : validityErrorKeys.filter((key) => validity[key])
+  return (
+    current.event === next.event &&
+    current.isErrorVisible === next.isErrorVisible &&
+    current.errors.length === next.errors.length &&
+    current.errors.every((key, index) => key === next.errors[index]) &&
+    fieldKeys.every((key) => current.field[key] === next.field[key])
+  )
 }
 
 function resolveVisibleErrors({
