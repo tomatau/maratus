@@ -224,7 +224,7 @@ const defaultErrorPolicy = (args: FieldErrorPolicyArgs) => {
 
 ### Validity Reporting
 
-Each reporting input sends these browser events to the field. For each event, the field reads the `ValidityState` of the input the event fired at, and its true flags become the error keys.
+Each reporting input sends these browser events to the field. For each event, the field reads the `ValidityState` of the input the event fired at, and its true flags become that input's error keys. The field's error keys are the union of the current `ValidityState` error flags of each connected input that has reported.
 
 | Browser event | Fired at the input when (HTML Standard)                                                                     | Field history event (PRD-010) |
 | ------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------- |

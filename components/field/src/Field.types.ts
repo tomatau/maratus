@@ -47,7 +47,7 @@ export type FieldContextValue = {
   errorMap?: ReadonlyMap<FieldErrorKey, ReactNode>
   updateValidityState(
     event: FieldErrorPolicyArgs['event'],
-    control: { validity: ValidityState },
+    report: ValidityReport,
   ): void
   isLoading: boolean
   isReadOnly: boolean
@@ -154,6 +154,11 @@ export type UseFieldControlOptions = Omit<
   Partial<ValidityHandlerProps>
 
 export type UseFieldControlResult = FieldControlRenderArgs
+
+export type ValidityReport = {
+  reporter: EventTarget
+  validity: ValidityState
+}
 
 export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   event: TEvent,

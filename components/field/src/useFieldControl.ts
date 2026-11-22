@@ -3,9 +3,11 @@ import type {
   UseFieldControlOptions,
   UseFieldControlResult,
   ValidityHandlerProps,
+  ValidityReport,
   WithValidity,
 } from './Field.types'
 import clsx from 'clsx'
+import { validityErrorKeys } from './fieldValidity'
 import { useFieldContext } from './useFieldContext'
 import styles from './Field.module.css'
 
@@ -46,6 +48,8 @@ export function useFieldControl(
   }
 }
 
+const withValiditySources = new WeakMap<EventTarget, EventTarget>()
+
 const withValidity: WithValidity = (event, validity) => {
   const currentTarget = Object.create(
     Object.getPrototypeOf(event.currentTarget),
@@ -54,6 +58,7 @@ const withValidity: WithValidity = (event, validity) => {
   Object.assign(currentTarget, event.currentTarget, {
     validity: createValidityState(validity),
   })
+  withValiditySources.set(currentTarget, event.currentTarget)
 
   return {
     ...event,
@@ -68,52 +73,48 @@ function composeValidityHandlerProps(
   return {
     onBlur: (event) => {
       userHandlers.onBlur?.(event)
-      updateValidityState('blur', getValidityControl(event))
+      updateValidityState('blur', getValidityReport(event))
     },
     onChange: (event) => {
       userHandlers.onChange?.(event)
-      updateValidityState('change', getValidityControl(event))
+      updateValidityState('change', getValidityReport(event))
     },
     onFocus: (event) => {
       userHandlers.onFocus?.(event)
-      updateValidityState('focus', getValidityControl(event))
+      updateValidityState('focus', getValidityReport(event))
     },
     onInput: (event) => {
       userHandlers.onInput?.(event)
-      updateValidityState('input', getValidityControl(event))
+      updateValidityState('input', getValidityReport(event))
     },
     onInvalid: (event) => {
       userHandlers.onInvalid?.(event)
-      updateValidityState('invalid', getValidityControl(event))
+      updateValidityState('invalid', getValidityReport(event))
     },
   }
 }
 
-function getValidityControl(event: { currentTarget: EventTarget }) {
-  return event.currentTarget as EventTarget & { validity: ValidityState }
-}
+function getValidityReport(event: {
+  currentTarget: EventTarget
+}): ValidityReport {
+  const control = event.currentTarget as EventTarget & {
+    validity: ValidityState
+  }
 
-const validityStateKeys = [
-  'badInput',
-  'customError',
-  'patternMismatch',
-  'rangeOverflow',
-  'rangeUnderflow',
-  'stepMismatch',
-  'tooLong',
-  'tooShort',
-  'typeMismatch',
-  'valueMissing',
-] as const satisfies readonly (keyof Omit<ValidityState, 'valid'>)[]
+  return {
+    reporter: withValiditySources.get(control) ?? control,
+    validity: control.validity,
+  }
+}
 
 function createValidityState(validity: Partial<ValidityState>): ValidityState {
   const errors = Object.fromEntries(
-    validityStateKeys.map((key) => [key, validity[key] ?? false]),
-  ) as Record<(typeof validityStateKeys)[number], boolean>
+    validityErrorKeys.map((key) => [key, validity[key] ?? false]),
+  ) as Record<(typeof validityErrorKeys)[number], boolean>
 
   return {
     ...errors,
     valid:
-      validity.valid ?? validityStateKeys.every((key) => errors[key] === false),
+      validity.valid ?? validityErrorKeys.every((key) => errors[key] === false),
   }
 }
