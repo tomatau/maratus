@@ -13,7 +13,7 @@ This document defines Maratus's package naming and visibility rules.
 ## Workspace Mapping
 
 - `packages/*` publishes directly consumable public packages under `@maratus/*`.
-- `lib/*` publishes directly consumable public packages under `@maratus/*` (but also indirect consumption through CLI).
+- `lib/*` holds `@maratus-lib/*` packages, which the CLI copies into consumers alongside the components that depend on them.
 - `registry/*` publishes non-direct-consumption public packages under `@maratus-registry/*`.
 - `codemods/*` publishes non-direct-consumption public packages under `@maratus-codemod/*`.
 - `components/*` stays private under `@maratus-component/*`.

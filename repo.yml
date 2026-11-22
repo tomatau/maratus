@@ -21,10 +21,10 @@ workspaces:
   lib:
     path: lib
     scope: "@maratus-lib/"
-    description: Internal source-first library packages copied into consumers by CLI.
+    description: Source-first library packages, published for registry dependencies and copied into consumers by CLI.
     artifactTypes:
       - source
-    published: false
+    published: true
     consumption: indirect
 
   codemods:
