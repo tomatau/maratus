@@ -202,6 +202,14 @@
         "vite": "^7.1.7",
       },
     },
+    "lib/development": {
+      "name": "@maratus-lib/development",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+      },
+    },
     "lib/focus-modality": {
       "name": "@maratus-lib/focus-modality",
       "version": "0.3.0",
@@ -618,6 +626,8 @@
     "@maratus-consumer/vite-css-modules": ["@maratus-consumer/vite-css-modules@workspace:consumers/vite-css-modules"],
 
     "@maratus-consumer/vite-raw-css": ["@maratus-consumer/vite-raw-css@workspace:consumers/vite-raw-css"],
+
+    "@maratus-lib/development": ["@maratus-lib/development@workspace:lib/development"],
 
     "@maratus-lib/focus-modality": ["@maratus-lib/focus-modality@workspace:lib/focus-modality"],
 
