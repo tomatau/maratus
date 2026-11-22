@@ -29,7 +29,7 @@ Guiding principles live in [`docs/PRINCIPLES.md`](./PRINCIPLES.md). They inform 
   - intrinsic element substitution
   - callback composition for advanced cases
 - Do not introduce a slot primitive until a component actually needs composition via props.
-- Use `isNative` in hooks that shape native and non-native semantics.
+- Use a `mode` string union in hooks that shape native and non-native semantics, defaulting to the native root when there is exactly one.
 - Native roots keep platform semantics and avoid redundant ARIA.
 - Non-native roots get the required role, focusability, and keyboard behaviour.
 - Root substitution must preserve ids, relationships, and owned semantics.
