@@ -33,7 +33,7 @@ hold the requirement-writing rules applied here.
   a control's label, description and error.
 - Check `components/` first. Build on an existing package rather than repeat
   it, and say when a proposal would split or merge one.
-- Settle the roots (native, and non-native through `as` and `isNative`), the
+- Settle the roots (native, and non-native through `as` and `mode`), the
   compound parts, and the states it supports.
 
 A package's `requirements.md` has these sections, in this order:

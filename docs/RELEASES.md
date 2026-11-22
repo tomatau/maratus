@@ -31,3 +31,11 @@
 
 - `main` remains the stable release channel.
 - Pushes to `main` validate and publish stable releases to `latest`.
+
+## Changesets
+
+- Release the registry (`@maratus-registry/*`), lib (`@maratus-lib/*`), and `@maratus/manifest` packages. Changesets ignores the `@maratus-component/*` source packages.
+- A change to registry metadata (`registry/*/package.json` or `meta.json`) must also release `@maratus/manifest`. CI's changeset check enforces this.
+- A new package starts at `0.0.0`, and its first changeset is `minor`, which releases `0.1.0`.
+- Before `1.0.0`, breaking changes are `minor`.
+- Commit changesets in their own `changeset:` commit.
