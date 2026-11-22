@@ -1,0 +1,20 @@
+{
+  "name": "@maratus-lib/development",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test:unit": "bun test --preload @maratus/bun/unit-test src/**",
+    "typecheck": "tsgo -p tsconfig.src.json --noEmit && tsgo -p tsconfig.bun.json --noEmit",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
+  "devDependencies": {
+    "@maratus/bun": "workspace:*",
+    "@maratus/dotfiles": "workspace:*"
+  }
+}
