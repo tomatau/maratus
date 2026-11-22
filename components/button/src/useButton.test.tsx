@@ -253,12 +253,21 @@ describe(useButton, () => {
     expect(result.current.buttonProps.disabled).toBe(undefined)
   })
 
+  test('GPRD-003 defaults mode to the native button', () => {
+    const { result } = renderHook(() =>
+      useButton({ children: 'Save', disabled: true }),
+    )
+
+    expect(result.current.buttonProps.role).toBe(undefined)
+    expect(result.current.buttonProps.disabled).toBe(true)
+  })
+
   describe('non-native roots', () => {
-    test('returns button semantics', () => {
+    test('GPRD-003 returns button semantics in custom mode', () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
-          isNative: false,
+          mode: 'custom',
         }),
       )
 
@@ -272,7 +281,7 @@ describe(useButton, () => {
           children: 'Save',
           disabled: true,
           disabledBehavior: 'focusable',
-          isNative: false,
+          mode: 'custom',
         }),
       )
 
@@ -285,7 +294,7 @@ describe(useButton, () => {
         useButton({
           children: 'Save',
           disabled: true,
-          isNative: false,
+          mode: 'custom',
           type: 'submit',
         }),
       )
@@ -300,7 +309,7 @@ describe(useButton, () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
-          isNative: false,
+          mode: 'custom',
         }),
       )
 
@@ -333,7 +342,7 @@ describe(useButton, () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
-          isNative: false,
+          mode: 'custom',
           onKeyDown: () => undefined,
         }),
       )
@@ -359,7 +368,7 @@ describe(useButton, () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
-          isNative: false,
+          mode: 'custom',
           onKeyDown: () => {
             keyDownCalls += 1
           },

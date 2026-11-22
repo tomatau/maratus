@@ -10,7 +10,7 @@ export function Button(props: ButtonProps) {
   const { as: Root = 'button', ...hookProps } = props
   const { buttonProps } = useButton({
     ...hookProps,
-    isNative: Root === 'button',
+    mode: Root === 'button' ? 'native' : 'custom',
   })
 
   return <Root {...buttonProps} />

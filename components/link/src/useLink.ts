@@ -11,8 +11,12 @@ export type LinkBaseProps = ComponentPropsWithRef<'a'> & {
   isLoading?: boolean
 }
 
+// `native` renders the native <a>; `custom` adds the
+// semantics a non-native root needs.
+export type LinkMode = 'custom' | 'native'
+
 export type UseLinkProps = LinkBaseProps & {
-  isNative?: boolean
+  mode?: LinkMode
 }
 
 type LinkRootProps = LinkBaseProps & {
@@ -28,12 +32,13 @@ export function useLink(props: UseLinkProps): UseLinkResult {
   const {
     className,
     isLoading = false,
-    isNative = true,
+    mode = 'native',
     onClick,
     onKeyDown,
     tabIndex,
     ...rest
   } = props
+  const isNative = mode === 'native'
   const isFocusVisible = useIsFocusVisible()
 
   return {

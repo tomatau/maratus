@@ -11,7 +11,7 @@ export function Link(props: LinkProps) {
   const Root = as ?? 'a'
   const { linkProps } = useLink({
     ...rest,
-    isNative: Root === 'a',
+    mode: Root === 'a' ? 'native' : 'custom',
   })
 
   return <Root {...linkProps} />

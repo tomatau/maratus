@@ -13,7 +13,7 @@ export function Separator(props: SeparatorProps) {
   const Root = as ?? defaultTag
   const { separatorProps } = useSeparator({
     ...props,
-    isNative: Root === 'hr',
+    mode: Root === 'hr' ? 'native' : 'custom',
   })
 
   return <Root {...separatorProps} />

@@ -29,8 +29,12 @@ type ToggleButtonProps = {
 export type ButtonBaseProps = CommonButtonProps &
   (CommandButtonProps | ToggleButtonProps)
 
+// `native` renders the native <button>; `custom` adds the
+// semantics a non-native root needs.
+export type ButtonMode = 'custom' | 'native'
+
 export type UseButtonProps = ButtonBaseProps & {
-  isNative?: boolean
+  mode?: ButtonMode
 }
 
 type ButtonRootProps = NativeButtonProps & {
@@ -49,7 +53,7 @@ export function useButton(props: UseButtonProps): UseButtonResult {
     className,
     disabled,
     disabledBehavior = 'native',
-    isNative = true,
+    mode = 'native',
     isLoading = false,
     kind = 'command',
     onClick,
@@ -63,6 +67,7 @@ export function useButton(props: UseButtonProps): UseButtonResult {
     type,
     ...nativeProps
   } = props
+  const isNative = mode === 'native'
   const isInteractionDisabled = disabled || isLoading
   const ariaPressed = kind === 'toggle' ? pressed : undefined
   const isFocusVisible = useIsFocusVisible()
