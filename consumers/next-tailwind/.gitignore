@@ -1,4 +1,5 @@
 .next
 app/components
+app/lib
 app/styles
 maratus-components.json
