@@ -1,0 +1,35 @@
+{
+  "name": "@maratus-component/choices-control",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "cypress run --component --config-file cypress.config.mjs",
+    "cypress:open": "cypress open --component --config-file cypress.config.mjs",
+    "test:unit": "bun test --preload @maratus/bun/unit-test src/**",
+    "typecheck": "tsgo -p tsconfig.src.json --noEmit && tsgo -p tsconfig.bun.json --noEmit && tsgo -p tsconfig.cypress.json --noEmit",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
+  "dependencies": {
+    "@maratus-component/field": "workspace:*",
+    "@maratus-lib/props": "workspace:*"
+  },
+  "devDependencies": {
+    "@maratus/bun": "workspace:*",
+    "@maratus/cypress": "workspace:*",
+    "@maratus/dotfiles": "workspace:*",
+    "@types/react": "^19.2.14",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

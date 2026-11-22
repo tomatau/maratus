@@ -104,6 +104,27 @@
         "react-dom": "^19.0.0",
       },
     },
+    "components/choices-control": {
+      "name": "@maratus-component/choices-control",
+      "version": "0.0.0",
+      "dependencies": {
+        "@maratus-component/field": "workspace:*",
+        "@maratus-lib/props": "workspace:*",
+      },
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/cypress": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "typescript": "^5.9.2",
+      },
+      "peerDependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
     "components/field": {
       "name": "@maratus-component/field",
       "version": "0.0.0",
@@ -353,6 +374,18 @@
     },
     "registry/choice-control": {
       "name": "@maratus-registry/choice-control",
+      "version": "0.0.0",
+      "dependencies": {
+        "@maratus-lib/props": "0.1.0",
+        "@maratus-registry/field": "0.2.1",
+      },
+      "peerDependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
+    "registry/choices-control": {
+      "name": "@maratus-registry/choices-control",
       "version": "0.0.0",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
@@ -673,6 +706,8 @@
 
     "@maratus-component/choice-control": ["@maratus-component/choice-control@workspace:components/choice-control"],
 
+    "@maratus-component/choices-control": ["@maratus-component/choices-control@workspace:components/choices-control"],
+
     "@maratus-component/field": ["@maratus-component/field@workspace:components/field"],
 
     "@maratus-component/link": ["@maratus-component/link@workspace:components/link"],
@@ -700,6 +735,8 @@
     "@maratus-registry/button": ["@maratus-registry/button@workspace:registry/button"],
 
     "@maratus-registry/choice-control": ["@maratus-registry/choice-control@workspace:registry/choice-control"],
+
+    "@maratus-registry/choices-control": ["@maratus-registry/choices-control@workspace:registry/choices-control"],
 
     "@maratus-registry/field": ["@maratus-registry/field@workspace:registry/field"],
 

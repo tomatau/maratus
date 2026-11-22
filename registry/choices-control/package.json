@@ -1,0 +1,20 @@
+{
+  "name": "@maratus-registry/choices-control",
+  "version": "0.0.0",
+  "private": false,
+  "files": [
+    "css-files",
+    "css-modules",
+    "tailwind-css",
+    "meta.json"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@maratus-lib/props": "0.1.0",
+    "@maratus-registry/field": "0.2.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
