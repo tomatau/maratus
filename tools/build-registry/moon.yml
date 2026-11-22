@@ -1,10 +1,27 @@
+fileGroups:
+  registry-style-files:
+    - '/registry/*/css-files/**/*'
+    - '/registry/*/css-modules/**/*'
+    - '/registry/*/tailwind-css/**/*'
+
 tasks:
   build:
     command: 'bun'
-    args:
-      - 'run'
-      - 'build'
+    args: ['run', 'build']
+    # Release versions live in manifests this task also writes. Moon 2.2.4
+    # excludes those outputs from the input hash and can restore stale versions.
+    options:
+      cache: false
     inputs:
       - '@group(components-source)'
+      - '@group(repo-config)'
+      - '@group(lib-manifests)'
+      - '/bun.lock'
+      - '/.oxfmtrc.json'
+      - 'package.json'
+      - 'scripts/**/*'
+      - 'src/**/*'
+      - 'project://tools-utils'
     outputs:
       - '@group(registry-meta)'
+      - '@group(registry-style-files)'

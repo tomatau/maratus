@@ -4,6 +4,8 @@ fileGroups:
   components-source:
     - '/components/*/src/**/*'
     - '/components/*/package.json'
+  lib-manifests:
+    - '/lib/*/package.json'
   registry-meta:
     - '/registry/*/package.json'
     - '/registry/*/meta.json'
