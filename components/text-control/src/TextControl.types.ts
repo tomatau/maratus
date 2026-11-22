@@ -1,7 +1,6 @@
 import type {
   FieldControlRenderProps,
   ValidityHandlerProps,
-  WithValidity,
 } from '@maratus-component/field'
 import type { ReactNode } from 'react'
 
@@ -18,7 +17,6 @@ export type TextControlRenderProps = FieldControlRenderProps &
 
 export type TextControlRenderArgs = {
   textControlProps: TextControlRenderProps
-  withValidity: WithValidity
 }
 
 export type UseTextControlOptions = Omit<
@@ -46,7 +44,6 @@ export type UseTextControlOptions = Omit<
 
 export type UseTextControlResult = {
   textControlProps: TextControlRenderProps
-  withValidity: WithValidity
 }
 
 export type TextControlProps = UseTextControlOptions & {

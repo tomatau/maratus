@@ -18,6 +18,52 @@ Cypress.Commands.add('getByTestId', (testId, options) =>
   cy.get(`[data-testid="${testId}"]`, options),
 )
 
+// Asserts that an IDREF list attribute names the given test ids, in order.
+Cypress.Commands.add(
+  'assertReferences',
+  { prevSubject: 'element' },
+  (subject, attribute, testIds) =>
+    cy.wrap(subject, { log: false }).should(($subject) => {
+      const document = $subject.get(0).ownerDocument
+      const ids = testIds.map(
+        (testId) => document.querySelector(`[data-testid="${testId}"]`)?.id,
+      )
+
+      expect(ids, 'referenced ids').to.not.include(undefined)
+      expect($subject.attr(attribute), attribute).to.equal(ids.join(' '))
+    }),
+)
+
+Cypress.Commands.add(
+  'checkFormValidity',
+  { prevSubject: 'element' },
+  (subject) => {
+    subject.get(0).checkValidity()
+
+    return cy.wrap(subject, { log: false })
+  },
+)
+
+// Sets a style hook (a CSS custom property) to a test value on the subject and
+// asserts its computed property takes that value. This checks that a state
+// uses its hook, not which design token the hook defaults to.
+Cypress.Commands.add(
+  'assertStyleHook',
+  { prevSubject: 'element' },
+  (subject, { property, pseudo, value, variable }) => {
+    const element = subject.get(0)
+    element.style.setProperty(variable, value)
+
+    return cy.wrap(subject, { log: false }).should(() => {
+      const computed = element.ownerDocument.defaultView
+        .getComputedStyle(element, pseudo)
+        .getPropertyValue(property)
+
+      expect(computed, `${property} from ${variable}`).to.equal(value)
+    })
+  },
+)
+
 Cypress.Commands.add('getRootElement', () =>
   cy.get(CYPRESS_ROOT, { log: false }).then(($root) =>
     cy
@@ -85,7 +131,8 @@ const commonPropAssertions = {
       },
       {
         props: ['onMouseEnter'],
-        trigger: () => cy.wrap($subject).trigger('mouseenter', { force: true }),
+        // React derives onMouseEnter from mouseover, not mouseenter.
+        trigger: () => cy.wrap($subject).trigger('mouseover', { force: true }),
       },
       {
         props: ['onTouchStart'],
@@ -148,6 +195,35 @@ const commonPropAssertions = {
 
     cy.wrap($subject).should('have.attr', 'title', commonRootProps.title)
   },
+}
+
+// One shared fixture for GPRD-005 common root prop tests.
+globalThis.COMMON_ROOT_PROPS = {
+  className: 'common-root-class',
+  data: { name: 'data-common-root-prop', value: 'supported' },
+  dir: 'rtl',
+  eventHandlers: [
+    { alias: 'commonRootFocus', prop: 'onFocus' },
+    { alias: 'commonRootBlur', prop: 'onBlur' },
+    { alias: 'commonRootClick', prop: 'onClick' },
+    { alias: 'commonRootClickCapture', prop: 'onClickCapture' },
+    { alias: 'commonRootKeyDown', prop: 'onKeyDown' },
+    { alias: 'commonRootPointerDown', prop: 'onPointerDown' },
+    { alias: 'commonRootMouseEnter', prop: 'onMouseEnter' },
+    { alias: 'commonRootTouchStart', prop: 'onTouchStart' },
+  ],
+  id: 'common-root-id',
+  lang: 'en-GB',
+  ref: { alias: 'commonRootRef' },
+  style: { name: '--common-root-prop', value: 'supported' },
+  tabIndex: 0,
+  title: 'Common root title',
+}
+
+// Elements whose id the component owns take the same props without an id.
+globalThis.RELATIONSHIP_ROOT_PROPS = {
+  ...globalThis.COMMON_ROOT_PROPS,
+  id: undefined,
 }
 
 globalThis.createCommonRootProps = (commonRootProps) => {

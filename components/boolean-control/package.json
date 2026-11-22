@@ -15,7 +15,8 @@
     "format:check": "oxfmt --check ."
   },
   "dependencies": {
-    "@maratus-component/field": "workspace:*"
+    "@maratus-component/field": "workspace:*",
+    "@maratus-lib/props": "workspace:*"
   },
   "devDependencies": {
     "@maratus/bun": "workspace:*",

@@ -8,8 +8,12 @@ import type {
   FieldProviderProps,
 } from './Field.types'
 import type { ValidityReports } from './fieldValidity'
-import { createContext, useId, useRef, useState } from 'react'
-import { getReportedErrorKeys, recordValidityReport } from './fieldValidity'
+import { createContext, useCallback, useId, useRef, useState } from 'react'
+import {
+  getReportedErrorKeys,
+  pruneDisconnectedReporters,
+  recordValidityReport,
+} from './fieldValidity'
 
 type FieldNativeState = {
   errors: readonly FieldErrorKey[]
@@ -61,6 +65,20 @@ function useFieldProviderValue({
     isErrorVisible: false,
   })
   const validityReports = useRef<ValidityReports>(new Map())
+  // A reporting input can unmount without a validity event. Its ref cleanup
+  // runs before React removes the node, so the prune waits for a microtask.
+  const validityReporterRef = useCallback(
+    () => () => {
+      queueMicrotask(() => {
+        if (!pruneDisconnectedReporters(validityReports.current)) return
+
+        const errors = getReportedErrorKeys(validityReports.current)
+        setNativeState((state) => ({ ...state, errors }))
+      })
+    },
+    [],
+  )
+
   const generatedId = useId()
   const resolvedControlId = controlId ?? `${generatedId}-control`
   const currentErrors = activeErrors ?? new Set(nativeState.errors)
@@ -105,6 +123,7 @@ function useFieldProviderValue({
     label,
     labelId: `${generatedId}-label`,
     name,
+    validityReporterRef,
     visibleErrors,
   }
 }

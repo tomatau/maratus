@@ -1,7 +1,6 @@
 import type {
   FieldControlRenderProps,
   ValidityHandlerProps,
-  WithValidity,
 } from '@maratus-component/field'
 import type { AriaAttributes, ReactNode } from 'react'
 
@@ -20,7 +19,6 @@ export type BooleanControlRenderProps = FieldControlRenderProps &
 
 export type BooleanControlRenderArgs = {
   booleanControlProps: BooleanControlRenderProps
-  withValidity: WithValidity
 }
 
 export type UseBooleanControlOptions = Omit<
@@ -49,7 +47,6 @@ export type UseBooleanControlOptions = Omit<
 
 export type UseBooleanControlResult = {
   booleanControlProps: BooleanControlRenderProps
-  withValidity: WithValidity
 }
 
 export type BooleanControlProps = UseBooleanControlOptions & {
