@@ -9,15 +9,20 @@ import type {
   ValidityHandlerProps,
 } from '@maratus-component/field'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
+import { mergeRefs } from '@maratus-lib/props'
 
 export function useBooleanControl(
   options: UseBooleanControlOptions = {},
 ): UseBooleanControlResult {
   const { role, ...fieldControlOptions } = options
   const field = useFieldContext('BooleanControl')
-  const { fieldControlProps, validityHandlerProps, withValidity } =
+  const { fieldControlProps, validityHandlerProps } =
     useFieldControl(fieldControlOptions)
-  const controlProps = { ...fieldControlProps, ...validityHandlerProps }
+  const controlProps = {
+    ...fieldControlProps,
+    ...validityHandlerProps,
+    ref: mergeRefs(fieldControlProps.ref, validityHandlerProps.ref),
+  }
 
   if (role) {
     return {
@@ -26,13 +31,11 @@ export function useBooleanControl(
         ...(field.isRequired ? { 'aria-required': true } : {}),
         role,
       },
-      withValidity,
     }
   }
 
   return {
     booleanControlProps: getNativeBooleanControlProps(controlProps, field),
-    withValidity,
   }
 }
 

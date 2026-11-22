@@ -65,7 +65,7 @@
   color: var(--ara-field-control-fg--loading);
 }
 
-.fieldControl:read-only,
+.fieldControl[readonly],
 .fieldControl[aria-readonly='true'] {
   color: var(--ara-field-control-fg--readonly);
 }

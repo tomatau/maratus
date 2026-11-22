@@ -9,15 +9,20 @@ import type {
   ValidityHandlerProps,
 } from '@maratus-component/field'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
+import { mergeRefs } from '@maratus-lib/props'
 
 export function useTextControl(
   options: UseTextControlOptions = {},
 ): UseTextControlResult {
   const { role, ...fieldControlOptions } = options
   const field = useFieldContext('TextControl')
-  const { fieldControlProps, validityHandlerProps, withValidity } =
+  const { fieldControlProps, validityHandlerProps } =
     useFieldControl(fieldControlOptions)
-  const controlProps = { ...fieldControlProps, ...validityHandlerProps }
+  const controlProps = {
+    ...fieldControlProps,
+    ...validityHandlerProps,
+    ref: mergeRefs(fieldControlProps.ref, validityHandlerProps.ref),
+  }
 
   if (role) {
     return {
@@ -25,13 +30,11 @@ export function useTextControl(
         ...controlProps,
         role,
       },
-      withValidity,
     }
   }
 
   return {
     textControlProps: getNativeTextControlProps(controlProps, field),
-    withValidity,
   }
 }
 

@@ -302,21 +302,19 @@ describe('TextControl', () => {
       expectNativeRoleValidityError('combobox')
     })
 
-    it('REQ-012 PRD-002 lets custom controls wrap events with ValidityState', () => {
+    it('REQ-012 PRD-002 lets custom controls report ValidityState through the validity handlers', () => {
       let isValid = false
 
       mountRoleValidityField({
-        control: ({ textControlProps, withValidity }) => (
+        control: ({ textControlProps }) => (
           <div
             data-testid="control"
             {...textControlProps}
             onInput={(event) =>
-              textControlProps.onInput?.(
-                withValidity(event, {
-                  valid: isValid,
-                  valueMissing: !isValid,
-                }),
-              )
+              textControlProps.onInput?.(event, {
+                valid: isValid,
+                valueMissing: !isValid,
+              })
             }
           />
         ),

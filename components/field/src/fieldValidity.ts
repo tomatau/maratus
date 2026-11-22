@@ -2,7 +2,10 @@ import type { ValidityErrorKey, ValidityReport } from './Field.types'
 
 // Native ValidityState objects are live, so a radio checked after its
 // sibling reported still clears that sibling's valueMissing.
-export type ValidityReports = Map<EventTarget, ValidityState>
+export type ValidityReports = Map<ValidityReport['reporter'], ValidityState>
+
+// Reported validity describes the whole control, so every report shares one key.
+export const CONTROL_REPORTER = Symbol('control')
 
 export const validityErrorKeys = [
   'badInput',
@@ -21,14 +24,24 @@ export function recordValidityReport(
   reports: ValidityReports,
   report: ValidityReport,
 ): void {
-  reports.set(report.reporter, report.validity)
-
-  for (const reporter of reports.keys()) {
-    if (isDisconnected(reporter)) reports.delete(reporter)
-  }
+  if (report.validity) reports.set(report.reporter, report.validity)
+  pruneDisconnectedReporters(reports)
 }
 
-function isDisconnected(reporter: EventTarget): boolean {
+export function pruneDisconnectedReporters(reports: ValidityReports): boolean {
+  let removed = false
+  for (const reporter of reports.keys()) {
+    if (isDisconnected(reporter)) {
+      reports.delete(reporter)
+      removed = true
+    }
+  }
+  return removed
+}
+
+function isDisconnected(reporter: ValidityReport['reporter']): boolean {
+  if (typeof reporter === 'symbol') return false
+
   return 'isConnected' in reporter && reporter.isConnected === false
 }
 

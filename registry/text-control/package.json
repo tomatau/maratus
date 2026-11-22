@@ -10,6 +10,7 @@
   ],
   "type": "module",
   "dependencies": {
+    "@maratus-lib/props": "0.1.0",
     "@maratus-registry/field": "0.2.1"
   },
   "peerDependencies": {

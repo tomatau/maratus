@@ -12,6 +12,13 @@ declare namespace Cypress {
       | 'onTouchStart'
   }
 
+  type StyleHook = {
+    property: string
+    pseudo?: '::after' | '::before'
+    value: string
+    variable: `--${string}`
+  }
+
   type CommonRootProps = Partial<{
     className: string
     data: {
@@ -47,6 +54,12 @@ declare namespace Cypress {
       >,
     ): Chainable<JQuery<TElement>>
     getRootElement(): Chainable<JQuery<HTMLElement>>
+    assertReferences(
+      attribute: string,
+      testIds: readonly string[],
+    ): Chainable<Subject>
+    checkFormValidity(): Chainable<Subject>
+    assertStyleHook(styleHook: StyleHook): Chainable<Subject>
     assertSupportsProps(commonRootProps: CommonRootProps): Chainable<Subject>
   }
 }
@@ -54,3 +67,7 @@ declare namespace Cypress {
 declare function createCommonRootProps(
   commonRootProps: Cypress.CommonRootProps,
 ): any
+
+declare const COMMON_ROOT_PROPS: Cypress.CommonRootProps
+
+declare const RELATIONSHIP_ROOT_PROPS: Cypress.CommonRootProps

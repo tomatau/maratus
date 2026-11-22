@@ -25,7 +25,7 @@ export type {
   ValidityErrorKey,
   ValidityHandlerProps,
   ValidityReport,
-  WithValidity,
+  ValidityReporterProps,
 } from './Field.types'
 export {
   Description,

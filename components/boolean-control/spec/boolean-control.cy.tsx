@@ -174,7 +174,7 @@ describe('BooleanControl', () => {
       })
     })
 
-    it('REQ-010 PRD-002 lets custom controls wrap events with ValidityState', () => {
+    it('REQ-010 PRD-002 lets custom controls report ValidityState through the validity handlers', () => {
       let isValid = false
       const errorMap = new Map<FieldErrorKey, string>([
         ['valueMissing', 'Choose a valid value.'],
@@ -188,18 +188,16 @@ describe('BooleanControl', () => {
           name="terms"
         >
           <BooleanControl role="checkbox">
-            {({ booleanControlProps, withValidity }) => (
+            {({ booleanControlProps }) => (
               <div
                 data-testid="control"
                 aria-checked={isValid}
                 {...booleanControlProps}
                 onInput={(event) =>
-                  booleanControlProps.onInput?.(
-                    withValidity(event, {
-                      valid: isValid,
-                      valueMissing: !isValid,
-                    }),
-                  )
+                  booleanControlProps.onInput?.(event, {
+                    valid: isValid,
+                    valueMissing: !isValid,
+                  })
                 }
               />
             )}

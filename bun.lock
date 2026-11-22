@@ -41,6 +41,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@maratus-component/field": "workspace:*",
+        "@maratus-lib/props": "workspace:*",
       },
       "devDependencies": {
         "@maratus/bun": "workspace:*",
@@ -85,6 +86,9 @@
     "components/field": {
       "name": "@maratus-component/field",
       "version": "0.0.0",
+      "dependencies": {
+        "@maratus-lib/props": "workspace:*",
+      },
       "devDependencies": {
         "@maratus/bun": "workspace:*",
         "@maratus/cypress": "workspace:*",
@@ -144,6 +148,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@maratus-component/field": "workspace:*",
+        "@maratus-lib/props": "workspace:*",
       },
       "devDependencies": {
         "@maratus/bun": "workspace:*",
@@ -304,6 +309,7 @@
       "name": "@maratus-registry/boolean-control",
       "version": "0.0.0",
       "dependencies": {
+        "@maratus-lib/props": "0.1.0",
         "@maratus-registry/field": "0.2.1",
       },
       "peerDependencies": {
@@ -327,6 +333,9 @@
     "registry/field": {
       "name": "@maratus-registry/field",
       "version": "0.2.1",
+      "dependencies": {
+        "@maratus-lib/props": "0.1.0",
+      },
       "peerDependencies": {
         "clsx": "^2.1.1",
         "react": "^19.0.0",
@@ -355,6 +364,7 @@
       "name": "@maratus-registry/text-control",
       "version": "0.0.0",
       "dependencies": {
+        "@maratus-lib/props": "0.1.0",
         "@maratus-registry/field": "0.2.1",
       },
       "peerDependencies": {

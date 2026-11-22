@@ -1,11 +1,13 @@
 import type {
   AriaAttributes,
-  ChangeEventHandler,
+  ChangeEvent,
   ComponentPropsWithRef,
-  FocusEventHandler,
+  FocusEvent,
   HTMLAttributes,
-  ReactEventHandler,
   ReactNode,
+  Ref,
+  RefCallback,
+  SyntheticEvent,
 } from 'react'
 
 export type ValidityErrorKey = Exclude<keyof ValidityState, 'valid'>
@@ -55,6 +57,7 @@ export type FieldContextValue = {
   label: ReactNode
   labelId: string
   name: string
+  validityReporterRef: RefCallback<ControlElement>
   visibleErrors: readonly FieldErrorKey[]
 }
 
@@ -84,8 +87,8 @@ export type UseFieldRootResult = {
   fieldRootProps: FieldRootRenderProps
 }
 
-// GPRD-006, REQ-002 and REQ-004: Field owns label relationship wiring so
-// consumers cannot override the generated label id or control association.
+// Field owns label relationship wiring so consumers cannot override the
+// generated label id or control association.
 export type UseLabelOptions = Omit<
   ComponentPropsWithRef<'label'>,
   'htmlFor' | 'id'
@@ -122,54 +125,68 @@ export type FieldControlRenderProps = FieldControlElementProps & {
   'aria-required'?: AriaAttributes['aria-required']
   'data-loading'?: ''
   id: string
+  ref?: RefCallback<ControlElement>
 }
 
-export type ValidityHandlerProps = {
-  onBlur: FocusEventHandler<ControlElement>
-  onChange: ChangeEventHandler<ControlElement>
-  onFocus: FocusEventHandler<ControlElement>
-  onInput: ReactEventHandler<ControlElement>
-  onInvalid: ReactEventHandler<ControlElement>
+// A custom root passes the control's validity as the second argument. Native
+// controls leave it out, so the field reads the element's own ValidityState.
+// Method signatures keep the handlers assignable to React's event props.
+export type ValidityHandlerProps<TElement extends Element = ControlElement> = {
+  onBlur(event: FocusEvent<TElement>, validity?: Partial<ValidityState>): void
+  onChange(
+    event: ChangeEvent<TElement>,
+    validity?: Partial<ValidityState>,
+  ): void
+  onFocus(event: FocusEvent<TElement>, validity?: Partial<ValidityState>): void
+  onInput(
+    event: SyntheticEvent<TElement>,
+    validity?: Partial<ValidityState>,
+  ): void
+  onInvalid(
+    event: SyntheticEvent<TElement>,
+    validity?: Partial<ValidityState>,
+  ): void
 }
+
+// Spread on each reporting input. The ref lets the field drop a removed
+// input's report; merge it with a consumer ref through mergeRefs.
+export type ValidityReporterProps<TElement extends Element = ControlElement> =
+  ValidityHandlerProps<TElement> & {
+    ref: RefCallback<TElement>
+  }
 
 export type FieldControlRenderArgs = {
   fieldControlProps: FieldControlRenderProps
-  validityHandlerProps: ValidityHandlerProps
-  withValidity: WithValidity
+  validityHandlerProps: ValidityReporterProps
 }
 
-export type UseFieldControlOptions = Omit<
-  FieldControlRenderProps,
-  | 'aria-describedby'
-  | 'aria-busy'
-  | 'aria-disabled'
-  | 'aria-errormessage'
-  | 'aria-invalid'
-  | 'aria-readonly'
-  | 'aria-required'
-  | 'children'
-  | 'data-loading'
-  | 'id'
-> &
-  Partial<ValidityHandlerProps>
+export type UseFieldControlOptions<TElement extends Element = ControlElement> =
+  Omit<
+    FieldControlRenderProps,
+    | 'aria-describedby'
+    | 'aria-busy'
+    | 'aria-disabled'
+    | 'aria-errormessage'
+    | 'aria-invalid'
+    | 'aria-readonly'
+    | 'aria-required'
+    | 'children'
+    | 'data-loading'
+    | 'id'
+    | 'ref'
+  > &
+    Partial<ValidityHandlerProps<TElement>> & {
+      ref?: Ref<TElement>
+    }
 
 export type UseFieldControlResult = FieldControlRenderArgs
 
 export type ValidityReport = {
-  reporter: EventTarget
-  validity: ValidityState
+  reporter: EventTarget | symbol
+  validity: ValidityState | null
 }
 
-export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
-  event: TEvent,
-  validity: Partial<ValidityState>,
-) => TEvent & {
-  currentTarget: TEvent['currentTarget'] & {
-    validity: ValidityState
-  }
-}
-
-// GPRD-006 and REQ-005: Field owns the description id because FieldControl
+// Field owns the description id because FieldControl
 // uses it for aria-describedby.
 export type UseDescriptionOptions = Omit<ComponentPropsWithRef<'div'>, 'id'>
 
@@ -177,7 +194,7 @@ export type UseDescriptionResult = {
   descriptionProps: ComponentPropsWithRef<'div'>
 }
 
-// GPRD-006 and REQ-007: Field owns the error id because FieldControl uses it
+// Field owns the error id because FieldControl uses it
 // for aria-errormessage when errors are visible.
 export type UseErrorMessageOptions = Omit<
   ComponentPropsWithRef<'div'>,
