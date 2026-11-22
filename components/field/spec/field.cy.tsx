@@ -80,10 +80,11 @@ describe('Field', () => {
         >
           <Label />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 type="text"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -114,10 +115,11 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -165,10 +167,11 @@ describe('Field', () => {
           >
             <Label data-testid="first-label" />
             <FieldControl>
-              {({ fieldControlProps }) => (
+              {({ fieldControlProps, validityHandlerProps }) => (
                 <input
                   data-testid="first-control"
                   {...fieldControlProps}
+                  {...validityHandlerProps}
                 />
               )}
             </FieldControl>
@@ -184,10 +187,11 @@ describe('Field', () => {
           >
             <Label data-testid="second-label" />
             <FieldControl>
-              {({ fieldControlProps }) => (
+              {({ fieldControlProps, validityHandlerProps }) => (
                 <input
                   data-testid="second-control"
                   {...fieldControlProps}
+                  {...validityHandlerProps}
                 />
               )}
             </FieldControl>
@@ -234,10 +238,11 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -258,10 +263,11 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -284,10 +290,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -320,10 +327,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -364,10 +372,11 @@ describe('Field', () => {
             data-testid="label"
           />
           <FieldControl className="custom-control">
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -437,7 +446,13 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl {...createCommonRootProps(commonRootProps)}>
-            {({ fieldControlProps }) => <input {...fieldControlProps} />}
+            {({ fieldControlProps, validityHandlerProps }) => (
+              <input
+                {...fieldControlProps}
+                {...validityHandlerProps}
+                {...validityHandlerProps}
+              />
+            )}
           </FieldControl>
         </FieldRoot>,
       )
@@ -550,10 +565,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -572,10 +588,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -612,10 +629,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -653,11 +671,12 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 required
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -694,10 +713,11 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -717,7 +737,7 @@ describe('Field', () => {
           name="age"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 autoComplete="bday-year"
@@ -731,6 +751,7 @@ describe('Field', () => {
                 required
                 type="number"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -757,6 +778,57 @@ describe('Field', () => {
       })
     })
 
+    it('PRD-014 reports validity from each native input in a grouped control', () => {
+      const errorMap = new Map<ValidityErrorKey, string>([
+        ['valueMissing', 'Choose a drink.'],
+      ])
+
+      cy.mount(
+        <form data-testid="form">
+          <FieldRoot
+            errorMap={errorMap}
+            label="Drink"
+            name="drink"
+          >
+            <FieldControl>
+              {({ fieldControlProps, validityHandlerProps }) => (
+                <div
+                  data-testid="control"
+                  role="radiogroup"
+                  {...fieldControlProps}
+                >
+                  {['tea', 'coffee'].map((drink) => (
+                    <input
+                      aria-label={drink}
+                      key={drink}
+                      name="drink"
+                      required
+                      type="radio"
+                      value={drink}
+                      {...validityHandlerProps}
+                    />
+                  ))}
+                </div>
+              )}
+            </FieldControl>
+            <ErrorMessage data-testid="error" />
+          </FieldRoot>
+        </form>,
+      )
+
+      cy.getByTestId<HTMLFormElement>('form').then(($form) => {
+        $form.get(0).checkValidity()
+      })
+
+      cy.getByTestId('error').should('have.text', 'Choose a drink.')
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+
+      cy.get('input[value="tea"]').check()
+
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.getByTestId('error').find('p').should('have.length', 0)
+    })
+
     it('REQ-016 PRD-015 PRD-016 exposes required state to the label and field control', () => {
       cy.mount(
         <FieldRoot
@@ -766,10 +838,11 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -789,11 +862,12 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 type="text"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -814,10 +888,11 @@ describe('Field', () => {
         >
           <Label data-testid="label" />
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -856,12 +931,13 @@ describe('Field', () => {
           name="email"
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 required
                 type="email"
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>
@@ -914,12 +990,13 @@ describe('Field', () => {
           name={name}
         >
           <FieldControl>
-            {({ fieldControlProps }) => (
+            {({ fieldControlProps, validityHandlerProps }) => (
               <input
                 data-testid="control"
                 required={required}
                 type={type}
                 {...fieldControlProps}
+                {...validityHandlerProps}
               />
             )}
           </FieldControl>

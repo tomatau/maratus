@@ -25,10 +25,11 @@ describe(FieldRoot, () => {
       >
         <Label data-testid="label" />
         <FieldControl>
-          {({ fieldControlProps }) => (
+          {({ fieldControlProps, validityHandlerProps }) => (
             <input
               data-testid="control"
               {...fieldControlProps}
+              {...validityHandlerProps}
             />
           )}
         </FieldControl>

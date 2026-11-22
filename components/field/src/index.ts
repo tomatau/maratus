@@ -23,6 +23,7 @@ export type {
   UseLabelOptions,
   UseLabelResult,
   ValidityErrorKey,
+  ValidityHandlerProps,
   WithValidity,
 } from './Field.types'
 export {

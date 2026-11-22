@@ -122,15 +122,19 @@ export type FieldControlRenderProps = FieldControlElementProps & {
   'aria-required'?: AriaAttributes['aria-required']
   'data-loading'?: ''
   id: string
-  onBlur?: FocusEventHandler<ControlElement>
-  onChange?: ChangeEventHandler<ControlElement>
-  onFocus?: FocusEventHandler<ControlElement>
-  onInput?: ReactEventHandler<ControlElement>
-  onInvalid?: ReactEventHandler<ControlElement>
+}
+
+export type ValidityHandlerProps = {
+  onBlur: FocusEventHandler<ControlElement>
+  onChange: ChangeEventHandler<ControlElement>
+  onFocus: FocusEventHandler<ControlElement>
+  onInput: ReactEventHandler<ControlElement>
+  onInvalid: ReactEventHandler<ControlElement>
 }
 
 export type FieldControlRenderArgs = {
   fieldControlProps: FieldControlRenderProps
+  validityHandlerProps: ValidityHandlerProps
   withValidity: WithValidity
 }
 
@@ -146,12 +150,10 @@ export type UseFieldControlOptions = Omit<
   | 'children'
   | 'data-loading'
   | 'id'
->
+> &
+  Partial<ValidityHandlerProps>
 
-export type UseFieldControlResult = {
-  fieldControlProps: FieldControlRenderProps
-  withValidity: WithValidity
-}
+export type UseFieldControlResult = FieldControlRenderArgs
 
 export type WithValidity = <TEvent extends { currentTarget: EventTarget }>(
   event: TEvent,
