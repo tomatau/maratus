@@ -224,6 +224,21 @@
         "react": "^19.1.1",
       },
     },
+    "lib/props": {
+      "name": "@maratus-lib/props",
+      "version": "0.1.0",
+      "dependencies": {
+        "@maratus-lib/development": "workspace:*",
+      },
+      "devDependencies": {
+        "@maratus/bun": "workspace:*",
+        "@maratus/dotfiles": "workspace:*",
+        "@types/react": "^19.2.14",
+      },
+      "peerDependencies": {
+        "react": "^19.1.1",
+      },
+    },
     "lib/store-runtime": {
       "name": "@maratus-lib/store-runtime",
       "version": "0.3.0",
@@ -630,6 +645,8 @@
     "@maratus-lib/development": ["@maratus-lib/development@workspace:lib/development"],
 
     "@maratus-lib/focus-modality": ["@maratus-lib/focus-modality@workspace:lib/focus-modality"],
+
+    "@maratus-lib/props": ["@maratus-lib/props@workspace:lib/props"],
 
     "@maratus-lib/store-runtime": ["@maratus-lib/store-runtime@workspace:lib/store-runtime"],
 
