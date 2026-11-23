@@ -8,7 +8,8 @@ runs:
       uses: actions/cache@v5
       with:
         path: .cache/tools
-        key: setup-tools-v1-linux-x64
+        # The install steps skip cached binaries, so the key must change with versions.
+        key: setup-tools-linux-x64-yq-4.54.3-just-1.59.0
 
     - name: Install jq
       shell: bash
@@ -27,7 +28,7 @@ runs:
         mkdir -p .cache/tools/bin
 
         if [ ! -x .cache/tools/bin/yq ]; then
-          wget -qO .cache/tools/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64
+          wget -qO .cache/tools/bin/yq https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64
           chmod +x .cache/tools/bin/yq
         fi
 
@@ -37,7 +38,7 @@ runs:
         mkdir -p .cache/tools/bin
 
         if [ ! -x .cache/tools/bin/just ]; then
-          wget -qO .cache/tools/just.tar.gz https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-x86_64-unknown-linux-musl.tar.gz
+          wget -qO .cache/tools/just.tar.gz https://github.com/casey/just/releases/download/1.59.0/just-1.59.0-x86_64-unknown-linux-musl.tar.gz
           tar -xzf .cache/tools/just.tar.gz -C .cache/tools/bin just
         fi
 
