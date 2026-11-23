@@ -8,5 +8,6 @@
   "baseBranch": "origin/main",
   "updateInternalDependencies": "patch",
   "ignore": ["@maratus-component/*"],
+  "privatePackages": { "version": false, "tag": false },
   "bumpVersionsWithWorkspaceProtocolOnly": false
 }
