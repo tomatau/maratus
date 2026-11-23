@@ -15,7 +15,7 @@ runs:
   using: composite
   steps:
     - name: Restore cached tools
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: .cache/tools
         # The install steps skip cached binaries, so the key must change with versions.
