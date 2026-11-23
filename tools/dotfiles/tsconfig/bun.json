@@ -1,5 +1,6 @@
 {
   "extends": "./react-component.json",
+  "files": [],
   "compilerOptions": {
     "types": [
       "@maratus/dotfiles/css-modules",

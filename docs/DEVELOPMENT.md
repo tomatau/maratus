@@ -16,14 +16,14 @@ How to work on Maratus locally. Testing rules live in [`TESTING.md`](./TESTING.m
 
 ## Checks
 
-| Recipe              | Runs                                                                     |
-| ------------------- | ------------------------------------------------------------------------ |
-| `just test`         | Cypress functional tests.                                                |
-| `just test-unit`    | `bun test` unit and server-rendering tests.                              |
-| `just typecheck`    | `tsgo` over each package's tsconfigs, including `src/*.test-d.ts` files. |
-| `just lint`         | `oxlint`.                                                                |
-| `just format-check` | `oxfmt --check`. `just format` writes the fixes.                         |
-| `just traceability` | The requirements traceability check in `.checks/traceability.py`.        |
+| Recipe              | Runs                                                                          |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `just test`         | Cypress functional tests.                                                     |
+| `just test-unit`    | `bun test` unit and server-rendering tests.                                   |
+| `just typecheck`    | `bun check` over each package's tsconfigs, including `src/*.test-d.ts` files. |
+| `just lint`         | `oxlint`.                                                                     |
+| `just format-check` | `oxfmt --check`. `just format` writes the fixes.                              |
+| `just traceability` | The requirements traceability check in `.checks/traceability.py`.             |
 
 Run them for every package a change touches before opening a pull request.
 

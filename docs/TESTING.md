@@ -5,7 +5,7 @@
 - `just test` runs package-level functional test tasks.
 - `just test-unit` runs package-level unit test tasks.
 - `just test-integration` runs package-level integration test tasks.
-- `just typecheck` runs package-level type checks with `tsgo`, including type test files.
+- `just typecheck` runs package-level type checks with `bun check`, including type test files.
 - `just traceability` checks that every current requirement is cited by a test.
 
 ## Component Test Structure

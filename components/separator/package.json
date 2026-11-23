@@ -6,6 +6,7 @@
   "scripts": {
     "test": "cypress run --component --config-file cypress.config.mjs",
     "cypress:open": "cypress open --component --config-file cypress.config.mjs",
+    "typecheck": "bun check",
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
@@ -17,8 +18,7 @@
     "@vitejs/plugin-react": "^5.0.2",
     "clsx": "^2.1.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "typescript": "^5.9.2"
+    "react-dom": "^19.1.1"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",
