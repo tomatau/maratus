@@ -10,7 +10,7 @@
     "test": "cypress run --component --config-file cypress.config.mjs",
     "cypress:open": "cypress open --component --config-file cypress.config.mjs",
     "test:unit": "bun test --preload @maratus/bun/unit-test src/**",
-    "typecheck": "tsgo -p tsconfig.src.json --noEmit && tsgo -p tsconfig.bun.json --noEmit && tsgo -p tsconfig.cypress.json --noEmit",
+    "typecheck": "bun check",
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
@@ -25,8 +25,7 @@
     "@maratus/dotfiles": "workspace:*",
     "@types/react": "^19.2.14",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "typescript": "^5.9.2"
+    "react-dom": "^19.1.1"
   },
   "peerDependencies": {
     "react": "^19.0.0",
