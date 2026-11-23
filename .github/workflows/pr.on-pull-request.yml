@@ -19,7 +19,7 @@ jobs:
     uses: ./.github/workflows/_changeset-check.yml
     with:
       base-sha: ${{ github.event.pull_request.base.sha }}
-      manifest-affected: ${{ needs.ci-context.outputs.manifest_affected }}
+      manifest-changed: ${{ needs.ci-context.outputs.manifest_changed }}
 
   registry-sync-check:
     needs: ci-context
