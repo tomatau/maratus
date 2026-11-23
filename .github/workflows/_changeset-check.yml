@@ -6,7 +6,7 @@ on:
       base-sha:
         required: true
         type: string
-      manifest-affected:
+      manifest-changed:
         required: true
         type: string
 
@@ -30,11 +30,11 @@ jobs:
           auto-install: true
           auto-setup: true
 
-      - name: Verify changeset for manifest-affecting changes
+      - name: Verify changeset for manifest changes
         env:
-          MANIFEST_AFFECTED: ${{ inputs.manifest-affected }}
+          MANIFEST_CHANGED: ${{ inputs.manifest-changed }}
         run: |
-          if [ "$MANIFEST_AFFECTED" != "true" ]; then
+          if [ "$MANIFEST_CHANGED" != "true" ]; then
             exit 0
           fi
 
@@ -52,5 +52,5 @@ jobs:
             exit 0
           fi
 
-          echo "Manifest-affecting changes require a changeset that releases @maratus/manifest." >&2
+          echo "Manifest changes require a changeset that releases @maratus/manifest." >&2
           exit 1

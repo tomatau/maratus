@@ -16,6 +16,9 @@ on:
       manifest_affected:
         description: Whether the manifest package is affected
         value: ${{ jobs.ci-context.outputs.manifest_affected }}
+      manifest_changed:
+        description: Whether the manifest's own inputs changed
+        value: ${{ jobs.ci-context.outputs.manifest_changed }}
       test_affected:
         description: Whether any functional test tasks are affected
         value: ${{ jobs.ci-context.outputs.test_affected }}
@@ -38,6 +41,7 @@ jobs:
       test_unit_affected: ${{ steps.test_unit_affected.outputs.value }}
       test_integration_affected: ${{ steps.test_integration_affected.outputs.value }}
       manifest_affected: ${{ steps.manifest_affected.outputs.value }}
+      manifest_changed: ${{ steps.manifest_changed.outputs.value }}
       cli_platform_matrix: ${{ steps.cli_matrix.outputs.value }}
 
     defaults:
@@ -126,6 +130,22 @@ jobs:
           MOON_HEAD: ${{ inputs.head-sha }}
         run: |
           affected=$(moon query affected --downstream deep)
+
+          if jq -e '.tasks["manifest:build"]' <<<"$affected" >/dev/null
+          then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Ignores upstream builder inputs, which only matter if the registry changes.
+      - name: Detect manifest input changes
+        id: manifest_changed
+        env:
+          MOON_BASE: ${{ inputs.base-sha }}
+          MOON_HEAD: ${{ inputs.head-sha }}
+        run: |
+          affected=$(moon query affected --downstream none)
 
           if jq -e '.tasks["manifest:build"]' <<<"$affected" >/dev/null
           then
