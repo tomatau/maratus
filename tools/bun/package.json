@@ -11,7 +11,7 @@
     "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/jest-dom": "^8.0.0",
     "jsdom": "^26.1.0"
   }
 }
