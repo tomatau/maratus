@@ -1,6 +1,16 @@
 name: Setup Tools
 description: Set up cached jq, yq and just binaries
 
+inputs:
+  yq-version:
+    description: yq release to install
+    # renovate: datasource=github-releases depName=mikefarah/yq extractVersion=^v(?<version>.+)$
+    default: '4.54.3'
+  just-version:
+    description: just release to install
+    # renovate: datasource=github-releases depName=casey/just
+    default: '1.59.0'
+
 runs:
   using: composite
   steps:
@@ -9,7 +19,7 @@ runs:
       with:
         path: .cache/tools
         # The install steps skip cached binaries, so the key must change with versions.
-        key: setup-tools-linux-x64-yq-4.54.3-just-1.59.0
+        key: setup-tools-linux-x64-yq-${{ inputs.yq-version }}-just-${{ inputs.just-version }}
 
     - name: Install jq
       shell: bash
@@ -24,21 +34,25 @@ runs:
 
     - name: Install yq
       shell: bash
+      env:
+        YQ_VERSION: ${{ inputs.yq-version }}
       run: |
         mkdir -p .cache/tools/bin
 
         if [ ! -x .cache/tools/bin/yq ]; then
-          wget -qO .cache/tools/bin/yq https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64
+          wget -qO .cache/tools/bin/yq https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64
           chmod +x .cache/tools/bin/yq
         fi
 
     - name: Install just
       shell: bash
+      env:
+        JUST_VERSION: ${{ inputs.just-version }}
       run: |
         mkdir -p .cache/tools/bin
 
         if [ ! -x .cache/tools/bin/just ]; then
-          wget -qO .cache/tools/just.tar.gz https://github.com/casey/just/releases/download/1.59.0/just-1.59.0-x86_64-unknown-linux-musl.tar.gz
+          wget -qO .cache/tools/just.tar.gz https://github.com/casey/just/releases/download/${JUST_VERSION}/just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz
           tar -xzf .cache/tools/just.tar.gz -C .cache/tools/bin just
         fi
 
