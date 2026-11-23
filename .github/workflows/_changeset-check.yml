@@ -30,14 +30,41 @@ jobs:
           auto-install: true
           auto-setup: true
 
-      # Only the Changesets CLI is needed; skip lifecycle scripts.
+      # These checks need no lifecycle scripts.
       - name: Install workspace dependencies
         if: ${{ inputs.manifest-changed == 'true' }}
         run: bun install --frozen-lockfile --ignore-scripts
 
+      # Input changes such as devDependencies may leave the manifest unchanged.
+      - name: Compare manifest output with base
+        id: manifest_output
+        if: ${{ inputs.manifest-changed == 'true' }}
+        env:
+          BASE_SHA: ${{ inputs.base-sha }}
+        run: |
+          base_dir="$RUNNER_TEMP/manifest-base"
+          manifest_path='packages/maratus-manifest/dist/index.json'
+
+          # The manifest lists components by their generated registry meta.json.
+          build_manifest() {
+            (cd "$1/tools/build-registry" && bun run build)
+            (cd "$1/packages/maratus-manifest" && bun run build)
+          }
+
+          git worktree add --detach "$base_dir" "$BASE_SHA"
+          (cd "$base_dir" && bun install --frozen-lockfile --ignore-scripts)
+          build_manifest "$base_dir"
+          build_manifest .
+
+          if cmp -s "$base_dir/$manifest_path" "$manifest_path"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Verify changeset for manifest changes
         env:
-          MANIFEST_CHANGED: ${{ inputs.manifest-changed }}
+          MANIFEST_CHANGED: ${{ steps.manifest_output.outputs.changed }}
         run: |
           if [ "$MANIFEST_CHANGED" != "true" ]; then
             exit 0
