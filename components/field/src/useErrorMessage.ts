@@ -19,14 +19,12 @@ export function useErrorMessage(
     .filter(
       (entry): entry is readonly [FieldErrorKey, ReactNode] => entry[1] != null,
     )
-    .map(
-      ([errorKey, message]): ErrorMessageItemProps => ({
-        children: message,
-        className: styles.errorMessage,
-        errorKey,
-        key: errorKey,
-      }),
-    )
+    .map(([errorKey, message]): ErrorMessageItemProps => ({
+      children: message,
+      className: styles.errorMessage,
+      errorKey,
+      key: errorKey,
+    }))
 
   return {
     errorMessageProps: {
