@@ -198,6 +198,11 @@ jobs:
         if: ${{ steps.publish_kind.outputs.value != 'pr' }}
         run: bun run changeset version
 
+      # changeset version rewrites internal dependency pins but not bun.lock.
+      - name: Sync lockfile with new versions
+        if: ${{ steps.publish_kind.outputs.value != 'pr' }}
+        run: bun install --lockfile-only
+
       - name: Detect version changes
         id: version_changes
         run: |
