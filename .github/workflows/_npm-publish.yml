@@ -190,17 +190,27 @@ jobs:
 
           echo "value=$snapshot_tag" >> "$GITHUB_OUTPUT"
 
+      # changeset version exits 1 when there are no changesets to release.
+      - name: Detect pending changesets
+        id: pending_changesets
+        run: |
+          if find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | grep -q .; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Version snapshot packages
-        if: ${{ steps.publish_kind.outputs.value == 'pr' }}
+        if: ${{ steps.publish_kind.outputs.value == 'pr' && steps.pending_changesets.outputs.value == 'true' }}
         run: bun run changeset version --snapshot "${{ steps.snapshot_tag.outputs.value }}"
 
       - name: Version non-PR packages
-        if: ${{ steps.publish_kind.outputs.value != 'pr' }}
+        if: ${{ steps.publish_kind.outputs.value != 'pr' && steps.pending_changesets.outputs.value == 'true' }}
         run: bun run changeset version
 
       # changeset version rewrites internal dependency pins but not bun.lock.
       - name: Sync lockfile with new versions
-        if: ${{ steps.publish_kind.outputs.value != 'pr' }}
+        if: ${{ steps.publish_kind.outputs.value != 'pr' && steps.pending_changesets.outputs.value == 'true' }}
         run: bun install --lockfile-only
 
       - name: Detect version changes
