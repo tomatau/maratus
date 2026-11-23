@@ -77,7 +77,7 @@ test-integration workspace='' package='':
     just _test-package {{workspace}} {{package}} test:integration; \
   elif [ -z "{{workspace}}" ] && [ -z "{{package}}" ]; then \
     go -C cli test ./...; \
-    just _run-workspace test:integration; \
+    just _run-workspace-optional test:integration; \
   else \
     echo "expected workspace" >&2; \
     exit 1; \
@@ -212,6 +212,14 @@ _run-workspace command workspace='':
     bunx bun-workspaces run {{command}} "$(just _workspace-filter {{workspace}})"; \
   else \
     bunx bun-workspaces run {{command}}; \
+  fi
+
+# Skips scripts no workspace defines yet, so placeholder layers still run.
+_run-workspace-optional command workspace='':
+  @if bunx bun-workspaces script-info {{command}} >/dev/null 2>&1; then \
+    just _run-workspace {{command}} {{workspace}}; \
+  else \
+    echo "No workspace defines {{command}}; skipping."; \
   fi
 
 _workspace-scope workspace:
