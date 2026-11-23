@@ -18,6 +18,6 @@
     "cypress": "^15.21.2",
     "cypress-axe": "^1.7.0",
     "cypress-real-events": "^1.15.1",
-    "vite": "^7.3.8"
+    "vite": "^8.0.0"
   }
 }
