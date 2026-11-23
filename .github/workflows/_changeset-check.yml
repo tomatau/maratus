@@ -30,6 +30,11 @@ jobs:
           auto-install: true
           auto-setup: true
 
+      # Only the Changesets CLI is needed; skip lifecycle scripts.
+      - name: Install workspace dependencies
+        if: ${{ inputs.manifest-changed == 'true' }}
+        run: bun install --frozen-lockfile --ignore-scripts
+
       - name: Verify changeset for manifest changes
         env:
           MANIFEST_CHANGED: ${{ inputs.manifest-changed }}
@@ -43,7 +48,7 @@ jobs:
 
           mkdir -p tmp
           set +e
-          bunx @changesets/cli status \
+          bun run changeset status \
             --since=${{ inputs.base-sha }} \
             --output="$status_path"
           set -e
