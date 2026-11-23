@@ -209,14 +209,14 @@ _consumer-config-file name:
 
 _run-workspace command workspace='':
   @if [ -n "{{workspace}}" ]; then \
-    bunx bun-workspaces run {{command}} "$(just _workspace-filter {{workspace}})"; \
+    bunx pacwich run {{command}} "$(just _workspace-filter {{workspace}})"; \
   else \
-    bunx bun-workspaces run {{command}}; \
+    bunx pacwich run {{command}}; \
   fi
 
 # Skips scripts no workspace defines yet, so placeholder layers still run.
 _run-workspace-optional command workspace='':
-  @if bunx bun-workspaces script-info {{command}} >/dev/null 2>&1; then \
+  @if bunx pacwich script-info {{command}} >/dev/null 2>&1; then \
     just _run-workspace {{command}} {{workspace}}; \
   else \
     echo "No workspace defines {{command}}; skipping."; \
@@ -244,7 +244,7 @@ _workspace-filter workspace:
   fi
 
 @_run-package command workspace package:
-  bunx bun-workspaces run {{command}} "$(just _package-name {{workspace}} {{package}})"
+  bunx pacwich run {{command}} "$(just _package-name {{workspace}} {{package}})"
 
 @_clean-package workspace package command='clean':
   just _run-package {{command}} {{workspace}} {{package}}
