@@ -63,6 +63,10 @@ jobs:
       - name: Set up workflow tools
         uses: ./.github/actions/setup-tools
 
+      # Only the Changesets CLI is needed; skip lifecycle scripts.
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
       - name: Detect CLI changes
         id: cli_affected_moon
         env:
@@ -176,7 +180,7 @@ jobs:
 
           mkdir -p tmp
           set +e
-          bunx @changesets/cli status --output="$status_path"
+          bun run changeset status --output="$status_path"
           status_exit=$?
           set -e
 
