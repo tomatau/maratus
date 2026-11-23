@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@cypress/react": "^9.0.1",
-    "@vitejs/plugin-react": "^5.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
     "cypress": "^15.21.2",
     "cypress-axe": "^1.7.0",
     "cypress-real-events": "^1.15.1",
