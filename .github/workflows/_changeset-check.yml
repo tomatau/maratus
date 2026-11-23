@@ -45,16 +45,10 @@ jobs:
           base_dir="$RUNNER_TEMP/manifest-base"
           manifest_path='packages/maratus-manifest/dist/index.json'
 
-          # The manifest lists components by their generated registry meta.json.
-          build_manifest() {
-            (cd "$1/tools/build-registry" && bun run build)
-            (cd "$1/packages/maratus-manifest" && bun run build)
-          }
-
           git worktree add --detach "$base_dir" "$BASE_SHA"
           (cd "$base_dir" && bun install --frozen-lockfile --ignore-scripts)
-          build_manifest "$base_dir"
-          build_manifest .
+          (cd "$base_dir" && moon run manifest:build --force)
+          moon run manifest:build --force
 
           if cmp -s "$base_dir/$manifest_path" "$manifest_path"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
