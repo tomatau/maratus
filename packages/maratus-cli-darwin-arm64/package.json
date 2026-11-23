@@ -13,7 +13,6 @@
   ],
   "type": "module",
   "scripts": {
-    "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
   }
