@@ -19,12 +19,12 @@
     "@maratus/bun": "workspace:*",
     "@maratus/cypress": "workspace:*",
     "@maratus/dotfiles": "workspace:*",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.2.14",
-    "@vitejs/plugin-react": "^5.0.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
     "clsx": "^2.1.1",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",
