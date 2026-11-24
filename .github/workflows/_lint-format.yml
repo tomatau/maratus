@@ -37,8 +37,5 @@ jobs:
             --head "${{ inputs.head-sha }}" \
             --include-relations
 
-      # Reports only until the existing findings are cleared; then remove
-      # continue-on-error so new gaps block.
       - name: Check requirements traceability
-        continue-on-error: true
         run: python3 .checks/traceability.py

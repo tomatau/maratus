@@ -36,7 +36,7 @@
 
 ## CI Checks
 
-- `lint-format` runs Moon `:lint`, `:format-check`, and `:typecheck` tasks, then the traceability check, which reports without blocking for now.
+- `lint-format` runs Moon `:lint`, `:format-check`, and `:typecheck` tasks, then the traceability check.
 
 ## CI Gating
 
