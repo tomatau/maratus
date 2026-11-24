@@ -1,41 +1,11 @@
 # ChoicesControl Requirements
 
-## Surfaces
+## Scope
+
+### Surfaces
 
 - `ChoicesControl`
 - `useChoicesControl`
-
-## Normative Sources
-
-- HTML Standard: [Checkbox state](<https://html.spec.whatwg.org/multipage/input.html#checkbox-state-(type=checkbox)>)
-- HTML Standard: [`fieldset` element](https://html.spec.whatwg.org/#the-fieldset-element)
-- HTML Standard: [`input` element](https://html.spec.whatwg.org/#the-input-element)
-- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
-- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
-- HTML Standard: [Disabled form controls](https://html.spec.whatwg.org/#enabling-and-disabling-form-controls:-the-disabled-attribute)
-- WAI-ARIA 1.2: [`group` role](https://www.w3.org/TR/wai-aria-1.2/#group)
-- WAI-ARIA 1.2: [`checkbox` role](https://www.w3.org/TR/wai-aria-1.2/#checkbox)
-- WAI-ARIA 1.2: [`listbox` role](https://www.w3.org/TR/wai-aria-1.2/#listbox)
-- WAI-ARIA 1.2: [`option` role](https://www.w3.org/TR/wai-aria-1.2/#option)
-- WAI-ARIA 1.2: [`aria-busy`](https://www.w3.org/TR/wai-aria-1.2/#aria-busy)
-- WAI-ARIA 1.2: [`aria-checked`](https://www.w3.org/TR/wai-aria-1.2/#aria-checked)
-- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
-- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
-- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
-- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
-- WAI-ARIA 1.2: [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.2/#aria-labelledby)
-- WAI-ARIA 1.2: [`aria-multiselectable`](https://www.w3.org/TR/wai-aria-1.2/#aria-multiselectable)
-- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
-- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
-- WAI-ARIA 1.2: [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected)
-- ARIA in HTML: [`input type=checkbox`](https://www.w3.org/TR/html-aria/#el-input-checkbox)
-- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
-- WCAG 2.2 SC 2.1.1: [Keyboard](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html)
-- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
-- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-
-## Scope
 
 ### Current scope
 
@@ -138,3 +108,33 @@ Semantics only, as in `boolean-control` and `text-control`; behaviour belongs to
 | PRD-011 | When the field is loading, `ChoicesControl` must not call consumer pointer activation handlers, or consumer key handlers for Enter and Space, passed to a custom root or item; the same holds for a disabled item (GPRD-008).                                        | ChoicesControl    | Current       |
 
 [^unsupported-attribute]: WAI-ARIA 1.2 does not list this attribute as supported on `group`. We have not found an author-level MUST NOT for unsupported attributes in WAI-ARIA 1.2 or ARIA in HTML, so the spec's own strength is unclear. The MUST follows axe-core: version 4.11 does not allow `aria-required` or `aria-readonly` on `group`, and its `aria-allowed-attr` rule reports them as violations.
+
+## Normative Sources
+
+- HTML Standard: [Checkbox state](<https://html.spec.whatwg.org/multipage/input.html#checkbox-state-(type=checkbox)>)
+- HTML Standard: [`fieldset` element](https://html.spec.whatwg.org/#the-fieldset-element)
+- HTML Standard: [`input` element](https://html.spec.whatwg.org/#the-input-element)
+- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
+- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
+- HTML Standard: [Disabled form controls](https://html.spec.whatwg.org/#enabling-and-disabling-form-controls:-the-disabled-attribute)
+- WAI-ARIA 1.2: [`group` role](https://www.w3.org/TR/wai-aria-1.2/#group)
+- WAI-ARIA 1.2: [`checkbox` role](https://www.w3.org/TR/wai-aria-1.2/#checkbox)
+- WAI-ARIA 1.2: [`listbox` role](https://www.w3.org/TR/wai-aria-1.2/#listbox)
+- WAI-ARIA 1.2: [`option` role](https://www.w3.org/TR/wai-aria-1.2/#option)
+- WAI-ARIA 1.2: [`aria-busy`](https://www.w3.org/TR/wai-aria-1.2/#aria-busy)
+- WAI-ARIA 1.2: [`aria-checked`](https://www.w3.org/TR/wai-aria-1.2/#aria-checked)
+- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
+- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
+- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
+- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
+- WAI-ARIA 1.2: [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.2/#aria-labelledby)
+- WAI-ARIA 1.2: [`aria-multiselectable`](https://www.w3.org/TR/wai-aria-1.2/#aria-multiselectable)
+- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
+- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
+- WAI-ARIA 1.2: [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected)
+- ARIA in HTML: [`input type=checkbox`](https://www.w3.org/TR/html-aria/#el-input-checkbox)
+- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
+- WCAG 2.2 SC 2.1.1: [Keyboard](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html)
+- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
+- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)

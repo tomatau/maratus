@@ -1,13 +1,13 @@
 # Props Requirements
 
-## Surfaces
+## Scope
+
+### Surfaces
 
 - `mergeRefs`
 - `omitPropWithWarning`
 - `omitProps`
 - `suppressActivation`
-
-## Scope
 
 ### Current scope
 

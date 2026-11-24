@@ -1,11 +1,11 @@
 # Development Requirements
 
-## Surfaces
+## Scope
+
+### Surfaces
 
 - `isDevelopment`
 - `warnInDevelopment`
-
-## Scope
 
 ### Current scope
 
