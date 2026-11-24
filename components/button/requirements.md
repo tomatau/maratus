@@ -51,6 +51,7 @@
 | REQ-020 | MUST   | When the button is disabled through the rendered variant, do not activate through keyboard interaction.                                                                                      | HTML Standard `button` activation behaviour; WAI-ARIA 1.2 `aria-disabled`           | Current       |
 | REQ-021 | MUST   | When the button receives keyboard focus in a focus-visible interaction mode, expose a visible focus indicator state that authors can style separately from raw focus.                        | WCAG 2.2 SC 2.4.7; Selectors Level 4 `:focus-visible`                               | Current       |
 | REQ-022 | SHOULD | When the button receives pointer focus, do not expose the focus-visible indicator state unless the browser or author explicitly does so.                                                     | Selectors Level 4 `:focus-visible`                                                  | Current       |
+| REQ-029 | MUST   | When the button is disabled but remains focusable, do not prevent non-activation keys such as `Tab`, so keyboard focus can leave it.                                                         | WCAG 2.2 SC 2.1.2                                                                   | Current       |
 
 ### Given Non-Native Element
 
@@ -95,6 +96,7 @@ Requirements the component cannot meet or check on its own. Consumers must meet 
 - WAI-ARIA 1.2: [`aria-pressed`](https://www.w3.org/TR/wai-aria-1.2/#aria-pressed)
 - WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
 - ARIA in HTML: [`button` element](https://www.w3.org/TR/html-aria/#el-button)
+- WCAG 2.2 SC 2.1.2: [No Keyboard Trap](https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap.html)
 - WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
 - Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
 - WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
