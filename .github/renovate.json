@@ -17,6 +17,34 @@
       "matchPackageNames": ["cypress", "vite", "@vitejs/plugin-react"],
       "matchUpdateTypes": ["major"],
       "groupName": "Cypress and Vite"
+    },
+    {
+      "description": "Charm TUI modules depend on each other's versions",
+      "matchPackageNames": ["github.com/charmbracelet/**", "charm.land/**"],
+      "groupName": "Charm TUI"
+    },
+    {
+      "description": "React types follow React's major",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "matchUpdateTypes": ["major"],
+      "groupName": "React"
+    },
+    {
+      "description": "oxlint and oxfmt release together from oxc",
+      "matchPackageNames": ["oxlint", "oxfmt"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "oxc"
+    },
+    {
+      "description": "Bun types follow Bun's major",
+      "matchPackageNames": ["bun", "@types/bun"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "Bun"
     }
   ],
   "customManagers": [
