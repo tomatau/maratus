@@ -1,3 +1,7 @@
+# Lockfile-only dependency updates must still re-run every task.
+implicitInputs:
+  - '/bun.lock'
+
 fileGroups:
   repo-config:
     - '/repo.yml'
