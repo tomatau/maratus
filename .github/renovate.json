@@ -1,11 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "group:allNonMajor", "schedule:weekly"],
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(chore)",
+    "group:allNonMajor",
+    "schedule:weekly"
+  ],
   "packageRules": [
     {
       "description": "Changesets versions the repo's own packages",
       "matchPackageNames": ["/^@maratus(-[a-z]+)?//"],
       "enabled": false
+    },
+    {
+      "description": "Cypress, Vite and plugin-react majors must move together",
+      "matchPackageNames": ["cypress", "vite", "@vitejs/plugin-react"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "Cypress and Vite"
     }
   ],
   "customManagers": [
