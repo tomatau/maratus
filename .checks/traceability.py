@@ -5,7 +5,7 @@
 # ///
 """Check that tests cite the requirements in a project's requirements.md files.
 
-traceability.py, version 2
+traceability.py, version 3
 
 Copy into a project as .checks/traceability.py and run it from anywhere in the
 repository, with `uv run .checks/traceability.py` or `python3`. It needs git
@@ -14,6 +14,10 @@ and the standard library only, and takes no arguments.
 An optional .checks/traceability.ignore lists glob patterns, one per line, for
 files the check skips entirely, such as templates. `#` starts a comment, and
 `*` matches across directories.
+
+A row whose ID an enclosing requirements.md defines is a reference. It applies
+that requirement to its own package's surfaces and carries the coverage there.
+A definition with references needs no citation of its own.
 
 Canonical copy: ~/.agents/skills/requirements-traceability/checks/traceability.py
 Format contract: ~/.agents/skills/requirements-traceability/SKILL.md
@@ -164,7 +168,27 @@ def surface_of(file: str, declared: str | None, names: set[str]) -> str:
     return max((name for name in names if name in path), key=len, default="")
 
 
+def referenced_definition(
+    reference: Requirement,
+    requirements: list[Requirement],
+) -> Requirement | None:
+    """The nearest enclosing definition a row repeats the ID of, if any."""
+    definitions = [
+        r
+        for r in requirements
+        if r.id == reference.id
+        and r.package != reference.package
+        and within(r.package, reference.file)
+    ]
+    return max(definitions, key=lambda r: len(r.package), default=None)
+
+
 def check(requirements: list[Requirement], tests: dict) -> list[tuple]:
+    referenced = {
+        definition
+        for r in requirements
+        if (definition := referenced_definition(r, requirements))
+    }
     names_by_file: dict[str, set[str]] = {}
     for r in requirements:
         names_by_file.setdefault(r.file, set()).update(normalise(s) for s in r.surfaces)
@@ -182,7 +206,7 @@ def check(requirements: list[Requirement], tests: dict) -> list[tuple]:
             covered.update({(target, surface), (target, None)})
 
     for r in requirements:
-        if not r.required:
+        if not r.required or r in referenced:
             continue
         if not r.surfaces and (r, None) not in covered:
             findings.append(("uncovered", r.file, r.id))
