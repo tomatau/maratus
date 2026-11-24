@@ -118,6 +118,41 @@ describe('TextControl', () => {
         expect(control.validity.valueMissing, 'valueMissing').to.equal(true)
       })
     })
+
+    it('PRD-003 reports native input validity to the field', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Enter your name.'],
+      ])
+
+      cy.mount(
+        <FieldRoot
+          errorMap={errorMap}
+          errorPolicy={() => true}
+          label="Name"
+          name="name"
+        >
+          <TextControl>
+            {({ textControlProps }) => (
+              <input
+                data-testid="control"
+                required
+                {...textControlProps}
+              />
+            )}
+          </TextControl>
+          <ErrorMessage data-testid="error" />
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('control').type('A')
+      cy.getByTestId('control').clear()
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+      cy.getByTestId('error').should('have.text', 'Enter your name.')
+
+      cy.getByTestId('control').type('A')
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.getByTestId('error').find('p').should('have.length', 0)
+    })
   })
 
   describe('role-aware text controls', () => {

@@ -104,6 +104,41 @@ describe('BooleanControl', () => {
         expect(control.validity.valid, 'valid').to.equal(true)
       })
     })
+
+    it('PRD-003 reports native checkbox validity to the field', () => {
+      const errorMap = new Map<FieldErrorKey, string>([
+        ['valueMissing', 'Accept the terms.'],
+      ])
+
+      cy.mount(
+        <FieldRoot
+          errorMap={errorMap}
+          errorPolicy={() => true}
+          label="Accept terms"
+          name="terms"
+        >
+          <BooleanControl>
+            {({ booleanControlProps }) => (
+              <input
+                data-testid="control"
+                required
+                {...booleanControlProps}
+              />
+            )}
+          </BooleanControl>
+          <ErrorMessage data-testid="error" />
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('control').check()
+      cy.getByTestId('control').uncheck()
+      cy.getByTestId('control').should('have.attr', 'aria-invalid', 'true')
+      cy.getByTestId('error').should('have.text', 'Accept the terms.')
+
+      cy.getByTestId('control').check()
+      cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
+      cy.getByTestId('error').find('p').should('have.length', 0)
+    })
   })
 
   describe('role-aware boolean controls', () => {

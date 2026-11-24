@@ -40,12 +40,12 @@
 
 ## Product Requirements
 
-| ID      | Requirement                                                                                                      | Applicability |
-| ------- | ---------------------------------------------------------------------------------------------------------------- | ------------- |
-| PRD-001 | Export `TextControl`, `useTextControl`, and their public types from the text-control package entry point.        | Current       |
-| PRD-002 | `TextControl` should support role-aware text widgets through an explicit supported role API.                     | Current       |
-| PRD-003 | `TextControl` should depend on the field package instead of duplicating field relationship or validity plumbing. | Current       |
-| PRD-004 | Native text control render props must be available during server rendering.                                      | Current       |
+| ID      | Requirement                                                                                                                                                                 | Applicability |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| PRD-001 | Export `TextControl`, `useTextControl`, and their public types from the text-control package entry point.                                                                   | Current       |
+| PRD-002 | `TextControl` should support role-aware text widgets through an explicit supported role API.                                                                                | Current       |
+| PRD-003 | When a native text control fires `change`, `blur`, or `invalid` and `FieldRoot` has no `activeErrors`, the field's active errors must follow the control's `ValidityState`. | Current       |
+| PRD-004 | Native text control render props must be available during server rendering.                                                                                                 | Current       |
 
 ## Normative Sources
 
