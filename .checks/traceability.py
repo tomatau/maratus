@@ -5,11 +5,15 @@
 # ///
 """Check that tests cite the requirements in a project's requirements.md files.
 
-traceability.py, version 1
+traceability.py, version 2
 
 Copy into a project as .checks/traceability.py and run it from anywhere in the
 repository, with `uv run .checks/traceability.py` or `python3`. It needs git
 and the standard library only, and takes no arguments.
+
+An optional .checks/traceability.ignore lists glob patterns, one per line, for
+files the check skips entirely, such as templates. `#` starts a comment, and
+`*` matches across directories.
 
 Canonical copy: ~/.agents/skills/requirements-traceability/checks/traceability.py
 Format contract: ~/.agents/skills/requirements-traceability/SKILL.md
@@ -24,10 +28,12 @@ import re
 import subprocess
 import sys
 from dataclasses import dataclass
+from fnmatch import fnmatchcase
 from pathlib import Path, PurePosixPath
 
 REQUIREMENTS_FILE = "requirements.md"
 CHECKS_DIR = ".checks/"
+IGNORE_FILE = CHECKS_DIR + "traceability.ignore"
 ID = re.compile(r"[A-Z][A-Z0-9]*-[0-9]+")
 SURFACE_DECLARATION = re.compile(r"surface:\s*([A-Za-z0-9_.-]+)")
 SEPARATOR_ROW = re.compile(r"^\|[-:| ]+\|$")
@@ -200,6 +206,19 @@ def tracked_files(root: Path) -> list[str]:
     return [file for file in listing.stdout.split("\0") if (root / file).is_file()]
 
 
+def ignore_patterns(root: Path) -> list[str]:
+    path = root / IGNORE_FILE
+    if not path.is_file():
+        return []
+    lines = path.read_text(encoding="utf-8").splitlines()
+    patterns = (line.split("#", 1)[0].strip() for line in lines)
+    return [pattern for pattern in patterns if pattern]
+
+
+def is_ignored(file: str, patterns: list[str]) -> bool:
+    return any(fnmatchcase(file, pattern) for pattern in patterns)
+
+
 def read_text(path: Path) -> str | None:
     try:
         return path.read_text(encoding="utf-8")
@@ -220,7 +239,8 @@ def main() -> int:
         check=True,
     )
     root = Path(toplevel.stdout.strip())
-    files = tracked_files(root)
+    patterns = ignore_patterns(root)
+    files = [file for file in tracked_files(root) if not is_ignored(file, patterns)]
 
     requirements = [
         requirement
