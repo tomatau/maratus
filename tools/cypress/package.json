@@ -13,7 +13,7 @@
     "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "@cypress/react": "^9.0.1",
+    "@cypress/react": "^10.0.0",
     "@vitejs/plugin-react": "^6.0.0",
     "cypress": "^16.0.0",
     "cypress-axe": "^1.7.0",
