@@ -38,7 +38,6 @@
 | REQ-006 | MUST   | When the button is not a toggle button, do not set `aria-pressed`.                                                                                                                           | WAI-ARIA 1.2 `button`; WAI-ARIA 1.2 `aria-pressed`                                  | Current       |
 | REQ-007 | SHOULD | When the button uses `aria-disabled`, also change its appearance to indicate the disabled state.                                                                                             | WAI-ARIA 1.2 `aria-disabled`                                                        | Current       |
 | REQ-008 | MUST   | When the button exposes a supported state such as pressed, disabled, busy, or expanded, expose that state programmatically.                                                                  | WCAG 2.2 SC 4.1.2                                                                   | Current       |
-| REQ-009 | MUST   | Do not include interactive descendants or descendants with a `tabindex` attribute inside the button content model.                                                                           | HTML Standard `button` element                                                      | Current       |
 | REQ-010 | SHOULD | When the button is a native `<button>`, do not set a redundant explicit `role="button"`.                                                                                                     | ARIA in HTML `button`                                                               | Current       |
 | REQ-011 | MUST   | When the button renders with `type="submit"`, allow normal HTML form submission behaviour.                                                                                                   | HTML Standard `button` element                                                      | Current       |
 | REQ-012 | MUST   | When the button renders with `type="reset"`, allow normal HTML form reset behaviour.                                                                                                         | HTML Standard `button` element                                                      | Current       |
@@ -72,6 +71,14 @@
 | PRD-002 | Support a focusable disabled mode for cases such as tooltip-triggered disabled explanations.                         | Current       |
 | PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
 | PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |
+
+## Consumer Responsibilities
+
+Requirements the component cannot meet or check on its own. Consumers must meet them.
+
+| Requirement                                                                                                        | Source                         | Reason                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Do not include interactive descendants or descendants with a `tabindex` attribute inside the button content model. | HTML Standard `button` element | The consumer supplies the button's children. Detecting interactive descendants needs a DOM query after every render, and still misses content that changes later. |
 
 ## Normative Sources
 
