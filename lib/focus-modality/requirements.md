@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `useFocusModality`
+- `useIsFocusVisible`
+
 ### Current scope
 
 - Global focus modality state
@@ -14,7 +19,7 @@
 - Provider override for runtime scoping
 - Virtual cursor or assistive technology modality distinctions
 
-## Normative Matrix
+## Accessibility Requirements
 
 | ID      | Level  | Requirement                                                                                                                                                               | Source                                                | Applicability |
 | ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------- |

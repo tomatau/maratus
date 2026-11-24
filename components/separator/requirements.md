@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `Separator`
+- `useSeparator`
+
 ### Current scope
 
 - Native horizontal separator output
@@ -13,7 +18,7 @@
 
 - Focusable separator behavior with range-widget semantics
 
-## Matrix
+## Accessibility Requirements
 
 | ID      | Level  | Requirement                                                                                                                                     | Source                                        | Applicability |
 | ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------- |

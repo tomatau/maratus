@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `BooleanControl`
+- `useBooleanControl`
+
 ### Current scope
 
 - Native boolean value controls rendered through `input[type="checkbox"]`
@@ -16,7 +21,7 @@
 - Tri-state checkbox support
 - Checkbox group and choice-set controls
 
-## Matrix
+## Accessibility Requirements
 
 | ID      | Level  | Requirement                                                                                                                                                                                                                                                         | Source                                                                                                                                         | Applicability |
 | ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
