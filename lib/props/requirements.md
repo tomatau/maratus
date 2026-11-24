@@ -57,6 +57,14 @@
 | PRD-010 | When suppressed, `suppressActivation` must keep `onKeyDown` and `onKeyUp` but skip Enter and Space, preventing their default, and pass every other key on. | suppressActivation | Current       |
 | PRD-011 | When not suppressed, `suppressActivation` must return the same props object.                                                                               | suppressActivation | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces | Applicability |
+| -------- | -------- | ------------- |
+| GPRD-004 |          | N/A           |
+
 ## API Contract
 
 ```ts

@@ -109,6 +109,14 @@ Semantics only, as in `boolean-control` and `text-control`; behaviour belongs to
 
 [^unsupported-attribute]: WAI-ARIA 1.2 does not list this attribute as supported on `group`. We have not found an author-level MUST NOT for unsupported attributes in WAI-ARIA 1.2 or ARIA in HTML, so the spec's own strength is unclear. The MUST follows axe-core: version 4.11 does not allow `aria-required` or `aria-readonly` on `group`, and its `aria-allowed-attr` rule reports them as violations.
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces            | Applicability |
+| -------- | ------------------- | ------------- |
+| GPRD-004 | `useChoicesControl` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [Checkbox state](<https://html.spec.whatwg.org/multipage/input.html#checkbox-state-(type=checkbox)>)

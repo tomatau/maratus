@@ -37,6 +37,14 @@
 | PRD-003 | Treat keyboard interaction as focus-visible by default.                                                          | Current       |
 | PRD-005 | Start from a global singleton runtime and allow provider-based override later without changing the hook surface. | Potential     |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces | Applicability |
+| -------- | -------- | ------------- |
+| GPRD-004 |          | N/A           |
+
 ## Consumer Responsibilities
 
 Requirements the library cannot meet or check on its own. Consumers must meet them.

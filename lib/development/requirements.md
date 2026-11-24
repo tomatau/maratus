@@ -39,6 +39,14 @@
 | PRD-005 | When `isDevelopment` returns `true`, `warnInDevelopment` must log its message with `console.warn`. | warnInDevelopment | Current       |
 | PRD-006 | When `isDevelopment` returns `false`, `warnInDevelopment` must log nothing.                        | warnInDevelopment | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces | Applicability |
+| -------- | -------- | ------------- |
+| GPRD-004 |          | N/A           |
+
 ## API Contract
 
 ```ts

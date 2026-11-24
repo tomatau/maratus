@@ -124,6 +124,14 @@ Semantics only, as in `boolean-control` and `text-control`; behaviour belongs to
 
 [^radio-aria-required]: WAI-ARIA 1.2 neither supports nor inherits `aria-required` on `radio`. We have not found an author-level MUST NOT for unsupported attributes in WAI-ARIA 1.2 or ARIA in HTML, so the spec's own strength is unclear, and axe-core 4.11 allows `aria-required` on `radio`. The MUST is library policy, matching PRD-008 in `choices-control`: assistive technologies should not announce every item as required.
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces           | Applicability |
+| -------- | ------------------ | ------------- |
+| GPRD-004 | `useChoiceControl` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [`select` element](https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element)

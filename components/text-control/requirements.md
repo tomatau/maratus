@@ -47,6 +47,14 @@
 | PRD-003 | When a native text control fires `change`, `blur`, or `invalid` and `FieldRoot` has no `activeErrors`, the field's active errors must follow the control's `ValidityState`. | Current       |
 | PRD-004 | Native text control render props must be available during server rendering.                                                                                                 | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces         | Applicability |
+| -------- | ---------------- | ------------- |
+| GPRD-004 | `useTextControl` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
