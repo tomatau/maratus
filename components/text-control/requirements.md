@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `TextControl`
+- `useTextControl`
+
 ### Current scope
 
 - Native text value controls rendered through text-like `input` elements and `textarea`
@@ -16,7 +21,7 @@
 - Autocomplete and combobox widget wrappers
 - Formatting and masking adapters
 
-## Matrix
+## Accessibility Requirements
 
 | ID      | Level  | Requirement                                                                                                                                                                                                                                                      | Source                                                                                            | Applicability |
 | ------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------- |

@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `Button`
+- `useButton`
+
 ### Current scope
 
 - Native button output
@@ -68,7 +73,7 @@
 | PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
 | PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |
 
-## Accessibility Sources
+## Normative Sources
 
 - HTML Standard: [`button` element](https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element)
 - WAI-ARIA 1.2: [`button` role](https://www.w3.org/TR/wai-aria-1.2/#button)

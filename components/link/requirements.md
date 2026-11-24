@@ -2,6 +2,11 @@
 
 ## Scope
 
+### Surfaces
+
+- `Link`
+- `useLink`
+
 ### Current scope
 
 - Native anchor output
@@ -20,6 +25,8 @@
 - Download or external-link affordance APIs beyond native HTML attributes
 
 ## Accessibility Requirements
+
+### Given Native Anchor Element
 
 | ID      | Level  | Requirement                                                                                                                                                                   | Source                                                            | Applicability |
 | :------ | :----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------- |

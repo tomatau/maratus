@@ -2,6 +2,13 @@
 
 ## Scope
 
+### Surfaces
+
+- `createStore`
+- `createStoreRuntime`
+- `useStoreRuntime`
+- `useStoreSelector`
+
 ### Current scope
 
 - Store creation
