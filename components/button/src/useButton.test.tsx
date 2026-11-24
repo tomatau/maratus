@@ -26,7 +26,7 @@ function createKeyboardEvent(
 }
 
 describe(useButton, () => {
-  test('sets aria and data state props from button state', () => {
+  test('REQ-005 REQ-008 PRD-001 sets aria and data state props from button state', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -42,7 +42,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps['data-loading']).toBe('')
   })
 
-  test('does not set aria-pressed for command buttons', () => {
+  test('REQ-006 does not set aria-pressed for command buttons', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -52,7 +52,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps['aria-pressed']).toBeUndefined()
   })
 
-  test('supports mixed pressed state for toggle buttons', () => {
+  test('REQ-005 supports mixed pressed state for toggle buttons', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -79,7 +79,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps['aria-disabled']).toBe('false')
   })
 
-  test('omits pointer activation handlers when interaction is disabled', () => {
+  test('REQ-019 omits pointer activation handlers when interaction is disabled', () => {
     const onClick = () => undefined
     const onMouseDown = () => undefined
 
@@ -96,7 +96,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps.onMouseDown).toBeUndefined()
   })
 
-  test('preserves pointer activation handlers when interaction is enabled', () => {
+  test('REQ-017 preserves pointer activation handlers when interaction is enabled', () => {
     const onClick = () => undefined
 
     const { result } = renderHook(() =>
@@ -109,7 +109,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps.onClick).toBe(onClick)
   })
 
-  test('preserves keyboard handlers when enabled', () => {
+  test('REQ-018 GPRD-009 preserves keyboard handlers when enabled', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
 
@@ -134,7 +134,7 @@ describe(useButton, () => {
     expect(keyUpCalls).toBe(1)
   })
 
-  test('blocks Enter on keydown for focusable disabled buttons', () => {
+  test('REQ-020 PRD-002 blocks Enter on keydown for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -161,7 +161,7 @@ describe(useButton, () => {
     expect(keyDownCalls).toBe(0)
   })
 
-  test('blocks Space on keydown and keyup for focusable disabled buttons', () => {
+  test('REQ-020 PRD-002 blocks Space on keydown and keyup for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let keyUpCalls = 0
     let preventedKeyDown = false
@@ -203,7 +203,7 @@ describe(useButton, () => {
     expect(keyUpCalls).toBe(0)
   })
 
-  test('does not block non-activation keys for focusable disabled buttons', () => {
+  test('REQ-029 does not block non-activation keys for focusable disabled buttons', () => {
     let keyDownCalls = 0
     let prevented = false
 
@@ -230,7 +230,7 @@ describe(useButton, () => {
     expect(keyDownCalls).toBe(1)
   })
 
-  test('sets native disabled when native disabled behaviour applies', () => {
+  test('REQ-003 REQ-004 sets native disabled when native disabled behaviour applies', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -241,7 +241,7 @@ describe(useButton, () => {
     expect(result.current.buttonProps.disabled).toBe(true)
   })
 
-  test('does not set native disabled when focusable disabled behaviour applies', () => {
+  test('REQ-004 PRD-002 does not set native disabled when focusable disabled behaviour applies', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
@@ -263,7 +263,7 @@ describe(useButton, () => {
   })
 
   describe('non-native roots', () => {
-    test('GPRD-003 returns button semantics in custom mode', () => {
+    test('GPRD-003 REQ-023 REQ-024 returns button semantics in custom mode', () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
@@ -275,7 +275,7 @@ describe(useButton, () => {
       expect(result.current.buttonProps.tabIndex).toBe(0)
     })
 
-    test('keeps focusable disabled roots in the tab order', () => {
+    test('REQ-027 PRD-002 keeps focusable disabled roots in the tab order', () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
@@ -289,7 +289,7 @@ describe(useButton, () => {
       expect(result.current.buttonProps.disabled).toBe(undefined)
     })
 
-    test('does not return native-only props', () => {
+    test('REQ-027 REQ-028 does not return native-only props', () => {
       const { result } = renderHook(() =>
         useButton({
           children: 'Save',
