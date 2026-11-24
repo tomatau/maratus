@@ -1,6 +1,7 @@
-# Lockfile-only dependency updates must still re-run every task.
+# Lockfile changes re-run every task; Markdown changes run none.
 implicitInputs:
   - '/bun.lock'
+  - '!**/*.md'
 
 fileGroups:
   repo-config:
