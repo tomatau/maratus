@@ -28,7 +28,6 @@ export function createCypressCTConfig(specPattern) {
       specPattern,
       supportFile,
     },
-    allowCypressEnv: false,
     video: false,
   })
 }
