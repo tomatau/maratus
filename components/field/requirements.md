@@ -92,6 +92,14 @@
 | PRD-026 | When a custom root calls a validity handler without a validity, `FieldControl` must record the field history event and leave the active error keys unchanged.                                                                           | FieldControl                         | Current       |
 | PRD-027 | When a custom root passes a validity to a validity handler, `FieldControl` must replace any earlier reported validity with it, because it describes the whole control.                                                                  | FieldControl                         | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces                                                                           | Applicability |
+| -------- | ---------------------------------------------------------------------------------- | ------------- |
+| GPRD-004 | `useFieldRoot`, `useFieldControl`, `useLabel`, `useDescription`, `useErrorMessage` | Current       |
+
 ## API Contract
 
 ```ts

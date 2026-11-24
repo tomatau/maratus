@@ -59,6 +59,14 @@
 | PRD-003 | Expose a `data-focus-visible` state hook when keyboard focus is visibly indicated.              | Current       |
 | PRD-004 | Expose `data-loading`, `aria-busy`, and disabled semantics when the link is in a loading state. | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces  | Applicability |
+| -------- | --------- | ------------- |
+| GPRD-004 | `useLink` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [`a` element](https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element)

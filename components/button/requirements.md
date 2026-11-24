@@ -72,6 +72,14 @@
 | PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
 | PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces    | Applicability |
+| -------- | ----------- | ------------- |
+| GPRD-004 | `useButton` | Current       |
+
 ## Consumer Responsibilities
 
 Requirements the component cannot meet or check on its own. Consumers must meet them.

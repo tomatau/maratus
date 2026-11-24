@@ -33,6 +33,14 @@
 | REQ-009 | SHOULD | When the separator is focusable and the current value is not user-friendly, set `aria-valuetext`.                                               | WAI-ARIA 1.2 `separator`                      | N/A           |
 | REQ-010 | MUST   | When the separator is horizontal and does not use `<hr>`, expose separator semantics with `role="separator"` and do not set `aria-orientation`. | WAI-ARIA 1.2 `separator`; WCAG 2.2 SC 4.1.2   | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces       | Applicability |
+| -------- | -------------- | ------------- |
+| GPRD-004 | `useSeparator` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [`hr` element](https://html.spec.whatwg.org/multipage/grouping-content.html#the-hr-element)

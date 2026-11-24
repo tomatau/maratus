@@ -46,6 +46,14 @@
 | PRD-003 | When a native boolean control fires `change`, `blur`, or `invalid` and `FieldRoot` has no `activeErrors`, the field's active errors must follow the control's `ValidityState`. | Current       |
 | PRD-004 | Native boolean control render props must be available during server rendering.                                                                                                 | Current       |
 
+## Global Requirements
+
+How the root [`requirements.md`](../../requirements.md) applies to this package.
+
+| ID       | Surfaces            | Applicability |
+| -------- | ------------------- | ------------- |
+| GPRD-004 | `useBooleanControl` | Current       |
+
 ## Normative Sources
 
 - HTML Standard: [Checkbox state](<https://html.spec.whatwg.org/multipage/input.html#checkbox-state-(type=checkbox)>)
