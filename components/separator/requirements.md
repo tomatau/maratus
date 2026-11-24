@@ -1,12 +1,5 @@
 # Separator Requirements
 
-## Normative Sources
-
-- HTML Standard: [`hr` element](https://html.spec.whatwg.org/multipage/grouping-content.html#the-hr-element)
-- WAI-ARIA 1.2: [`separator` role](https://www.w3.org/TR/wai-aria-1.2/#separator)
-- ARIA in HTML: [`hr` element](https://www.w3.org/TR/html-aria/#el-hr)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-
 ## Scope
 
 ### Current scope
@@ -34,3 +27,10 @@
 | REQ-008 | SHOULD | When the separator is focusable, set `aria-valuemin` and `aria-valuemax`; if omitted, default values are 0 and 100.                             | WAI-ARIA 1.2 `separator`                      | N/A           |
 | REQ-009 | SHOULD | When the separator is focusable and the current value is not user-friendly, set `aria-valuetext`.                                               | WAI-ARIA 1.2 `separator`                      | N/A           |
 | REQ-010 | MUST   | When the separator is horizontal and does not use `<hr>`, expose separator semantics with `role="separator"` and do not set `aria-orientation`. | WAI-ARIA 1.2 `separator`; WCAG 2.2 SC 4.1.2   | Current       |
+
+## Normative Sources
+
+- HTML Standard: [`hr` element](https://html.spec.whatwg.org/multipage/grouping-content.html#the-hr-element)
+- WAI-ARIA 1.2: [`separator` role](https://www.w3.org/TR/wai-aria-1.2/#separator)
+- ARIA in HTML: [`hr` element](https://www.w3.org/TR/html-aria/#el-hr)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)

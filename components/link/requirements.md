@@ -1,15 +1,5 @@
 # Link Requirements
 
-## Normative Sources
-
-- HTML Standard: [`a` element](https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element)
-- WAI-ARIA 1.2: [`link` role](https://www.w3.org/TR/wai-aria-1.2/#link)
-- ARIA in HTML: [`a` with `href`](https://www.w3.org/TR/html-aria/#el-a)
-- WCAG 2.2 SC 2.4.4: [Link Purpose (In Context)](https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html)
-- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
-
 ## Scope
 
 ### Current scope
@@ -61,3 +51,13 @@
 | PRD-002 | Support the global `as` root substitution pattern for `Link`.                                   | Current       |
 | PRD-003 | Expose a `data-focus-visible` state hook when keyboard focus is visibly indicated.              | Current       |
 | PRD-004 | Expose `data-loading`, `aria-busy`, and disabled semantics when the link is in a loading state. | Current       |
+
+## Normative Sources
+
+- HTML Standard: [`a` element](https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-a-element)
+- WAI-ARIA 1.2: [`link` role](https://www.w3.org/TR/wai-aria-1.2/#link)
+- ARIA in HTML: [`a` with `href`](https://www.w3.org/TR/html-aria/#el-a)
+- WCAG 2.2 SC 2.4.4: [Link Purpose (In Context)](https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html)
+- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
+- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)

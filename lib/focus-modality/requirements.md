@@ -1,12 +1,5 @@
 # Focus Modality Requirements
 
-## Normative Sources
-
-- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
-- WCAG 2.2 SC 2.4.11: [Focus Not Obscured (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)
-- WCAG 2.2 SC 2.4.13: [Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html)
-- Selectors Level 4: `[:focus-visible](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)`
-
 ## Scope
 
 ### Current scope
@@ -39,3 +32,10 @@
 | PRD-002 | Expose `useIsFocusVisible()` as the shared derived hook for reading the current global focus-visible state.      | Current       |
 | PRD-003 | Treat keyboard interaction as focus-visible by default.                                                          | Current       |
 | PRD-005 | Start from a global singleton runtime and allow provider-based override later without changing the hook surface. | Potential     |
+
+## Normative Sources
+
+- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
+- WCAG 2.2 SC 2.4.11: [Focus Not Obscured (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)
+- WCAG 2.2 SC 2.4.13: [Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html)
+- Selectors Level 4: `[:focus-visible](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)`

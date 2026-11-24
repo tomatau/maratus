@@ -1,22 +1,5 @@
 # TextControl Requirements
 
-## Normative Sources
-
-- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
-- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
-- WAI-ARIA 1.2: [`combobox` role](https://www.w3.org/TR/wai-aria-1.2/#combobox)
-- WAI-ARIA 1.2: [`searchbox` role](https://www.w3.org/TR/wai-aria-1.2/#searchbox)
-- WAI-ARIA 1.2: [`textbox` role](https://www.w3.org/TR/wai-aria-1.2/#textbox)
-- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
-- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
-- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
-- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
-- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
-- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
-- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
-- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-
 ## Scope
 
 ### Current scope
@@ -58,3 +41,20 @@
 | PRD-002 | `TextControl` should support role-aware text widgets through an explicit supported role API.                     | Current       |
 | PRD-003 | `TextControl` should depend on the field package instead of duplicating field relationship or validity plumbing. | Current       |
 | PRD-004 | Native text control render props must be available during server rendering.                                      | Current       |
+
+## Normative Sources
+
+- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
+- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
+- WAI-ARIA 1.2: [`combobox` role](https://www.w3.org/TR/wai-aria-1.2/#combobox)
+- WAI-ARIA 1.2: [`searchbox` role](https://www.w3.org/TR/wai-aria-1.2/#searchbox)
+- WAI-ARIA 1.2: [`textbox` role](https://www.w3.org/TR/wai-aria-1.2/#textbox)
+- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
+- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
+- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
+- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
+- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
+- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
+- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
+- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)

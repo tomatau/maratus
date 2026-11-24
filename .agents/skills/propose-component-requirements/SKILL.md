@@ -36,13 +36,13 @@ hold the requirement-writing rules applied here.
 - Settle the roots (native, and non-native through `as` and `mode`), the
   compound parts, and the states it supports.
 
-A package's `requirements.md` has these sections, in this order:
-`Normative Sources`, `Scope`, `Accessibility Requirements` and
-`Product Requirements`. Once the shape is agreed, write the first two:
+A package's `requirements.md` has these sections, in this order: `Scope`,
+`Accessibility Requirements`, `Product Requirements` and `Normative Sources`.
+Once the shape is agreed, write `Scope` and `Normative Sources`:
 
-- `Normative Sources`: each spec section relied on, linked to its exact anchor;
 - `Scope`: `Current scope` for what this package does, and `Potential scope`
-  for what is plausible later.
+  for what is plausible later;
+- `Normative Sources`: each spec section relied on, linked to its exact anchor.
 
 ## 2. Propose requirements
 
@@ -68,7 +68,7 @@ each state including disabled, and each root or variant. For each area:
 
 The same two phases apply, as review rather than first drafts.
 
-- Shape: challenge the current `Normative Sources` and `Scope` instead of
+- Shape: challenge the current `Scope` and `Normative Sources` instead of
   writing them. Propose any section that is missing, and headings that differ
   from the four above.
 - Requirements: check each confirmed row against its source. Is its level the

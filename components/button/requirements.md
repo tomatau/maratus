@@ -1,16 +1,5 @@
 # Button Requirements
 
-## Accessibility Sources
-
-- HTML Standard: [`button` element](https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element)
-- WAI-ARIA 1.2: [`button` role](https://www.w3.org/TR/wai-aria-1.2/#button)
-- WAI-ARIA 1.2: [`aria-pressed`](https://www.w3.org/TR/wai-aria-1.2/#aria-pressed)
-- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
-- ARIA in HTML: [`button` element](https://www.w3.org/TR/html-aria/#el-button)
-- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
-- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-
 ## Scope
 
 ### Current scope
@@ -78,3 +67,14 @@
 | PRD-002 | Support a focusable disabled mode for cases such as tooltip-triggered disabled explanations.                         | Current       |
 | PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
 | PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |
+
+## Accessibility Sources
+
+- HTML Standard: [`button` element](https://html.spec.whatwg.org/multipage/form-elements.html#the-button-element)
+- WAI-ARIA 1.2: [`button` role](https://www.w3.org/TR/wai-aria-1.2/#button)
+- WAI-ARIA 1.2: [`aria-pressed`](https://www.w3.org/TR/wai-aria-1.2/#aria-pressed)
+- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
+- ARIA in HTML: [`button` element](https://www.w3.org/TR/html-aria/#el-button)
+- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
+- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)

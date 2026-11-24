@@ -1,6 +1,8 @@
 # Field Requirements
 
-## Surfaces
+## Scope
+
+### Surfaces
 
 - `FieldRoot`
 - `FieldProvider`
@@ -13,29 +15,6 @@
 - `useLabel`
 - `useDescription`
 - `useErrorMessage`
-
-## Normative Sources
-
-- HTML Standard: [`label` element](https://html.spec.whatwg.org/multipage/forms.html#the-label-element)
-- HTML Standard: [`id` attribute](https://html.spec.whatwg.org/multipage/dom.html#the-id-attribute)
-- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
-- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
-- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
-- WAI-ARIA 1.2: [`aria-details`](https://www.w3.org/TR/wai-aria-1.2/#aria-details)
-- WAI-ARIA 1.2: [`aria-busy`](https://www.w3.org/TR/wai-aria-1.2/#aria-busy)
-- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
-- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
-- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
-- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
-- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
-- WAI-ARIA 1.2: [`alert` role](https://www.w3.org/TR/wai-aria-1.2/#alert)
-- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
-- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
-- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
-- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
-- WCAG 2.2 SC 4.1.3: [Status Messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html)
-
-## Scope
 
 ### Current scope
 
@@ -273,3 +252,24 @@ Each reporting input sends these browser events to the field. For each event, th
 | `input`       | the user changes its value or checkedness (common input element events)                                     | `wasChanged`, `wasTouched`    |
 | `change`      | the user commits that change (common input element events)                                                  | `wasChanged`, `wasTouched`    |
 | `invalid`     | constraint validation finds the input invalid: on form submission, `checkValidity()`, or `reportValidity()` | `wasTouched`                  |
+
+## Normative Sources
+
+- HTML Standard: [`label` element](https://html.spec.whatwg.org/multipage/forms.html#the-label-element)
+- HTML Standard: [`id` attribute](https://html.spec.whatwg.org/multipage/dom.html#the-id-attribute)
+- HTML Standard: [Form control infrastructure](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html)
+- HTML Standard: [Constraint validation](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constraints)
+- WAI-ARIA 1.2: [`aria-describedby`](https://www.w3.org/TR/wai-aria-1.2/#aria-describedby)
+- WAI-ARIA 1.2: [`aria-details`](https://www.w3.org/TR/wai-aria-1.2/#aria-details)
+- WAI-ARIA 1.2: [`aria-busy`](https://www.w3.org/TR/wai-aria-1.2/#aria-busy)
+- WAI-ARIA 1.2: [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled)
+- WAI-ARIA 1.2: [`aria-errormessage`](https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage)
+- WAI-ARIA 1.2: [`aria-invalid`](https://www.w3.org/TR/wai-aria-1.2/#aria-invalid)
+- WAI-ARIA 1.2: [`aria-readonly`](https://www.w3.org/TR/wai-aria-1.2/#aria-readonly)
+- WAI-ARIA 1.2: [`aria-required`](https://www.w3.org/TR/wai-aria-1.2/#aria-required)
+- WAI-ARIA 1.2: [`alert` role](https://www.w3.org/TR/wai-aria-1.2/#alert)
+- WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
+- WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
+- WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
+- WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
+- WCAG 2.2 SC 4.1.3: [Status Messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html)
