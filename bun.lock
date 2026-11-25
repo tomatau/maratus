@@ -352,7 +352,7 @@
     },
     "registry/button": {
       "name": "@maratus-registry/button",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "dependencies": {
         "@maratus-lib/focus-modality": "0.3.0",
       },
