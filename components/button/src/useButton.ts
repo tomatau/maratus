@@ -81,8 +81,7 @@ export function useButton(props: UseButtonProps): UseButtonResult {
     buttonProps: {
       ...nativeProps,
       'aria-busy': ariaBusy ?? (isLoading ? true : undefined),
-      'aria-disabled':
-        ariaDisabled ?? (isInteractionDisabled ? true : undefined),
+      'aria-disabled': isInteractionDisabled ? true : ariaDisabled,
       'aria-pressed': ariaPressed,
       children,
       className: clsx(styles.button, className),
