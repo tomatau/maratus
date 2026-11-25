@@ -72,6 +72,7 @@
 | PRD-002 | Support a focusable disabled mode for cases such as tooltip-triggered disabled explanations.                         | Current       |
 | PRD-003 | Keep native `<button>` as the default rendered element.                                                              | Current       |
 | PRD-004 | Expose focus-visible state through a `data-focus-visible` hook that aligns with the shared focus-modality primitive. | Current       |
+| PRD-005 | A consumer-provided `aria-busy` takes precedence over the busy state the button derives from `isLoading`.            | Current       |
 
 ## Global Requirements
 

@@ -64,19 +64,29 @@ describe(useButton, () => {
     expect(result.current.buttonProps['aria-pressed']).toBe('mixed')
   })
 
-  test('preserves user-supplied busy and disabled aria props when state does not override them', () => {
+  test('PRD-005 consumer aria-busy overrides the loading busy state', () => {
     const { result } = renderHook(() =>
       useButton({
         children: 'Save',
         isLoading: true,
-        disabled: true,
         'aria-busy': 'false',
-        'aria-disabled': 'false',
       }),
     )
 
     expect(result.current.buttonProps['aria-busy']).toBe('false')
-    expect(result.current.buttonProps['aria-disabled']).toBe('false')
+  })
+
+  test('REQ-026 keeps aria-disabled true over a consumer aria-disabled', () => {
+    const { result } = renderHook(() =>
+      useButton({
+        children: 'Save',
+        mode: 'custom',
+        disabled: true,
+        'aria-disabled': 'false',
+      }),
+    )
+
+    expect(result.current.buttonProps['aria-disabled']).toBe(true)
   })
 
   test('REQ-019 omits pointer activation handlers when interaction is disabled', () => {
