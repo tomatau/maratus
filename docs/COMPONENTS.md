@@ -24,6 +24,10 @@ A component package is complete when it satisfies these checks:
 - Hooks that compose element props return named prop bags such as `buttonProps`, `linkProps`, or `fieldRootProps`.
 - Shared behaviour belongs in hooks, not components.
 
+## Field Controls
+
+- Group field controls by the value the whole field represents, not by the element that renders it.
+
 ## Props
 
 - Keep platform prop names when the platform already defines the concept.
