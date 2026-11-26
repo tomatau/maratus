@@ -1,3 +1,5 @@
-# Files that hold example IDs rather than citations.
+# Files that mention IDs without citing them as tests.
 AGENTS.md
 templates/*
+*/README.md
+*/docs/decision-log.md
