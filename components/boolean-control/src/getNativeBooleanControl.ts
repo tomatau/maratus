@@ -1,4 +1,5 @@
 import type {
+  BooleanControlRootProps,
   NativeBooleanControlInput,
   UseNativeBooleanControlResult,
 } from './BooleanControl.types'
@@ -23,10 +24,28 @@ export function getNativeBooleanControl({
       ...(checked === undefined ? {} : { checked }),
       ...(isInteractionDisabled ? { disabled: true } : {}),
       name: field.name,
+      ...(field.isReadOnly ? preventToggle(controlProps) : {}),
       ...(field.isRequired ? { required: true } : {}),
       // A native checkbox already has the checkbox role.
       ...(role === 'switch' ? { role } : {}),
       type: 'checkbox',
+    },
+  }
+}
+
+// Cancelling the click restores the checkbox, and React's onChange fires
+// from that click, so it is dropped too.
+function preventToggle({
+  onClick,
+}: Pick<BooleanControlRootProps, 'onClick'>): Pick<
+  BooleanControlRootProps,
+  'onChange' | 'onClick'
+> {
+  return {
+    onChange: () => {},
+    onClick: (event) => {
+      onClick?.(event)
+      event.preventDefault()
     },
   }
 }

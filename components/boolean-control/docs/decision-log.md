@@ -4,6 +4,15 @@ Product decisions, including API shape, newest first: the choice made, why,
 and the alternatives ruled out. Implementation details, bug fixes, and
 anything a requirement or doc already states stay out; link to them instead.
 
+## Readonly blocks the change for the consumer (2026-11-27)
+
+- **Decision:** a readonly field blocks the change on both roots, so the
+  consumer has nothing to wire (REQ-042 to REQ-045).
+- **Why:** React fires a checkbox's `onChange` before the browser undoes a
+  cancelled click, so a consumer handler sees the flipped value.
+- **Ruled out:** passing `onChange` through so the consumer prevents the
+  change, as choice's PRD-006 does.
+
 ## The hook owns the checked state (2026-11-26)
 
 - **Decision:** consumers pass `checked` to the hook, which writes `checked`
