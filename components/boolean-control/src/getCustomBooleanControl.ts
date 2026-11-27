@@ -1,7 +1,9 @@
 import type {
+  BooleanControlRootProps,
   CustomBooleanControlInput,
   UseCustomBooleanControlResult,
 } from './BooleanControl.types'
+import { suppressActivation } from '@maratus-lib/props'
 
 export function getCustomBooleanControl({
   checked,
@@ -10,14 +12,43 @@ export function getCustomBooleanControl({
   isInteractionDisabled,
   role,
 }: CustomBooleanControlInput): UseCustomBooleanControlResult {
+  // Readonly blocks the consumer's onClick, which owns the checked state.
+  const isActivationBlocked = isInteractionDisabled || field.isReadOnly
+  const { onKeyDown, onKeyUp, ...rootProps } = suppressActivation(
+    controlProps,
+    isActivationBlocked,
+  )
+
   return {
     booleanControlProps: {
-      ...controlProps,
+      ...rootProps,
       'aria-checked': checked,
       ...(isInteractionDisabled ? { 'aria-disabled': true } : {}),
       // A custom root is not labelable, so it names itself from the label.
       'aria-labelledby': field.labelId,
+      onKeyDown: preventSpaceScroll(onKeyDown),
+      onKeyUp: isActivationBlocked ? onKeyUp : clickOnSpace(onKeyUp),
       role,
+      tabIndex: controlProps.tabIndex ?? (isInteractionDisabled ? -1 : 0),
     },
+  }
+}
+
+type KeyHandler = NonNullable<BooleanControlRootProps['onKeyDown']>
+
+function preventSpaceScroll(onKeyDown: KeyHandler | undefined): KeyHandler {
+  return (event) => {
+    if (event.key === ' ') event.preventDefault()
+    onKeyDown?.(event)
+  }
+}
+
+// Space activates on keyup, as on a native checkbox.
+function clickOnSpace(onKeyUp: KeyHandler | undefined): KeyHandler {
+  return (event) => {
+    onKeyUp?.(event)
+    if (event.key !== ' ' || event.defaultPrevented) return
+    event.preventDefault()
+    event.currentTarget.click()
   }
 }

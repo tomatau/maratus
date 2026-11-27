@@ -63,6 +63,7 @@ export type CustomBooleanControlRenderProps = BooleanControlRootProps & {
   'aria-checked': boolean
   'aria-labelledby': string
   role: BooleanControlRole
+  tabIndex: number
 }
 
 export type UseCustomBooleanControlResult = {

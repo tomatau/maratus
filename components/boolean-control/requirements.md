@@ -10,7 +10,7 @@
 ### Current scope
 
 - Native checkboxes, `input type="checkbox"`, with checkbox or switch semantics.
-- Custom checkboxes and switches, `role="checkbox"` or `role="switch"`, with semantics.
+- Custom checkboxes and switches, `role="checkbox"` or `role="switch"`, with semantics, focus, and `Space` activation.
 - Accessible field labels, descriptions, and error relationships.
 - Field-level required, readonly, and loading state translation.
 - Control-level disabled state.
@@ -38,36 +38,49 @@
 
 ### Given Native Checkbox
 
-| ID      | Level  | Requirement                                                                                | Source                                                                              | Surfaces       | Applicability |
-| ------- | ------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | -------------- | ------------- |
-| REQ-001 | MUST   | The label's `for` must match the native checkbox's `id`.                                   | HTML Standard `label`; WCAG 2.2 SC 1.3.1; WCAG 2.2 SC 3.3.2                         | BooleanControl | Current       |
-| REQ-002 | MUST   | The native checkbox must render as an `input` with `type="checkbox"`.                      | HTML Standard checkbox state; WCAG 2.2 SC 4.1.2                                     | BooleanControl | Current       |
-| REQ-004 | MUST   | When the field is required, the native checkbox must have the `required` attribute.        | HTML Standard checkbox state; WCAG 2.2 SC 3.3.2                                     | BooleanControl | Current       |
-| REQ-005 | MUST   | When the field is loading, the native checkbox must have `disabled`.                       | HTML Standard disabled form controls; GPRD-008                                      | BooleanControl | Current       |
-| REQ-034 | MUST   | When `disabled` is true, the native checkbox must have the `disabled` attribute.           | HTML Standard disabled form controls; WCAG 2.2 SC 4.1.2                             | BooleanControl | Current       |
-| REQ-006 | MUST   | When the `checked` option is set, the native checkbox's DOM `checked` state must match it. | HTML Standard checkbox state; WCAG 2.2 SC 4.1.2                                     | BooleanControl | Current       |
-| REQ-012 | MUST   | When `role` is `switch`, the native checkbox must have `role="switch"`.                    | ARIA in HTML `input type=checkbox`; WAI-ARIA 1.2 `switch`; WCAG 2.2 SC 4.1.2        | BooleanControl | Current       |
-| REQ-013 | SHOULD | When `role` is `checkbox` or unset, the native checkbox should omit an explicit `role`.    | ARIA in HTML `input type=checkbox`                                                  | BooleanControl | Current       |
-| REQ-014 | MUST   | The native checkbox must not have `aria-checked`.                                          | ARIA in HTML `input type=checkbox`                                                  | BooleanControl | Current       |
-| REQ-020 | SHOULD | When the native checkbox has `required`, it should not have `aria-required`.               | ARIA in HTML `required` attribute                                                   | BooleanControl | Current       |
-| REQ-024 | MUST   | When the field is readonly, the native checkbox must have `aria-readonly="true"`.          | WAI-ARIA 1.2 `aria-readonly`; ARIA in HTML `input type=checkbox`; WCAG 2.2 SC 4.1.2 | BooleanControl | Current       |
-| REQ-026 | SHOULD | When the native checkbox has `disabled`, it should not have `aria-disabled`.               | ARIA in HTML `disabled` attribute                                                   | BooleanControl | Current       |
+| ID      | Level  | Requirement                                                                                                                           | Source                                                                              | Surfaces       | Applicability |
+| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------- | ------------- |
+| REQ-001 | MUST   | The label's `for` must match the native checkbox's `id`.                                                                              | HTML Standard `label`; WCAG 2.2 SC 1.3.1; WCAG 2.2 SC 3.3.2                         | BooleanControl | Current       |
+| REQ-002 | MUST   | The native checkbox must render as an `input` with `type="checkbox"`.                                                                 | HTML Standard checkbox state; WCAG 2.2 SC 4.1.2                                     | BooleanControl | Current       |
+| REQ-004 | MUST   | When the field is required, the native checkbox must have the `required` attribute.                                                   | HTML Standard checkbox state; WCAG 2.2 SC 3.3.2                                     | BooleanControl | Current       |
+| REQ-005 | MUST   | When the field is loading, the native checkbox must have `disabled`.                                                                  | HTML Standard disabled form controls; GPRD-008                                      | BooleanControl | Current       |
+| REQ-034 | MUST   | When `disabled` is true, the native checkbox must have the `disabled` attribute.                                                      | HTML Standard disabled form controls; WCAG 2.2 SC 4.1.2                             | BooleanControl | Current       |
+| REQ-006 | MUST   | When the `checked` option is set, the native checkbox's DOM `checked` state must match it.                                            | HTML Standard checkbox state; WCAG 2.2 SC 4.1.2                                     | BooleanControl | Current       |
+| REQ-012 | MUST   | When `role` is `switch`, the native checkbox must have `role="switch"`.                                                               | ARIA in HTML `input type=checkbox`; WAI-ARIA 1.2 `switch`; WCAG 2.2 SC 4.1.2        | BooleanControl | Current       |
+| REQ-013 | SHOULD | When `role` is `checkbox` or unset, the native checkbox should omit an explicit `role`.                                               | ARIA in HTML `input type=checkbox`                                                  | BooleanControl | Current       |
+| REQ-014 | MUST   | The native checkbox must not have `aria-checked`.                                                                                     | ARIA in HTML `input type=checkbox`                                                  | BooleanControl | Current       |
+| REQ-020 | SHOULD | When the native checkbox has `required`, it should not have `aria-required`.                                                          | ARIA in HTML `required` attribute                                                   | BooleanControl | Current       |
+| REQ-024 | MUST   | When the field is readonly, the native checkbox must have `aria-readonly="true"`.                                                     | WAI-ARIA 1.2 `aria-readonly`; ARIA in HTML `input type=checkbox`; WCAG 2.2 SC 4.1.2 | BooleanControl | Current       |
+| REQ-026 | SHOULD | When the native checkbox has `disabled`, it should not have `aria-disabled`.                                                          | ARIA in HTML `disabled` attribute                                                   | BooleanControl | Current       |
+| REQ-029 | MUST   | Pointer activation toggles an enabled native checkbox when the field is not readonly.                                                 | HTML Standard `input`; HTML Standard checkbox state                                 | BooleanControl | Current       |
+| REQ-030 | MUST   | Keyboard users can toggle an enabled native checkbox when the field is not readonly, using the browser's native checkbox interaction. | WCAG 2.2 SC 2.1.1                                                                   | BooleanControl | Current       |
+| REQ-031 | MUST   | Pointer interaction cannot toggle a disabled native checkbox.                                                                         | HTML Standard disabled form controls                                                | BooleanControl | Current       |
+| REQ-032 | MUST   | Keyboard interaction cannot toggle a disabled native checkbox.                                                                        | HTML Standard disabled form controls                                                | BooleanControl | Current       |
+| REQ-044 | MUST   | When the field is readonly, pointer interaction leaves the native checkbox's `checked` state unchanged and fires no `change` event.   | WAI-ARIA 1.2 `aria-readonly`                                                        | BooleanControl | Current       |
+| REQ-045 | MUST   | When the field is readonly, keyboard interaction leaves the native checkbox's `checked` state unchanged and fires no `change` event.  | WAI-ARIA 1.2 `aria-readonly`                                                        | BooleanControl | Current       |
 
 ### Given Custom Root
 
-The hook supplies the role and states; the consumer updates `checked` (PRD-005). The Given Any Root rows also apply.
+The hook supplies the role, states, focus, and activation; the consumer updates `checked` (PRD-005). The Given Any Root rows also apply.
 
-| ID      | Level | Requirement                                                                                                              | Source                                                                                         | Surfaces       | Applicability |
-| ------- | ----- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------- | ------------- |
-| REQ-007 | MUST  | The custom root must have `role="checkbox"` or `role="switch"`, as its required `role` option requests.                  | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`; WCAG 2.2 SC 4.1.2                              | BooleanControl | Current       |
-| REQ-008 | MUST  | The custom root must have `aria-checked="true"` when the `checked` option is true, and `aria-checked="false"` otherwise. | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`; WAI-ARIA 1.2 `aria-checked`; WCAG 2.2 SC 4.1.2 | BooleanControl | Current       |
-| REQ-009 | MUST  | When the field is required, the custom root must have `aria-required="true"`.                                            | WAI-ARIA 1.2 `aria-required`; WCAG 2.2 SC 3.3.2; WCAG 2.2 SC 4.1.2                             | BooleanControl | Current       |
-| REQ-011 | MUST  | When the field is readonly, the custom root must have `aria-readonly="true"`.                                            | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `aria-readonly`; WCAG 2.2 SC 4.1.2                       | BooleanControl | Current       |
-| REQ-015 | MUST  | The custom root's `aria-labelledby` must reference the field label's `id`.                                               | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `aria-labelledby`; WCAG 2.2 SC 1.3.1; WCAG 2.2 SC 4.1.2  | BooleanControl | Current       |
-| REQ-021 | MUST  | The custom root must not have the `required` attribute.                                                                  | ARIA in HTML `required` attribute; HTML Standard form control infrastructure                   | BooleanControl | Current       |
-| REQ-027 | MUST  | When the field is loading, the custom root must have `aria-disabled="true"`.                                             | WAI-ARIA 1.2 `aria-disabled`; GPRD-008                                                         | BooleanControl | Current       |
-| REQ-035 | MUST  | When `disabled` is true, the custom root must have `aria-disabled="true"`.                                               | WAI-ARIA 1.2 `aria-disabled`; WCAG 2.2 SC 4.1.2                                                | BooleanControl | Current       |
-| REQ-028 | MUST  | The custom root must not have the `disabled` attribute.                                                                  | HTML Standard disabled form controls                                                           | BooleanControl | Current       |
+| ID      | Level | Requirement                                                                                                                           | Source                                                                                         | Surfaces       | Applicability |
+| ------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------- | ------------- |
+| REQ-007 | MUST  | The custom root must have `role="checkbox"` or `role="switch"`, as its required `role` option requests.                               | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`; WCAG 2.2 SC 4.1.2                              | BooleanControl | Current       |
+| REQ-008 | MUST  | The custom root must have `aria-checked="true"` when the `checked` option is true, and `aria-checked="false"` otherwise.              | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`; WAI-ARIA 1.2 `aria-checked`; WCAG 2.2 SC 4.1.2 | BooleanControl | Current       |
+| REQ-009 | MUST  | When the field is required, the custom root must have `aria-required="true"`.                                                         | WAI-ARIA 1.2 `aria-required`; WCAG 2.2 SC 3.3.2; WCAG 2.2 SC 4.1.2                             | BooleanControl | Current       |
+| REQ-011 | MUST  | When the field is readonly, the custom root must have `aria-readonly="true"`.                                                         | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `aria-readonly`; WCAG 2.2 SC 4.1.2                       | BooleanControl | Current       |
+| REQ-015 | MUST  | The custom root's `aria-labelledby` must reference the field label's `id`.                                                            | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `aria-labelledby`; WCAG 2.2 SC 1.3.1; WCAG 2.2 SC 4.1.2  | BooleanControl | Current       |
+| REQ-021 | MUST  | The custom root must not have the `required` attribute.                                                                               | ARIA in HTML `required` attribute; HTML Standard form control infrastructure                   | BooleanControl | Current       |
+| REQ-027 | MUST  | When the field is loading, the custom root must have `aria-disabled="true"`.                                                          | WAI-ARIA 1.2 `aria-disabled`; GPRD-008                                                         | BooleanControl | Current       |
+| REQ-035 | MUST  | When `disabled` is true, the custom root must have `aria-disabled="true"`.                                                            | WAI-ARIA 1.2 `aria-disabled`; WCAG 2.2 SC 4.1.2                                                | BooleanControl | Current       |
+| REQ-037 | MUST  | When the custom root is enabled and the field is not loading, it must be keyboard focusable.                                          | WAI-ARIA 1.2 `checkbox`; WCAG 2.2 SC 2.1.1                                                     | BooleanControl | Current       |
+| REQ-028 | MUST  | The custom root must not have the `disabled` attribute.                                                                               | HTML Standard disabled form controls                                                           | BooleanControl | Current       |
+| REQ-038 | MUST  | Pointer activation of an enabled custom root calls the consumer's `onClick` when the field is not readonly.                           | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`                                                 | BooleanControl | Current       |
+| REQ-039 | MUST  | When an enabled custom root has keyboard focus and the field is not readonly, `Space` activates it, calling the consumer's `onClick`. | WAI-ARIA 1.2 `checkbox`; WAI-ARIA 1.2 `switch`; WCAG 2.2 SC 2.1.1                              | BooleanControl | Current       |
+| REQ-040 | MUST  | Pointer interaction cannot activate the custom root when `disabled` is true or the field is loading.                                  | WAI-ARIA 1.2 `aria-disabled`; GPRD-008                                                         | BooleanControl | Current       |
+| REQ-041 | MUST  | Keyboard interaction cannot activate the custom root when `disabled` is true or the field is loading.                                 | WAI-ARIA 1.2 `aria-disabled`; GPRD-008                                                         | BooleanControl | Current       |
+| REQ-042 | MUST  | When the field is readonly, pointer interaction cannot activate the custom root.                                                      | WAI-ARIA 1.2 `aria-readonly`                                                                   | BooleanControl | Current       |
+| REQ-043 | MUST  | When the field is readonly, keyboard interaction cannot activate the custom root.                                                     | WAI-ARIA 1.2 `aria-readonly`                                                                   | BooleanControl | Current       |
 
 ## Product Requirements
 
@@ -83,8 +96,13 @@ The hook supplies the role and states; the consumer updates `checked` (PRD-005).
 | PRD-008 | `BooleanControl` passes `useBooleanControl`'s result to its children, so the hook meets every `BooleanControl` requirement.                                                                                                                                                                    | useBooleanControl | Current       |
 | PRD-010 | The native checkbox's `name` must match the configured field name.                                                                                                                                                                                                                             | BooleanControl    | Current       |
 | PRD-011 | When a consumer reports a validation error for the custom root through a validity handler's second argument and `FieldRoot` has no `activeErrors`, the field must treat it as an active error; once the field's `errorPolicy` makes it visible, the custom root must meet REQ-017 and REQ-018. | BooleanControl    | Current       |
+| PRD-012 | When `disabled` is true or the field is loading, the custom root's default `tabIndex` is `-1`, as a disabled native checkbox leaves the tab order.                                                                                                                                             | BooleanControl    | Current       |
+| PRD-013 | A consumer's `tabIndex` on the custom root wins over the hook's default.                                                                                                                                                                                                                       | BooleanControl    | Current       |
+| PRD-014 | The custom root activates on `Space` only, as a native checkbox does; `Enter`, which the APG makes optional for a switch, does not activate it.                                                                                                                                                | BooleanControl    | Current       |
+| PRD-015 | Keyboard activation of the custom root runs the consumer's key handler first, and does not activate when that handler prevents default (GPRD-009, GPRD-010).                                                                                                                                   | BooleanControl    | Current       |
 | PRD-016 | When the field is loading, the root has an empty `data-loading` attribute as a styling hook.                                                                                                                                                                                                   | BooleanControl    | Current       |
 | PRD-017 | The custom root has only global attributes: ARIA, `class`, `data-*`, `id`, `role`, and `tabindex`, so it stays valid on whichever element the consumer renders.                                                                                                                                | BooleanControl    | Current       |
+| PRD-018 | When the custom root has keyboard focus, pressing `Space` does not scroll the page, whether or not it is disabled, loading, or readonly, as `Space` does not on a focused native checkbox.                                                                                                     | BooleanControl    | Current       |
 
 ## Global Requirements
 
@@ -95,6 +113,9 @@ How the root [`requirements.md`](../../requirements.md) applies to this package.
 | GPRD-003 | `useBooleanControl` | Current       |
 | GPRD-004 | `useBooleanControl` | Current       |
 | GPRD-005 | `BooleanControl`    | Current       |
+| GPRD-008 | `BooleanControl`    | Current       |
+| GPRD-009 | `BooleanControl`    | Current       |
+| GPRD-010 | `BooleanControl`    | Current       |
 
 ## Normative Sources
 
@@ -120,6 +141,7 @@ How the root [`requirements.md`](../../requirements.md) applies to this package.
 - ARIA in HTML: [`readonly` attribute](https://www.w3.org/TR/html-aria/#att-readonly)
 - ARIA in HTML: [`disabled` attribute](https://www.w3.org/TR/html-aria/#att-disabled)
 - WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
+- WCAG 2.2 SC 2.1.1: [Keyboard](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html)
 - WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
 - WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
 - WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
