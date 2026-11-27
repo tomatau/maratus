@@ -10,12 +10,15 @@ export type BooleanControlMode = keyof BooleanControlModes
 
 export type BooleanControlRole = 'checkbox' | 'switch'
 
+export type BooleanControlDisabledBehavior = 'focusable' | 'native'
+
 // The native root is the default, so only a custom root names its mode.
 type BooleanControlModes = {
   custom: {
     options: Omit<UseFieldControlOptions, 'aria-checked'> & {
       checked: boolean
       disabled?: boolean
+      disabledBehavior?: BooleanControlDisabledBehavior
       mode: 'custom'
       role: BooleanControlRole
     }
@@ -25,6 +28,7 @@ type BooleanControlModes = {
     options: Omit<UseFieldControlOptions<HTMLInputElement>, 'aria-checked'> & {
       checked?: boolean
       disabled?: boolean
+      disabledBehavior?: BooleanControlDisabledBehavior
       mode?: 'native'
       role?: BooleanControlRole
     }
@@ -47,9 +51,10 @@ export type NativeBooleanControlRenderProps = Omit<
   BooleanControlRootProps,
   'aria-checked' | 'aria-disabled' | 'aria-required'
 > & {
+  'aria-disabled'?: true
   checked?: boolean
   disabled?: true
-  name: string
+  name?: string
   required?: true
   role?: 'switch'
   type: 'checkbox'
@@ -75,10 +80,16 @@ export type BooleanControlProps<TMode extends BooleanControlMode = 'native'> =
     children: (props: UseBooleanControlResult<TMode>) => ReactNode
   }
 
+// The disabled option and loading, resolved against disabledBehavior.
+export type BooleanControlDisabledState =
+  | 'disabled'
+  | 'enabled'
+  | 'focusableDisabled'
+
 type BooleanControlInput = {
   controlProps: BooleanControlRootProps
+  disabledState: BooleanControlDisabledState
   field: FieldContextValue
-  isInteractionDisabled: boolean
 }
 
 export type NativeBooleanControlInput = BooleanControlInput & {

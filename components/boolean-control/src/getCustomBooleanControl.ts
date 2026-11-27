@@ -8,12 +8,12 @@ import { suppressActivation } from '@maratus-lib/props'
 export function getCustomBooleanControl({
   checked,
   controlProps,
+  disabledState,
   field,
-  isInteractionDisabled,
   role,
 }: CustomBooleanControlInput): UseCustomBooleanControlResult {
   // Readonly blocks the consumer's onClick, which owns the checked state.
-  const isActivationBlocked = isInteractionDisabled || field.isReadOnly
+  const isActivationBlocked = disabledState !== 'enabled' || field.isReadOnly
   const { onKeyDown, onKeyUp, ...rootProps } = suppressActivation(
     controlProps,
     isActivationBlocked,
@@ -23,13 +23,14 @@ export function getCustomBooleanControl({
     booleanControlProps: {
       ...rootProps,
       'aria-checked': checked,
-      ...(isInteractionDisabled ? { 'aria-disabled': true } : {}),
+      ...(disabledState === 'enabled' ? {} : { 'aria-disabled': true }),
       // A custom root is not labelable, so it names itself from the label.
       'aria-labelledby': field.labelId,
       onKeyDown: preventSpaceScroll(onKeyDown),
       onKeyUp: isActivationBlocked ? onKeyUp : clickOnSpace(onKeyUp),
       role,
-      tabIndex: controlProps.tabIndex ?? (isInteractionDisabled ? -1 : 0),
+      tabIndex:
+        controlProps.tabIndex ?? (disabledState === 'disabled' ? -1 : 0),
     },
   }
 }

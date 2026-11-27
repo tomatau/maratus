@@ -3,29 +3,39 @@ import type {
   NativeBooleanControlInput,
   UseNativeBooleanControlResult,
 } from './BooleanControl.types'
-import { omitProps } from '@maratus-lib/props'
+import { omitProps, suppressActivation } from '@maratus-lib/props'
 
 export function getNativeBooleanControl({
   checked,
   controlProps,
+  disabledState,
   field,
-  isInteractionDisabled,
   role,
 }: NativeBooleanControlInput): UseNativeBooleanControlResult {
+  const isFocusableDisabled = disabledState === 'focusableDisabled'
+  // A disabled checkbox gets no click, so consumer activation is skipped too.
+  const rootProps = suppressActivation(
+    // Native attributes carry these states, so their ARIA forms must not.
+    omitProps(controlProps, ['aria-checked', 'aria-disabled', 'aria-required']),
+    isFocusableDisabled,
+  )
+
   return {
     booleanControlProps: {
-      // Native attributes carry these states, so their ARIA forms must not.
-      ...omitProps(controlProps, [
-        'aria-checked',
-        'aria-disabled',
-        'aria-required',
-      ]),
+      ...rootProps,
       // Without checked, the browser keeps the state.
       ...(checked === undefined ? {} : { checked }),
-      ...(isInteractionDisabled ? { disabled: true } : {}),
-      name: field.name,
-      ...(field.isReadOnly ? preventToggle(controlProps) : {}),
-      ...(field.isRequired ? { required: true } : {}),
+      ...(disabledState === 'disabled' ? { disabled: true } : {}),
+      // A focusable disabled checkbox leaves its form, as a disabled one does.
+      ...(isFocusableDisabled
+        ? { 'aria-disabled': true }
+        : {
+            name: field.name,
+            ...(field.isRequired ? { required: true } : {}),
+          }),
+      ...(field.isReadOnly || isFocusableDisabled
+        ? preventToggle(rootProps)
+        : {}),
       // A native checkbox already has the checkbox role.
       ...(role === 'switch' ? { role } : {}),
       type: 'checkbox',

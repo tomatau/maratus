@@ -68,6 +68,16 @@ export const NATIVE_DISABLED_CASES = [
   { options: { control: { disabled: true }, field: {} }, state: 'disabled' },
 ] satisfies { options: NativeMountOptions; state: string }[]
 
+export const FOCUSABLE_DISABLED_CASES = NATIVE_DISABLED_CASES.map(
+  ({ options, state }) => ({
+    options: {
+      ...options,
+      control: { ...options.control, disabledBehavior: 'focusable' as const },
+    },
+    state: `focusable ${state}`,
+  }),
+)
+
 export const CUSTOM_CHECKBOX = {
   checked: false,
   mode: 'custom',

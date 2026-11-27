@@ -1,4 +1,5 @@
 export type {
+  BooleanControlDisabledBehavior,
   BooleanControlMode,
   BooleanControlProps,
   BooleanControlRole,

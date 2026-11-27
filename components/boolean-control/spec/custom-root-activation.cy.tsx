@@ -31,6 +31,21 @@ describe('BooleanControl custom mode', () => {
       })
     })
 
+    DISABLED_CASES.forEach(({ control, field, state }) => {
+      it(`PRD-021 GPRD-011 keeps a focusable ${state} custom root in the tab order`, () => {
+        mountCustomRoot({
+          control: {
+            ...CUSTOM_CHECKBOX,
+            ...control,
+            disabledBehavior: 'focusable',
+          },
+          field,
+        })
+
+        cy.getByTestId('control').should('have.attr', 'tabindex', '0')
+      })
+    })
+
     it("PRD-013 keeps the consumer's tabIndex", () => {
       mountCustomRoot({
         control: { ...CUSTOM_CHECKBOX, disabled: true, tabIndex: 0 },
