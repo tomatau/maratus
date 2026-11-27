@@ -1,58 +1,64 @@
 import type {
-  BooleanControlRenderProps,
+  BooleanControlMode,
   UseBooleanControlOptions,
   UseBooleanControlResult,
 } from './BooleanControl.types'
-import type {
-  FieldContextValue,
-  FieldControlRenderProps,
-  ValidityHandlerProps,
-} from '@maratus-component/field'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
-import { mergeRefs } from '@maratus-lib/props'
+import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
+import { getCustomBooleanControl } from './getCustomBooleanControl'
+import { getNativeBooleanControl } from './getNativeBooleanControl'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'BooleanControl: HTML readonly does not apply to checkboxes. Use FieldRoot isReadOnly instead.'
 
 export function useBooleanControl(
-  options: UseBooleanControlOptions = {},
-): UseBooleanControlResult {
-  const { role, ...fieldControlOptions } = options
+  options?: UseBooleanControlOptions<'native'>,
+): UseBooleanControlResult<'native'>
+export function useBooleanControl<TMode extends BooleanControlMode>(
+  options: UseBooleanControlOptions<TMode>,
+): UseBooleanControlResult<TMode>
+// BooleanControl passes its props through, so its render prop is dropped here.
+export function useBooleanControl(
+  options: UseBooleanControlOptions<BooleanControlMode> & {
+    children?: unknown
+  } = {},
+): UseBooleanControlResult<BooleanControlMode> {
+  const {
+    checked,
+    children: _children,
+    disabled,
+    mode,
+    role,
+    ...fieldControlOptions
+  } = options
   const field = useFieldContext('BooleanControl')
-  const { fieldControlProps, validityHandlerProps } =
-    useFieldControl(fieldControlOptions)
+  const { fieldControlProps, validityHandlerProps } = useFieldControl(
+    omitPropWithWarning(
+      fieldControlOptions,
+      'readOnly',
+      UNSUPPORTED_READ_ONLY_WARNING,
+    ),
+  )
+  const isInteractionDisabled = disabled === true || field.isLoading
   const controlProps = {
     ...fieldControlProps,
     ...validityHandlerProps,
     ref: mergeRefs(fieldControlProps.ref, validityHandlerProps.ref),
   }
 
-  if (role) {
-    return {
-      booleanControlProps: {
-        ...controlProps,
-        ...(field.isRequired ? { 'aria-required': true } : {}),
+  return mode === 'custom'
+    ? getCustomBooleanControl({
+        checked,
+        controlProps,
+        field,
+        isInteractionDisabled,
         role,
-      },
-    }
-  }
-
-  return {
-    booleanControlProps: getNativeBooleanControlProps(controlProps, field),
-  }
-}
-
-function getNativeBooleanControlProps(
-  fieldControlProps: FieldControlRenderProps & ValidityHandlerProps,
-  field: FieldContextValue,
-): BooleanControlRenderProps {
-  const booleanControlProps = { ...fieldControlProps }
-
-  delete booleanControlProps['aria-readonly']
-  delete booleanControlProps['aria-required']
-
-  return {
-    ...booleanControlProps,
-    ...(field.isLoading ? { disabled: true } : {}),
-    name: field.name,
-    ...(field.isRequired ? { required: true } : {}),
-    type: 'checkbox',
-  }
+      })
+    : getNativeBooleanControl({
+        checked,
+        controlProps,
+        field,
+        isInteractionDisabled,
+        role,
+      })
 }

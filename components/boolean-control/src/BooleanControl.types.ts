@@ -1,54 +1,91 @@
 import type {
+  FieldContextValue,
   FieldControlRenderProps,
+  UseFieldControlOptions,
   ValidityHandlerProps,
 } from '@maratus-component/field'
-import type { AriaAttributes, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+
+export type BooleanControlMode = keyof BooleanControlModes
 
 export type BooleanControlRole = 'checkbox' | 'switch'
 
-export type BooleanControlRenderProps = FieldControlRenderProps &
-  ValidityHandlerProps & {
-    'aria-checked'?: AriaAttributes['aria-checked']
-    checked?: boolean
-    disabled?: boolean
-    name?: string
-    required?: boolean
-    role?: BooleanControlRole
-    type?: 'checkbox'
+// The native root is the default, so only a custom root names its mode.
+type BooleanControlModes = {
+  custom: {
+    options: Omit<UseFieldControlOptions, 'aria-checked'> & {
+      checked: boolean
+      disabled?: boolean
+      mode: 'custom'
+      role: BooleanControlRole
+    }
+    result: UseCustomBooleanControlResult
   }
-
-export type BooleanControlRenderArgs = {
-  booleanControlProps: BooleanControlRenderProps
+  native: {
+    options: Omit<UseFieldControlOptions<HTMLInputElement>, 'aria-checked'> & {
+      checked?: boolean
+      disabled?: boolean
+      mode?: 'native'
+      role?: BooleanControlRole
+    }
+    result: UseNativeBooleanControlResult
+  }
 }
 
-export type UseBooleanControlOptions = Omit<
-  BooleanControlRenderProps,
-  | 'aria-busy'
-  | 'aria-checked'
-  | 'aria-describedby'
-  | 'aria-disabled'
-  | 'aria-errormessage'
-  | 'aria-invalid'
-  | 'aria-readonly'
-  | 'aria-required'
-  | 'children'
-  | 'data-loading'
-  | 'disabled'
-  | 'id'
-  | 'name'
-  | 'required'
-  | 'role'
-  | 'type'
-  | keyof ValidityHandlerProps
-> &
-  Partial<ValidityHandlerProps> & {
-    role?: BooleanControlRole
-  }
+export type UseBooleanControlOptions<
+  TMode extends BooleanControlMode = 'native',
+> = BooleanControlModes[TMode]['options'] & { mode?: TMode }
 
-export type UseBooleanControlResult = {
-  booleanControlProps: BooleanControlRenderProps
+export type UseBooleanControlResult<
+  TMode extends BooleanControlMode = 'native',
+> = BooleanControlModes[TMode]['result']
+
+export type BooleanControlRootProps = FieldControlRenderProps &
+  ValidityHandlerProps
+
+export type NativeBooleanControlRenderProps = Omit<
+  BooleanControlRootProps,
+  'aria-checked' | 'aria-disabled' | 'aria-required'
+> & {
+  checked?: boolean
+  disabled?: true
+  name: string
+  required?: true
+  role?: 'switch'
+  type: 'checkbox'
 }
 
-export type BooleanControlProps = UseBooleanControlOptions & {
-  children: (props: BooleanControlRenderArgs) => ReactNode
+export type UseNativeBooleanControlResult = {
+  booleanControlProps: NativeBooleanControlRenderProps
+}
+
+export type CustomBooleanControlRenderProps = BooleanControlRootProps & {
+  'aria-checked': boolean
+  'aria-labelledby': string
+  role: BooleanControlRole
+}
+
+export type UseCustomBooleanControlResult = {
+  booleanControlProps: CustomBooleanControlRenderProps
+}
+
+export type BooleanControlProps<TMode extends BooleanControlMode = 'native'> =
+  UseBooleanControlOptions<TMode> & {
+    children: (props: UseBooleanControlResult<TMode>) => ReactNode
+  }
+
+type BooleanControlInput = {
+  controlProps: BooleanControlRootProps
+  field: FieldContextValue
+  isInteractionDisabled: boolean
+}
+
+export type NativeBooleanControlInput = BooleanControlInput & {
+  checked?: boolean
+  role?: BooleanControlRole
+}
+
+export type CustomBooleanControlInput = BooleanControlInput & {
+  checked: boolean
+  role: BooleanControlRole
 }
