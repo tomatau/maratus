@@ -12,3 +12,5 @@ packages/maratus-cli-*/bin/*
 !packages/maratus-cli-*/bin/.gitkeep
 .envrc
 playground.cy.tsx
+cypress/screenshots
+cypress/videos
