@@ -1,6 +1,7 @@
 import type { BooleanControlRole } from '../src'
 import {
   FIELD_NAME,
+  FOCUSABLE_DISABLED_CASES,
   NATIVE_DISABLED_CASES,
   VALUE_MISSING_MESSAGE,
   mountNativeCheckbox,
@@ -177,7 +178,7 @@ describe('BooleanControl native mode', () => {
       cy.getByTestId('control').should('have.attr', 'data-loading', '')
     })
 
-    it('REQ-034 PRD-007 renders the disabled option as the disabled attribute', () => {
+    it('REQ-034 PRD-007 PRD-019 renders the disabled option as the disabled attribute by default', () => {
       mountNativeCheckbox({ control: { disabled: true } })
 
       cy.getByTestId('control').should('have.prop', 'disabled', true)
@@ -188,6 +189,46 @@ describe('BooleanControl native mode', () => {
         mountNativeCheckbox(options)
 
         cy.getByTestId('control').should('not.have.attr', 'aria-disabled')
+      })
+    })
+  })
+
+  describe('focusable disabled', () => {
+    FOCUSABLE_DISABLED_CASES.forEach(({ options, state }) => {
+      it(`REQ-046 GPRD-011 marks a ${state} native checkbox aria-disabled`, () => {
+        mountNativeCheckbox(options)
+
+        cy.getByTestId('control').should('have.attr', 'aria-disabled', 'true')
+      })
+
+      it(`PRD-020 keeps a ${state} native checkbox focusable`, () => {
+        mountNativeCheckbox(options)
+
+        cy.getByTestId('control').should('not.have.attr', 'disabled')
+        cy.getByTestId('control').focus().should('have.focus')
+      })
+
+      it(`REQ-047 lets Tab leave a ${state} native checkbox`, () => {
+        mountNativeCheckbox(options)
+
+        cy.getByTestId('control').focus().realPress('Tab')
+
+        cy.getByTestId('control').should('not.have.focus')
+      })
+
+      it(`PRD-023 leaves the name off a ${state} native checkbox`, () => {
+        mountNativeCheckbox(options)
+
+        cy.getByTestId('control').should('not.have.attr', 'name')
+      })
+
+      it(`PRD-024 leaves required off a ${state} native checkbox`, () => {
+        mountNativeCheckbox({
+          ...options,
+          field: { ...options.field, isRequired: true },
+        })
+
+        cy.getByTestId('control').should('not.have.attr', 'required')
       })
     })
   })

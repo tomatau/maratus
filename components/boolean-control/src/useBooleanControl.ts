@@ -1,4 +1,6 @@
 import type {
+  BooleanControlDisabledBehavior,
+  BooleanControlDisabledState,
   BooleanControlMode,
   UseBooleanControlOptions,
   UseBooleanControlResult,
@@ -27,6 +29,7 @@ export function useBooleanControl(
     checked,
     children: _children,
     disabled,
+    disabledBehavior = 'native',
     mode,
     role,
     ...fieldControlOptions
@@ -39,7 +42,10 @@ export function useBooleanControl(
       UNSUPPORTED_READ_ONLY_WARNING,
     ),
   )
-  const isInteractionDisabled = disabled === true || field.isLoading
+  const disabledState = getDisabledState({
+    disabledBehavior,
+    isDisabled: disabled === true || field.isLoading,
+  })
   const controlProps = {
     ...fieldControlProps,
     ...validityHandlerProps,
@@ -50,15 +56,26 @@ export function useBooleanControl(
     ? getCustomBooleanControl({
         checked,
         controlProps,
+        disabledState,
         field,
-        isInteractionDisabled,
         role,
       })
     : getNativeBooleanControl({
         checked,
         controlProps,
+        disabledState,
         field,
-        isInteractionDisabled,
         role,
       })
+}
+
+function getDisabledState({
+  disabledBehavior,
+  isDisabled,
+}: {
+  disabledBehavior: BooleanControlDisabledBehavior
+  isDisabled: boolean
+}): BooleanControlDisabledState {
+  if (!isDisabled) return 'enabled'
+  return disabledBehavior === 'focusable' ? 'focusableDisabled' : 'disabled'
 }

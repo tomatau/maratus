@@ -1,7 +1,18 @@
 import {
+  FOCUSABLE_DISABLED_CASES,
   NATIVE_DISABLED_CASES,
   mountNativeCheckbox,
 } from './booleanControlField'
+
+// A focusable disabled checkbox must also skip consumer handlers (PRD-022),
+// which a disabled one never receives.
+const BLOCKED_CASES = [
+  ...NATIVE_DISABLED_CASES.map((blocked) => ({ ...blocked, ids: [] })),
+  ...FOCUSABLE_DISABLED_CASES.map((blocked) => ({
+    ...blocked,
+    ids: ['PRD-022'],
+  })),
+]
 
 describe('BooleanControl native mode', () => {
   describe('interaction', () => {
@@ -44,8 +55,8 @@ describe('BooleanControl native mode', () => {
           cy.get('@change').should('have.been.calledOnce')
         })
 
-        NATIVE_DISABLED_CASES.forEach(({ options, state }) => {
-          it(`${blockedWhenDisabled} keeps a ${state} native checkbox unchanged by ${path}`, () => {
+        BLOCKED_CASES.forEach(({ ids, options, state }) => {
+          it(`${[blockedWhenDisabled, ...ids].join(' ')} keeps a ${state} native checkbox unchanged by ${path}`, () => {
             mountNativeCheckbox({
               ...options,
               control: {
