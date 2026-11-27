@@ -1,10 +1,13 @@
 export type {
+  BooleanControlMode,
   BooleanControlProps,
-  BooleanControlRenderArgs,
-  BooleanControlRenderProps,
   BooleanControlRole,
+  CustomBooleanControlRenderProps,
+  NativeBooleanControlRenderProps,
   UseBooleanControlOptions,
   UseBooleanControlResult,
+  UseCustomBooleanControlResult,
+  UseNativeBooleanControlResult,
 } from './BooleanControl.types'
 export { BooleanControl } from './BooleanControl'
 export { useBooleanControl } from './useBooleanControl'

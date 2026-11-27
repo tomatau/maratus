@@ -1,9 +1,11 @@
-import type { BooleanControlProps } from './BooleanControl.types'
+import type {
+  BooleanControlMode,
+  BooleanControlProps,
+} from './BooleanControl.types'
 import { useBooleanControl } from './useBooleanControl'
 
-export function BooleanControl(props: BooleanControlProps) {
-  const { children, ...hookProps } = props
-  const control = useBooleanControl(hookProps)
-
-  return children(control)
+export function BooleanControl<TMode extends BooleanControlMode = 'native'>(
+  props: BooleanControlProps<TMode>,
+) {
+  return props.children(useBooleanControl<TMode>(props))
 }
