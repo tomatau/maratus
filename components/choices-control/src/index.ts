@@ -1,4 +1,5 @@
 export type {
+  ChoicesControlDisabledBehavior,
   CheckboxInputOptions,
   CheckboxInputRenderProps,
   CheckboxItemOptions,

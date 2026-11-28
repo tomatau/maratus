@@ -1,3 +1,4 @@
+import type { ChoicesControlDisabledBehavior } from '../src'
 import type { FieldRootProps, ValidityErrorKey } from '@maratus-component/field'
 import {
   Description,
@@ -50,11 +51,18 @@ export type CheckboxesFieldState = Pick<
 
 export type MountOptions = {
   checkboxes?: readonly CheckboxFixture[]
+  disabledBehavior?: ChoicesControlDisabledBehavior
   fieldState?: CheckboxesFieldState
   initialValues?: readonly string[]
+  onClick?: () => void
 }
 
-function CheckboxesField(props: Required<MountOptions>) {
+type CheckboxesFieldProps = Required<
+  Omit<MountOptions, 'disabledBehavior' | 'onClick'>
+> &
+  Pick<MountOptions, 'disabledBehavior' | 'onClick'>
+
+function CheckboxesField(props: CheckboxesFieldProps) {
   const [values, setValues] = useState(props.initialValues)
 
   return (
@@ -69,6 +77,7 @@ function CheckboxesField(props: Required<MountOptions>) {
         <Label data-testid="label" />
         {/* No mode, so the checkboxes specs run the default. */}
         <ChoicesControl
+          disabledBehavior={props.disabledBehavior}
           onChange={(event) => {
             const { checked, value } = event.currentTarget
             setValues((current) =>
@@ -91,6 +100,7 @@ function CheckboxesField(props: Required<MountOptions>) {
                       checked: values.includes(checkbox.value),
                       disabled: checkbox.disabled,
                       name: checkbox.name,
+                      onClick: props.onClick,
                       required: checkbox.isRequired,
                       value: checkbox.value,
                     })}
@@ -112,8 +122,10 @@ export function mountCheckboxes(options: MountOptions = {}) {
   cy.mount(
     <CheckboxesField
       checkboxes={options.checkboxes ?? CHECKBOXES}
+      disabledBehavior={options.disabledBehavior}
       fieldState={options.fieldState ?? {}}
       initialValues={options.initialValues ?? []}
+      onClick={options.onClick}
     />,
   )
 }

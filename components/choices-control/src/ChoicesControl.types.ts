@@ -40,17 +40,21 @@ type ChoicesControlModes = {
   }
 }
 
+export type ChoicesControlDisabledBehavior = 'focusable' | 'native'
+
 // Only the native mode can be left out, so a custom mode is always named.
 export type UseChoicesControlOptions<
   TMode extends ChoicesControlMode = ChoicesControlMode,
-> = ChoicesControlModes[TMode]['options'] &
-  (TMode extends 'checkboxes' ? { mode?: TMode } : { mode: TMode })
+> = ChoicesControlModes[TMode]['options'] & {
+  disabledBehavior?: ChoicesControlDisabledBehavior
+} & (TMode extends 'checkboxes' ? { mode?: TMode } : { mode: TMode })
 
 export type UseChoicesControlResult<
   TMode extends ChoicesControlMode = ChoicesControlMode,
 > = ChoicesControlModes[TMode]['result']
 
 export type ChoicesControlBuilder<TMode extends ChoicesControlMode> = (input: {
+  disabledBehavior: ChoicesControlDisabledBehavior
   field: FieldContextValue
   fieldControl: UseFieldControlResult
 }) => UseChoicesControlResult<TMode>
@@ -65,6 +69,7 @@ export type GroupControlRenderProps = Omit<
 
 export type CheckboxInputOptions = Omit<
   ComponentPropsWithRef<'input'>,
+  | 'aria-disabled'
   | 'aria-readonly'
   | 'disabled'
   | 'readOnly'
@@ -78,9 +83,10 @@ export type CheckboxInputOptions = Omit<
 
 export type CheckboxInputRenderProps = ComponentPropsWithRef<'input'> &
   ValidityHandlerProps & {
+    'aria-disabled'?: true
     'aria-readonly'?: true
     disabled?: true
-    name: string
+    name?: string
     type: 'checkbox'
     value: string
   }

@@ -25,6 +25,7 @@ export function useChoicesControl(
 ): UseChoicesControlResult {
   const {
     children: _children,
+    disabledBehavior = 'native',
     mode = 'checkboxes',
     ...fieldControlOptions
   } = omitPropWithWarning(options, 'readOnly', UNSUPPORTED_READ_ONLY_WARNING)
@@ -33,7 +34,7 @@ export function useChoicesControl(
   const buildChoicesControl: ChoicesControlBuilder<ChoicesControlMode> =
     choicesControlBuilders[mode]
 
-  return buildChoicesControl({ field, fieldControl })
+  return buildChoicesControl({ disabledBehavior, field, fieldControl })
 }
 
 const choicesControlBuilders: {
