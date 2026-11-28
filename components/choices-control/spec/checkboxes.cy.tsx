@@ -54,7 +54,7 @@ describe('ChoicesControl checkboxes mode', () => {
       ])
     })
 
-    it('REQ-033 uses the field name unless a checkbox supplies its own', () => {
+    it('PRD-014 uses the field name unless a checkbox supplies its own', () => {
       mountCheckboxes({
         checkboxes: [
           { isDisabled: false, isRequired: false, value: FIRST_CHOICE },

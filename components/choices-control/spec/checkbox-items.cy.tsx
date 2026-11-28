@@ -45,7 +45,7 @@ describe('ChoicesControl checkbox-items mode', () => {
       reportValueMissing('checkbox-items')
     })
 
-    it('REQ-017 REQ-032 PRD-005 describes the group with a consumer-reported error', () => {
+    it('REQ-017 PRD-013 PRD-005 describes the group with a consumer-reported error', () => {
       cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
       cy.getByTestId('control').assertReferences('aria-describedby', [
         'description',
@@ -59,7 +59,7 @@ describe('ChoicesControl checkbox-items mode', () => {
       cy.getByTestId('control').should('not.have.attr', 'aria-errormessage')
     })
 
-    it('REQ-032 REQ-042 drops the error from the group once an item is selected', () => {
+    it('PRD-013 REQ-042 drops the error from the group once an item is selected', () => {
       cy.getByTestId(FIRST_ITEM).click()
 
       cy.getByTestId('control').assertReferences('aria-describedby', [
