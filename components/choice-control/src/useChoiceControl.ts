@@ -5,18 +5,22 @@ import type {
   UseChoiceControlResult,
 } from './ChoiceControl.types'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
+import { omitPropWithWarning } from '@maratus-lib/props'
 import { getListboxControl } from './getListboxControl'
 import { getRadioItemsControl } from './getRadioItemsControl'
 import { getRadiosControl } from './getRadiosControl'
 import { getSelectControl } from './getSelectControl'
-import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'ChoiceControl: HTML readonly does not apply to this control. Use FieldRoot isReadOnly instead.'
 
 export function useChoiceControl<TMode extends ChoiceControlMode>(
   options: UseChoiceControlOptions<TMode>,
 ): UseChoiceControlResult<TMode> {
-  const { mode, ...fieldControlOptions } = omitUnsupportedReadOnly(
-    'ChoiceControl',
+  const { mode, ...fieldControlOptions } = omitPropWithWarning(
     options,
+    'readOnly',
+    UNSUPPORTED_READ_ONLY_WARNING,
   )
   const field = useFieldContext('ChoiceControl')
   const fieldControl = useFieldControl(fieldControlOptions)

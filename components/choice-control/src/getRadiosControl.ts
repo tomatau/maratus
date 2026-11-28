@@ -1,7 +1,9 @@
 import type { ChoiceControlBuilder } from './ChoiceControl.types'
-import { mergeRefs } from '@maratus-lib/props'
+import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
 import { isItemDisabled } from './isItemDisabled'
-import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'ChoiceControl radio option: HTML readonly does not apply to this control. Use FieldRoot isReadOnly instead.'
 
 export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
   field,
@@ -14,7 +16,11 @@ export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
   },
   getChoiceInputProps: ({ isDisabled, value, ...inputProps }) => {
     return {
-      ...omitUnsupportedReadOnly('ChoiceControl radio option', inputProps),
+      ...omitPropWithWarning(
+        inputProps,
+        'readOnly',
+        UNSUPPORTED_READ_ONLY_WARNING,
+      ),
       ...fieldControl.validityHandlerProps,
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
       ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),

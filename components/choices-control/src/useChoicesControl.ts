@@ -5,10 +5,13 @@ import type {
   UseChoicesControlResult,
 } from './ChoicesControl.types'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
+import { omitPropWithWarning } from '@maratus-lib/props'
 import { getCheckboxesControl } from './getCheckboxesControl'
 import { getCheckboxItemsControl } from './getCheckboxItemsControl'
 import { getMultiListboxControl } from './getMultiListboxControl'
-import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'ChoicesControl: HTML readonly does not apply to this control. Use FieldRoot isReadOnly instead.'
 
 export function useChoicesControl(
   options?: UseChoicesControlOptions<'checkboxes'>,
@@ -24,7 +27,7 @@ export function useChoicesControl(
     children: _children,
     mode = 'checkboxes',
     ...fieldControlOptions
-  } = omitUnsupportedReadOnly('ChoicesControl', options)
+  } = omitPropWithWarning(options, 'readOnly', UNSUPPORTED_READ_ONLY_WARNING)
   const field = useFieldContext('ChoicesControl')
   const fieldControl = useFieldControl(fieldControlOptions)
   const buildChoicesControl: ChoicesControlBuilder<ChoicesControlMode> =

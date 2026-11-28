@@ -1,8 +1,10 @@
 import type { ChoicesControlBuilder } from './ChoicesControl.types'
-import { mergeRefs } from '@maratus-lib/props'
+import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
 import { getGroupControlProps } from './getGroupControlProps'
 import { isItemDisabled } from './isItemDisabled'
-import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'ChoicesControl checkbox option: HTML readonly does not apply to this control. Use FieldRoot isReadOnly instead.'
 
 export const getCheckboxesControl: ChoicesControlBuilder<'checkboxes'> = ({
   field,
@@ -14,7 +16,11 @@ export const getCheckboxesControl: ChoicesControlBuilder<'checkboxes'> = ({
   ),
   getChoicesInputProps: ({ isDisabled, name, value, ...inputProps }) => {
     return {
-      ...omitUnsupportedReadOnly('ChoicesControl checkbox option', inputProps),
+      ...omitPropWithWarning(
+        inputProps,
+        'readOnly',
+        UNSUPPORTED_READ_ONLY_WARNING,
+      ),
       ...fieldControl.validityHandlerProps,
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
       ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
