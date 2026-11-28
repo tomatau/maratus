@@ -41,6 +41,7 @@ IGNORE_FILE = CHECKS_DIR + "traceability.ignore"
 ID = re.compile(r"[A-Z][A-Z0-9]*-[0-9]+")
 SURFACE_DECLARATION = re.compile(r"surface:\s*([A-Za-z0-9_.-]+)")
 SEPARATOR_ROW = re.compile(r"^\|[-:| ]+\|$")
+UNESCAPED_PIPE = re.compile(r"(?<!\\)\|")
 
 
 @dataclass(frozen=True)
@@ -94,7 +95,11 @@ def tables(text: str):
 def cells(line: str) -> list[str]:
     if SEPARATOR_ROW.match(line):
         return []
-    return [cell.replace("`", "").strip() for cell in line.strip("|").split("|")]
+    # Markdown escapes a pipe inside a cell as `\|`.
+    return [
+        cell.replace("\\|", "|").replace("`", "").strip()
+        for cell in UNESCAPED_PIPE.split(line.strip("|"))
+    ]
 
 
 def to_requirement(
