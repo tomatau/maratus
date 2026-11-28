@@ -1,6 +1,6 @@
 {
   "name": "@maratus-registry/boolean-control",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "files": [
     "css-files",
@@ -11,7 +11,7 @@
   "type": "module",
   "dependencies": {
     "@maratus-lib/props": "0.1.0",
-    "@maratus-registry/field": "0.3.0"
+    "@maratus-registry/field": "0.4.0"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",

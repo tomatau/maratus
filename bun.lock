@@ -339,10 +339,10 @@
     },
     "registry/boolean-control": {
       "name": "@maratus-registry/boolean-control",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
-        "@maratus-registry/field": "0.3.0",
+        "@maratus-registry/field": "0.4.0",
       },
       "peerDependencies": {
         "clsx": "^2.1.1",
@@ -364,10 +364,10 @@
     },
     "registry/choice-control": {
       "name": "@maratus-registry/choice-control",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
-        "@maratus-registry/field": "0.3.0",
+        "@maratus-registry/field": "0.4.0",
       },
       "peerDependencies": {
         "react": "^19.0.0",
@@ -376,10 +376,10 @@
     },
     "registry/choices-control": {
       "name": "@maratus-registry/choices-control",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
-        "@maratus-registry/field": "0.3.0",
+        "@maratus-registry/field": "0.4.0",
       },
       "peerDependencies": {
         "react": "^19.0.0",
@@ -388,7 +388,7 @@
     },
     "registry/field": {
       "name": "@maratus-registry/field",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
       },
@@ -418,10 +418,10 @@
     },
     "registry/text-control": {
       "name": "@maratus-registry/text-control",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@maratus-lib/props": "0.1.0",
-        "@maratus-registry/field": "0.3.0",
+        "@maratus-registry/field": "0.4.0",
       },
       "peerDependencies": {
         "clsx": "^2.1.1",
