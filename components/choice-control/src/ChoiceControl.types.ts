@@ -72,7 +72,7 @@ export type RadioInputOptions = Omit<
   | 'value'
   | keyof ValidityHandlerProps
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   value: string
 }
 
@@ -100,7 +100,7 @@ export type RadioItemOptions = Omit<
   CustomItemProps,
   'aria-checked' | 'aria-disabled' | 'aria-required' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 
@@ -139,7 +139,7 @@ export type ListboxOptionOptions = Omit<
   CustomItemProps,
   'aria-disabled' | 'aria-selected' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 

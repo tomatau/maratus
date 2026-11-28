@@ -57,9 +57,9 @@ describe('ChoicesControl checkboxes mode', () => {
     it('PRD-014 uses the field name unless a checkbox supplies its own', () => {
       mountCheckboxes({
         checkboxes: [
-          { isDisabled: false, isRequired: false, value: FIRST_CHOICE },
+          { disabled: false, isRequired: false, value: FIRST_CHOICE },
           {
-            isDisabled: false,
+            disabled: false,
             isRequired: false,
             name: CONSUMER_NAME,
             value: SECOND_CHOICE,
@@ -170,6 +170,12 @@ describe('ChoicesControl checkboxes mode', () => {
         cy.getByTestId(choice).should('not.be.checked')
       })
     }
+
+    it('PRD-015 disables a disabled checkbox', () => {
+      mountCheckboxes()
+
+      cy.getByTestId(DISABLED_CHOICE).should('be.disabled')
+    })
 
     it('REQ-011 does not toggle a disabled checkbox on click', () => {
       mountCheckboxes()

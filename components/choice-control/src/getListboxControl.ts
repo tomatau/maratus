@@ -20,13 +20,13 @@ export const getListboxControl: ChoiceControlBuilder<'listbox'> = ({
     'aria-labelledby': field.labelId,
     role: 'listbox',
   },
-  getChoiceItemProps: ({ isDisabled, isSelected, ref, ...optionProps }) => ({
+  getChoiceItemProps: ({ disabled, isSelected, ref, ...optionProps }) => ({
     ...suppressActivation(
       optionProps,
-      isItemDisabled(field, isDisabled) || field.isReadOnly,
+      isItemDisabled(field, disabled) || field.isReadOnly,
     ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
-    ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
+    ...(isItemDisabled(field, disabled) ? { 'aria-disabled': true } : {}),
     'aria-selected': isSelected,
     role: 'option',
   }),

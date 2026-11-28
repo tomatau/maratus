@@ -18,7 +18,7 @@ export const getCheckboxesControl: ChoicesControlBuilder<'checkboxes'> = ({
     field,
     fieldControl.fieldControlProps,
   ),
-  getChoicesInputProps: ({ isDisabled, name, value, ...inputProps }) => {
+  getChoicesInputProps: ({ disabled, name, value, ...inputProps }) => {
     return {
       // Readonly cancels the click, so each checkbox keeps its checked state.
       ...preventActivationBehavior(
@@ -34,7 +34,7 @@ export const getCheckboxesControl: ChoicesControlBuilder<'checkboxes'> = ({
       ),
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
       ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
-      ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),
+      ...(isItemDisabled(field, disabled) ? { disabled: true } : {}),
       name: name ?? field.name,
       type: 'checkbox',
       value,

@@ -72,7 +72,7 @@ export type CheckboxInputOptions = Omit<
   | 'value'
   | keyof ValidityHandlerProps
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   value: string
 }
 
@@ -96,7 +96,7 @@ export type CheckboxItemOptions = Omit<
   CustomItemProps,
   'aria-checked' | 'aria-disabled' | 'aria-readonly' | 'aria-required' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 
@@ -123,7 +123,7 @@ export type ListboxOptionOptions = Omit<
   CustomItemProps,
   'aria-disabled' | 'aria-selected' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 

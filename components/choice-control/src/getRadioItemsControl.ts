@@ -20,14 +20,14 @@ export const getRadioItemsControl: ChoiceControlBuilder<'radio-items'> = ({
     'aria-labelledby': field.labelId,
     role: 'radiogroup',
   },
-  getChoiceItemProps: ({ isDisabled, isSelected, ref, ...itemProps }) => ({
+  getChoiceItemProps: ({ disabled, isSelected, ref, ...itemProps }) => ({
     ...suppressActivation(
       itemProps,
-      isItemDisabled(field, isDisabled) || field.isReadOnly,
+      isItemDisabled(field, disabled) || field.isReadOnly,
     ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
     'aria-checked': isSelected,
-    ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
+    ...(isItemDisabled(field, disabled) ? { 'aria-disabled': true } : {}),
     role: 'radio',
   }),
 })

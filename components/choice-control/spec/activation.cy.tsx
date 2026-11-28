@@ -13,42 +13,42 @@ type ActivationTarget = 'item' | 'root'
 const SUPPRESSED_CASES = [
   {
     fieldState: { isLoading: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'radio-items',
     target: 'item',
     title: 'PRD-011 GPRD-008 skips item activation handlers while loading',
   },
   {
     fieldState: {},
-    isDisabled: true,
+    disabled: true,
     mode: 'radio-items',
     target: 'item',
     title: 'PRD-011 skips activation handlers on a disabled item',
   },
   {
     fieldState: { isLoading: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'radio-items',
     target: 'root',
     title: 'PRD-011 GPRD-008 skips root activation handlers while loading',
   },
   {
     fieldState: { isReadOnly: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'radio-items',
     target: 'item',
     title: 'REQ-056 REQ-057 skips activation handlers on a readonly radio item',
   },
   {
     fieldState: { isReadOnly: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'radio-items',
     target: 'root',
     title: 'REQ-057 skips root activation handlers on a readonly radio group',
   },
   {
     fieldState: { isReadOnly: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'listbox',
     target: 'item',
     title:
@@ -56,14 +56,14 @@ const SUPPRESSED_CASES = [
   },
   {
     fieldState: { isReadOnly: true },
-    isDisabled: false,
+    disabled: false,
     mode: 'listbox',
     target: 'root',
     title: 'REQ-059 skips root activation handlers on a readonly listbox',
   },
 ] satisfies {
   fieldState: ActivationFieldState
-  isDisabled: boolean
+  disabled: boolean
   mode: ActivationMode
   target: ActivationTarget
   title: string
@@ -72,13 +72,13 @@ const SUPPRESSED_CASES = [
 describe('ChoiceControl activation', () => {
   for (const {
     fieldState,
-    isDisabled,
+    disabled,
     mode,
     target,
     title,
   } of SUPPRESSED_CASES) {
     it(title, () => {
-      mountActivationField({ fieldState, isDisabled, mode, target })
+      mountActivationField({ fieldState, disabled, mode, target })
 
       cy.getByTestId(target).click()
       for (const key of ACTIVATION_KEYS) {
@@ -93,7 +93,7 @@ describe('ChoiceControl activation', () => {
   it('PRD-011 still passes other keys to an item while loading', () => {
     mountActivationField({
       fieldState: { isLoading: true },
-      isDisabled: false,
+      disabled: false,
       mode: 'radio-items',
       target: 'item',
     })
@@ -106,7 +106,7 @@ describe('ChoiceControl activation', () => {
 
 function mountActivationField(options: {
   fieldState: ActivationFieldState
-  isDisabled: boolean
+  disabled: boolean
   mode: ActivationMode
   target: ActivationTarget
 }) {
@@ -138,7 +138,7 @@ function mountActivationField(options: {
               tabIndex={0}
               {...getChoiceItemProps({
                 ...itemHandlers,
-                isDisabled: options.isDisabled,
+                disabled: options.disabled,
                 isSelected: false,
               })}
             >

@@ -18,7 +18,7 @@ export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
     'aria-labelledby': field.labelId,
     role: 'radiogroup',
   },
-  getChoiceInputProps: ({ isDisabled, value, ...inputProps }) => {
+  getChoiceInputProps: ({ disabled, value, ...inputProps }) => {
     return {
       // Readonly cancels the click, so the radios keep their checked state.
       ...preventActivationBehavior(
@@ -33,7 +33,7 @@ export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
         field.isReadOnly,
       ),
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
-      ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),
+      ...(isItemDisabled(field, disabled) ? { disabled: true } : {}),
       name: field.name,
       ...(field.isRequired ? { required: true } : {}),
       type: 'radio',

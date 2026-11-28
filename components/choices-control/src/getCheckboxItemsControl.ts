@@ -18,14 +18,14 @@ export const getCheckboxItemsControl: ChoicesControlBuilder<
       fieldControl.validityHandlerProps.ref,
     ),
   },
-  getChoicesItemProps: ({ isDisabled, isSelected, ref, ...itemProps }) => ({
+  getChoicesItemProps: ({ disabled, isSelected, ref, ...itemProps }) => ({
     ...suppressActivation(
       itemProps,
-      isItemDisabled(field, isDisabled) || field.isReadOnly,
+      isItemDisabled(field, disabled) || field.isReadOnly,
     ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
     'aria-checked': isSelected,
-    ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
+    ...(isItemDisabled(field, disabled) ? { 'aria-disabled': true } : {}),
     ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
     role: 'checkbox',
   }),

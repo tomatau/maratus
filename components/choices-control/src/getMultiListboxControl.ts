@@ -21,13 +21,13 @@ export const getMultiListboxControl: ChoicesControlBuilder<'listbox'> = ({
     'aria-multiselectable': true,
     role: 'listbox',
   },
-  getChoicesItemProps: ({ isDisabled, isSelected, ref, ...optionProps }) => ({
+  getChoicesItemProps: ({ disabled, isSelected, ref, ...optionProps }) => ({
     ...suppressActivation(
       optionProps,
-      isItemDisabled(field, isDisabled) || field.isReadOnly,
+      isItemDisabled(field, disabled) || field.isReadOnly,
     ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
-    ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
+    ...(isItemDisabled(field, disabled) ? { 'aria-disabled': true } : {}),
     'aria-selected': isSelected,
     role: 'option',
   }),

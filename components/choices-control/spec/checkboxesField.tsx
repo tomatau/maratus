@@ -24,21 +24,21 @@ const ERROR_MAP = new Map<ValidityErrorKey, string>([
 ])
 
 export type CheckboxFixture = {
-  isDisabled: boolean
+  disabled: boolean
   isRequired: boolean
   name?: string
   value: string
 }
 
 export const CHECKBOXES: readonly CheckboxFixture[] = [
-  { isDisabled: false, isRequired: false, value: FIRST_CHOICE },
-  { isDisabled: false, isRequired: false, value: SECOND_CHOICE },
-  { isDisabled: true, isRequired: false, value: DISABLED_CHOICE },
+  { disabled: false, isRequired: false, value: FIRST_CHOICE },
+  { disabled: false, isRequired: false, value: SECOND_CHOICE },
+  { disabled: true, isRequired: false, value: DISABLED_CHOICE },
 ]
 
 export const REQUIRED_FIRST_CHECKBOX: readonly CheckboxFixture[] = [
-  { isDisabled: false, isRequired: true, value: FIRST_CHOICE },
-  { isDisabled: false, isRequired: false, value: SECOND_CHOICE },
+  { disabled: false, isRequired: true, value: FIRST_CHOICE },
+  { disabled: false, isRequired: false, value: SECOND_CHOICE },
 ]
 
 export const ENABLED_CHOICES = [FIRST_CHOICE, SECOND_CHOICE]
@@ -89,7 +89,7 @@ function CheckboxesField(props: Required<MountOptions>) {
                     data-testid={checkbox.value}
                     {...getChoicesInputProps({
                       checked: values.includes(checkbox.value),
-                      isDisabled: checkbox.isDisabled,
+                      disabled: checkbox.disabled,
                       name: checkbox.name,
                       required: checkbox.isRequired,
                       value: checkbox.value,

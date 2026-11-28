@@ -21,9 +21,9 @@ const ERROR_MAP = new Map<ValidityErrorKey, string>([
 ])
 
 const RADIOS = [
-  { isDisabled: false, value: FIRST_RADIO },
-  { isDisabled: false, value: SECOND_RADIO },
-  { isDisabled: true, value: DISABLED_RADIO },
+  { disabled: false, value: FIRST_RADIO },
+  { disabled: false, value: SECOND_RADIO },
+  { disabled: true, value: DISABLED_RADIO },
 ]
 
 const ENABLED_RADIOS = [FIRST_RADIO, SECOND_RADIO]
@@ -79,7 +79,7 @@ describe('ChoiceControl radios mode', () => {
       cy.getByTestId('control').should('have.attr', 'aria-required', 'true')
     })
 
-    it('REQ-015 disables a disabled radio', () => {
+    it('REQ-015 PRD-017 disables a disabled radio', () => {
       mountRadios()
 
       cy.getByTestId(DISABLED_RADIO).should('be.disabled')
@@ -256,7 +256,7 @@ function RadiosField(props: {
                     data-testid={radio.value}
                     {...getChoiceInputProps({
                       checked: value === radio.value,
-                      isDisabled: radio.isDisabled,
+                      disabled: radio.disabled,
                       value: radio.value,
                     })}
                   />

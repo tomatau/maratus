@@ -14,7 +14,7 @@ const CUSTOM_ITEMS_MODES = [
     mode: 'checkbox-items',
     requirements: {
       a11y: 'REQ-001 REQ-003 REQ-004 REQ-020 REQ-021 REQ-022 REQ-024',
-      disabledItem: 'REQ-023',
+      disabledItem: 'REQ-023 PRD-015',
       itemRole: 'REQ-021',
       label: 'REQ-003',
       selection: 'REQ-022',
@@ -26,7 +26,7 @@ const CUSTOM_ITEMS_MODES = [
     mode: 'listbox',
     requirements: {
       a11y: 'REQ-005 REQ-006 REQ-013 REQ-035 REQ-036 REQ-043',
-      disabledItem: 'REQ-043',
+      disabledItem: 'REQ-043 PRD-015',
       itemRole: 'REQ-006',
       label: 'REQ-036',
       selection: 'REQ-006',
@@ -80,6 +80,7 @@ for (const testCase of CUSTOM_ITEMS_MODES) {
       mountCustomItems({ mode })
 
       cy.getByTestId(DISABLED_ITEM).should('have.attr', 'aria-disabled', 'true')
+      cy.getByTestId(DISABLED_ITEM).should('not.have.attr', 'disabled')
     })
 
     it('REQ-040 keeps enabled items enabled when readonly', () => {
