@@ -1,0 +1,113 @@
+:root {
+  --ara-boolean-control-appearance: auto;
+  --ara-boolean-control-bg: var(--ara-color-control-bg);
+  --ara-boolean-control-bg--checked: var(--ara-color-control-bg--checked);
+  --ara-boolean-control-bg--disabled: var(--ara-color-control-bg--disabled);
+  --ara-boolean-control-bg--focus: var(--ara-color-control-bg--focus);
+  --ara-boolean-control-bg--hover: var(--ara-color-control-bg--hover);
+  --ara-boolean-control-bg--invalid: var(--ara-color-control-bg--invalid);
+  --ara-boolean-control-bg--loading: var(--ara-color-control-bg--loading);
+  --ara-boolean-control-bg--readonly: var(--ara-color-control-bg--readonly);
+  --ara-boolean-control-border-radius: var(--ara-radius-x1);
+  --ara-boolean-control-border-width: var(--ara-border-width-x1);
+  --ara-boolean-control-detail: var(--ara-color-control-detail);
+  --ara-boolean-control-detail--checked: var(
+    --ara-color-control-detail--checked
+  );
+  --ara-boolean-control-detail--disabled: var(
+    --ara-color-control-detail--disabled
+  );
+  --ara-boolean-control-detail--focus: var(--ara-color-control-detail--focus);
+  --ara-boolean-control-detail--hover: var(--ara-color-control-detail--hover);
+  --ara-boolean-control-detail--invalid: var(--ara-color-feedback-fg);
+  --ara-boolean-control-detail--loading: var(
+    --ara-color-control-detail--loading
+  );
+  --ara-boolean-control-detail--readonly: var(
+    --ara-color-control-detail--readonly
+  );
+  --ara-boolean-control-fg: var(--ara-color-control-fg);
+  --ara-boolean-control-fg--checked: var(--ara-color-control-fg--checked);
+  --ara-boolean-control-fg--disabled: var(--ara-color-control-fg--disabled);
+  --ara-boolean-control-fg--focus: var(--ara-color-control-fg--focus);
+  --ara-boolean-control-fg--hover: var(--ara-color-control-fg--hover);
+  --ara-boolean-control-fg--invalid: var(--ara-color-feedback-fg);
+  --ara-boolean-control-fg--loading: var(--ara-color-control-fg--loading);
+  --ara-boolean-control-fg--readonly: var(--ara-color-control-fg--readonly);
+  --ara-boolean-control-focus: var(--ara-color-control-focus);
+  --ara-boolean-control-focus-offset: var(--ara-spacing-x1);
+  --ara-boolean-control-focus-width: var(--ara-border-width-x1);
+  --ara-boolean-control-shadow: var(--ara-shadow-control);
+  --ara-boolean-control-shadow--checked: var(--ara-shadow-control--checked);
+  --ara-boolean-control-shadow--disabled: var(--ara-shadow-control--disabled);
+  --ara-boolean-control-shadow--focus: var(--ara-shadow-control--focus);
+  --ara-boolean-control-shadow--hover: var(--ara-shadow-control--hover);
+  --ara-boolean-control-shadow--invalid: var(--ara-shadow-control--invalid);
+  --ara-boolean-control-shadow--loading: var(--ara-shadow-control--loading);
+  --ara-boolean-control-shadow--readonly: var(--ara-shadow-control--readonly);
+}
+
+.booleanControl {
+  accent-color: var(--ara-boolean-control-bg--checked);
+  appearance: var(--ara-boolean-control-appearance);
+  background-color: var(--ara-boolean-control-bg);
+  border-color: var(--ara-boolean-control-detail);
+  border-radius: var(--ara-boolean-control-border-radius);
+  border-width: var(--ara-boolean-control-border-width);
+  box-shadow: var(--ara-boolean-control-shadow);
+  color: var(--ara-boolean-control-fg);
+}
+
+.booleanControl:hover {
+  background-color: var(--ara-boolean-control-bg--hover);
+  border-color: var(--ara-boolean-control-detail--hover);
+  box-shadow: var(--ara-boolean-control-shadow--hover);
+  color: var(--ara-boolean-control-fg--hover);
+}
+
+.booleanControl:focus-visible {
+  background-color: var(--ara-boolean-control-bg--focus);
+  border-color: var(--ara-boolean-control-detail--focus);
+  box-shadow: var(--ara-boolean-control-shadow--focus);
+  color: var(--ara-boolean-control-fg--focus);
+  outline-color: var(--ara-boolean-control-focus);
+  outline-offset: var(--ara-boolean-control-focus-offset);
+  outline-width: var(--ara-boolean-control-focus-width);
+}
+
+.booleanControl:checked,
+.booleanControl[aria-checked='true'] {
+  background-color: var(--ara-boolean-control-bg--checked);
+  border-color: var(--ara-boolean-control-detail--checked);
+  box-shadow: var(--ara-boolean-control-shadow--checked);
+  color: var(--ara-boolean-control-fg--checked);
+}
+
+.booleanControl:disabled,
+.booleanControl[aria-disabled='true'] {
+  background-color: var(--ara-boolean-control-bg--disabled);
+  border-color: var(--ara-boolean-control-detail--disabled);
+  box-shadow: var(--ara-boolean-control-shadow--disabled);
+  color: var(--ara-boolean-control-fg--disabled);
+}
+
+.booleanControl[aria-invalid='true'] {
+  background-color: var(--ara-boolean-control-bg--invalid);
+  border-color: var(--ara-boolean-control-detail--invalid);
+  box-shadow: var(--ara-boolean-control-shadow--invalid);
+  color: var(--ara-boolean-control-fg--invalid);
+}
+
+.booleanControl[data-loading] {
+  background-color: var(--ara-boolean-control-bg--loading);
+  border-color: var(--ara-boolean-control-detail--loading);
+  box-shadow: var(--ara-boolean-control-shadow--loading);
+  color: var(--ara-boolean-control-fg--loading);
+}
+
+.booleanControl[aria-readonly='true'] {
+  background-color: var(--ara-boolean-control-bg--readonly);
+  border-color: var(--ara-boolean-control-detail--readonly);
+  box-shadow: var(--ara-boolean-control-shadow--readonly);
+  color: var(--ara-boolean-control-fg--readonly);
+}
