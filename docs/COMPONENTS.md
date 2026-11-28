@@ -103,6 +103,12 @@ type ExampleProps = {
 --ara-field-control-detail--invalid
 ```
 
+### State Tokens
+
+- A state rule sets every property group its base rule styles, such as `bg`, `detail`, `fg`, and `shadow`, each through its own component token, so a consumer can restyle the whole state.
+- Map each state token to the theme token for the same property and state. When the theme has none, add one, such as `--ara-color-control-bg--invalid`, rather than borrowing another state's.
+- A field control styles the field-level states, invalid, loading, and readonly, on its own root, through the same theme tokens field uses, so one theme token restyles a state on every control.
+
 ### State Selectors
 
 - Prefer native pseudo-classes and native attributes where available.
