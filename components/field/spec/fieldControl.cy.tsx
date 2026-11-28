@@ -17,6 +17,8 @@ import {
   commonRootProps,
 } from './fieldHarness'
 
+const CONSUMER_COLOUR = 'rgb(1, 2, 3)'
+
 type ControlFieldState = Pick<
   FieldRootProps,
   'activeErrors' | 'isLoading' | 'isReadOnly' | 'isRequired'
@@ -110,6 +112,26 @@ describe('FieldControl', () => {
         .should('have.attr', 'class')
         .and('contain', 'fieldControl')
         .and('contain', 'custom-control')
+    })
+
+    it('PRD-028 lets a consumer class rule win over the control styles loaded after it', () => {
+      const style = document.createElement('style')
+      style.textContent = `.custom-control { border-color: ${CONSUMER_COLOUR}; }`
+
+      cy.document().then((doc) => doc.head.prepend(style))
+      cy.mount(
+        <FieldRoot
+          activeErrors={VALUE_MISSING_ERRORS}
+          label={FIELD_LABEL}
+          name={FIELD_NAME}
+        >
+          <InputControl className="custom-control" />
+        </FieldRoot>,
+      )
+
+      cy.getByTestId('control')
+        .should('have.css', 'border-top-color', CONSUMER_COLOUR)
+        .then(() => style.remove())
     })
 
     it('GPRD-005 supports common root props on FieldControl render props', () => {
