@@ -32,7 +32,7 @@ describe('ChoiceControl select mode', () => {
       cy.getByTestId('label').assertReferences('for', ['control'])
     })
 
-    it('REQ-002 uses the field name', () => {
+    it('PRD-012 uses the field name', () => {
       mountSelect()
 
       cy.getByTestId('control').should('have.prop', 'name', FIELD_NAME)
@@ -95,14 +95,14 @@ describe('ChoiceControl select mode', () => {
       cy.getByTestId('form').checkFormValidity()
     })
 
-    it('REQ-046 REQ-050 REQ-051 exposes a browser-detected error', () => {
+    it('PRD-013 REQ-050 REQ-051 exposes a browser-detected error', () => {
       cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
       cy.getByTestId('control')
         .should('have.attr', 'aria-invalid', 'true')
         .assertReferences('aria-errormessage', ['error'])
     })
 
-    it('REQ-046 REQ-053 clears the error once the select is valid', () => {
+    it('PRD-013 REQ-053 clears the error once the select is valid', () => {
       cy.getByTestId('control').select(FIRST_OPTION)
 
       cy.getByTestId('control').should('not.have.attr', 'aria-invalid')

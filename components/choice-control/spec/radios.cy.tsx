@@ -135,14 +135,14 @@ describe('ChoiceControl radios mode', () => {
       cy.getByTestId('form').checkFormValidity()
     })
 
-    it('REQ-047 REQ-050 REQ-051 exposes a browser-detected error on the group', () => {
+    it('PRD-014 REQ-050 REQ-051 exposes a browser-detected error on the group', () => {
       cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
       cy.getByTestId('control')
         .should('have.attr', 'aria-invalid', 'true')
         .assertReferences('aria-errormessage', ['error'])
     })
 
-    it('REQ-047 REQ-053 clears the error once a radio is selected', () => {
+    it('PRD-014 REQ-053 clears the error once a radio is selected', () => {
       cy.getByTestId(FIRST_RADIO).check()
 
       cy.getByTestId('control').should('not.have.attr', 'aria-invalid')

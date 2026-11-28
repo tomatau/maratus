@@ -34,3 +34,8 @@ export const SELECT_RESULT_KEYS: Record<
 > = {
   choiceControlProps: true,
 }
+
+// GPRD-003 useChoiceControl requires a mode, since it has two native roots
+export const WITHOUT_MODE = () =>
+  // @ts-expect-error mode is required
+  useChoiceControl({})

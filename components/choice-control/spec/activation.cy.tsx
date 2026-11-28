@@ -13,7 +13,7 @@ const SUPPRESSED_CASES = [
     fieldState: { isLoading: true },
     isDisabled: false,
     target: 'item',
-    title: 'PRD-011 skips item activation handlers while loading',
+    title: 'PRD-011 GPRD-008 skips item activation handlers while loading',
   },
   {
     fieldState: {},
@@ -25,7 +25,7 @@ const SUPPRESSED_CASES = [
     fieldState: { isLoading: true },
     isDisabled: false,
     target: 'root',
-    title: 'PRD-011 skips root activation handlers while loading',
+    title: 'PRD-011 GPRD-008 skips root activation handlers while loading',
   },
 ] satisfies {
   fieldState: ActivationFieldState

@@ -57,13 +57,13 @@ const CUSTOM_ITEMS_MODES = [
     itemRole: 'radio',
     mode: 'radio-items',
     requirements: {
-      a11y: 'REQ-007 REQ-008 REQ-027 REQ-028 REQ-029 REQ-043 REQ-045',
+      a11y: 'REQ-007 REQ-008 REQ-027 REQ-028 REQ-029 REQ-043 PRD-016',
       containerRole: 'REQ-007',
       disabledItem: 'REQ-030',
       itemRole: 'REQ-028',
       label: 'REQ-008',
       readOnly: 'REQ-027',
-      required: 'REQ-043 REQ-045',
+      required: 'REQ-043 PRD-016',
       selection: 'REQ-029',
     },
     selectionAttribute: 'aria-checked',
@@ -178,14 +178,14 @@ for (const testCase of CUSTOM_ITEMS_MODES) {
         cy.getByTestId(FIRST_ITEM).blur()
       })
 
-      it('REQ-048 REQ-050 REQ-051 exposes a consumer-reported error on the container', () => {
+      it('PRD-015 REQ-050 REQ-051 exposes a consumer-reported error on the container', () => {
         cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
         cy.getByTestId('control')
           .should('have.attr', 'aria-invalid', 'true')
           .assertReferences('aria-errormessage', ['error'])
       })
 
-      it('REQ-048 REQ-053 clears the error once an item is selected', () => {
+      it('PRD-015 REQ-053 clears the error once an item is selected', () => {
         cy.getByTestId(FIRST_ITEM).click()
 
         cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
