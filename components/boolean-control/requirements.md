@@ -15,12 +15,14 @@
 - Field-level required, readonly, and loading state translation.
 - Control-level disabled state.
 - Reporting browser-detected and consumer-defined validation errors.
+- Default styles, shared by both roots, with `--ara-boolean-control-*` tokens for the box and its hover, focus, checked, disabled, invalid, readonly, and loading states.
 
 ### Potential scope
 
 - The HTML `switch` attribute on native checkboxes.
 - Tri-state (`mixed`) checkboxes.
 - Checkbox and switch widget wrappers.
+- A `data-focus-visible` styling hook.
 
 ## Accessibility Requirements
 
@@ -35,6 +37,8 @@
 | REQ-022 | MUST   | The native checkbox or custom root must not have the `readonly` attribute.                                                      | HTML Standard checkbox state; ARIA in HTML `readonly` attribute   | BooleanControl | Current       |
 | REQ-023 | SHOULD | Readonly alone should not make the native checkbox or custom root disabled.                                                     | WAI-ARIA 1.2 `aria-readonly`                                      | BooleanControl | Current       |
 | REQ-025 | MUST   | When the field is loading, the native checkbox or custom root must have `aria-busy="true"`.                                     | WAI-ARIA 1.2 `aria-busy`; GPRD-008                                | BooleanControl | Current       |
+| REQ-048 | MUST   | When the native checkbox or custom root has keyboard focus, the default focus styles apply through `:focus-visible`.            | WCAG 2.2 SC 2.4.7; Selectors Level 4 `:focus-visible`             | BooleanControl | Current       |
+| REQ-049 | SHOULD | Pointer focus alone does not apply the default focus styles to the native checkbox or custom root.                              | Selectors Level 4 `:focus-visible`                                | BooleanControl | Current       |
 
 ### Given Native Checkbox
 
@@ -111,6 +115,9 @@ The hook supplies the role, states, focus, and activation; the consumer updates 
 | PRD-022 | When `disabledBehavior` is `focusable`, a disabled or loading native checkbox does not call the consumer's `onClick` or `onChange`, as a disabled native checkbox receives no `click` (GPRD-008).                                                                                              | BooleanControl    | Current       |
 | PRD-023 | When `disabledBehavior` is `focusable`, a disabled or loading native checkbox stays out of its form's submitted data, as a disabled checkbox does, by having no `name`.                                                                                                                        | BooleanControl    | Current       |
 | PRD-024 | When `disabledBehavior` is `focusable`, a disabled or loading native checkbox stays out of constraint validation, as a disabled checkbox does, by having no `required` attribute.                                                                                                              | BooleanControl    | Current       |
+| PRD-025 | Both roots take their CSS `appearance` from `--ara-boolean-control-appearance`, which defaults to `auto`, so the browser draws a native checkbox until a consumer sets `none`.                                                                                                                 | BooleanControl    | Current       |
+| PRD-026 | The native checkbox's `accent-color` comes from `--ara-boolean-control-bg--checked`, so its checked fill follows the checked token while the browser draws it.                                                                                                                                 | BooleanControl    | Current       |
+| PRD-027 | Each root has an empty `data-focus-visible` attribute while it has keyboard focus, as a styling hook paired with `:focus-visible`.                                                                                                                                                             | BooleanControl    | Potential     |
 
 ## Global Requirements
 
@@ -152,6 +159,8 @@ How the root [`requirements.md`](../../requirements.md) applies to this package.
 - WCAG 2.2 SC 1.3.1: [Info and Relationships](https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html)
 - WCAG 2.2 SC 2.1.1: [Keyboard](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html)
 - WCAG 2.2 SC 2.1.2: [No Keyboard Trap](https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap.html)
+- WCAG 2.2 SC 2.4.7: [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
 - WCAG 2.2 SC 3.3.1: [Error Identification](https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html)
 - WCAG 2.2 SC 3.3.2: [Labels or Instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html)
 - WCAG 2.2 SC 4.1.2: [Name, Role, Value](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html)
+- Selectors Level 4: [`:focus-visible`](https://www.w3.org/TR/selectors-4/#the-focus-visible-pseudo)

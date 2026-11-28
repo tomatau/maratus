@@ -7,8 +7,10 @@ import type {
 } from './BooleanControl.types'
 import { useFieldContext, useFieldControl } from '@maratus-component/field'
 import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
+import clsx from 'clsx'
 import { getCustomBooleanControl } from './getCustomBooleanControl'
 import { getNativeBooleanControl } from './getNativeBooleanControl'
+import styles from './BooleanControl.module.css'
 
 const UNSUPPORTED_READ_ONLY_WARNING =
   'BooleanControl: HTML readonly does not apply to checkboxes. Use FieldRoot isReadOnly instead.'
@@ -49,6 +51,7 @@ export function useBooleanControl(
   const controlProps = {
     ...fieldControlProps,
     ...validityHandlerProps,
+    className: clsx(styles.booleanControl, fieldControlProps.className),
     ref: mergeRefs(fieldControlProps.ref, validityHandlerProps.ref),
   }
 
