@@ -7,7 +7,11 @@ export const getRadioItemsControl: ChoiceControlBuilder<'radio-items'> = ({
   fieldControl,
 }) => ({
   choiceControlProps: {
-    ...suppressActivation(fieldControl.fieldControlProps, field.isLoading),
+    // Readonly blocks the consumer's activation, which owns the selection.
+    ...suppressActivation(
+      fieldControl.fieldControlProps,
+      field.isLoading || field.isReadOnly,
+    ),
     ...fieldControl.validityHandlerProps,
     ref: mergeRefs(
       fieldControl.fieldControlProps.ref,
@@ -17,7 +21,10 @@ export const getRadioItemsControl: ChoiceControlBuilder<'radio-items'> = ({
     role: 'radiogroup',
   },
   getChoiceItemProps: ({ isDisabled, isSelected, ref, ...itemProps }) => ({
-    ...suppressActivation(itemProps, isItemDisabled(field, isDisabled)),
+    ...suppressActivation(
+      itemProps,
+      isItemDisabled(field, isDisabled) || field.isReadOnly,
+    ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
     'aria-checked': isSelected,
     ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),

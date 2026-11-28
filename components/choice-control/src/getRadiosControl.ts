@@ -1,5 +1,9 @@
 import type { ChoiceControlBuilder } from './ChoiceControl.types'
-import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
+import {
+  mergeRefs,
+  omitPropWithWarning,
+  preventActivationBehavior,
+} from '@maratus-lib/props'
 import { isItemDisabled } from './isItemDisabled'
 
 const UNSUPPORTED_READ_ONLY_WARNING =
@@ -16,12 +20,18 @@ export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
   },
   getChoiceInputProps: ({ isDisabled, value, ...inputProps }) => {
     return {
-      ...omitPropWithWarning(
-        inputProps,
-        'readOnly',
-        UNSUPPORTED_READ_ONLY_WARNING,
+      // Readonly cancels the click, so the radios keep their checked state.
+      ...preventActivationBehavior(
+        {
+          ...omitPropWithWarning(
+            inputProps,
+            'readOnly',
+            UNSUPPORTED_READ_ONLY_WARNING,
+          ),
+          ...fieldControl.validityHandlerProps,
+        },
+        field.isReadOnly,
       ),
-      ...fieldControl.validityHandlerProps,
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
       ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),
       name: field.name,

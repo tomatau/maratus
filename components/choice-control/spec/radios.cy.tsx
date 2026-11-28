@@ -114,6 +114,30 @@ describe('ChoiceControl radios mode', () => {
     })
   })
 
+  describe('readonly interaction', () => {
+    beforeEach(() => {
+      mountRadios({
+        fieldState: { isReadOnly: true },
+        initialValue: FIRST_RADIO,
+      })
+    })
+
+    it('REQ-054 keeps the selection when another radio is clicked', () => {
+      cy.getByTestId(SECOND_RADIO).realClick()
+
+      cy.getByTestId(FIRST_RADIO).should('be.checked')
+      cy.getByTestId(SECOND_RADIO).should('not.be.checked')
+    })
+
+    it('REQ-055 keeps the selection while arrow keys move focus', () => {
+      cy.getByTestId(FIRST_RADIO).focus().realPress('ArrowDown')
+      cy.getByTestId(SECOND_RADIO).should('have.focus').realPress('Space')
+
+      cy.getByTestId(FIRST_RADIO).should('be.checked')
+      cy.getByTestId(SECOND_RADIO).should('not.be.checked')
+    })
+  })
+
   describe('loading', () => {
     beforeEach(() => {
       mountRadios({ fieldState: { isLoading: true } })
