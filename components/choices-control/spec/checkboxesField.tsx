@@ -67,8 +67,8 @@ function CheckboxesField(props: Required<MountOptions>) {
         {...props.fieldState}
       >
         <Label data-testid="label" />
+        {/* No mode, so the checkboxes specs run the default. */}
         <ChoicesControl
-          mode="checkboxes"
           onChange={(event) => {
             const { checked, value } = event.currentTarget
             setValues((current) =>

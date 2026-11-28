@@ -10,16 +10,24 @@ import { getCheckboxItemsControl } from './getCheckboxItemsControl'
 import { getMultiListboxControl } from './getMultiListboxControl'
 import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
 
+export function useChoicesControl(
+  options?: UseChoicesControlOptions<'checkboxes'>,
+): UseChoicesControlResult<'checkboxes'>
 export function useChoicesControl<TMode extends ChoicesControlMode>(
   options: UseChoicesControlOptions<TMode>,
-): UseChoicesControlResult<TMode> {
-  const { mode, ...fieldControlOptions } = omitUnsupportedReadOnly(
-    'ChoicesControl',
-    options,
-  )
+): UseChoicesControlResult<TMode>
+// ChoicesControl passes its props through, so its render prop is dropped here.
+export function useChoicesControl(
+  options: UseChoicesControlOptions & { children?: unknown } = {},
+): UseChoicesControlResult {
+  const {
+    children: _children,
+    mode = 'checkboxes',
+    ...fieldControlOptions
+  } = omitUnsupportedReadOnly('ChoicesControl', options)
   const field = useFieldContext('ChoicesControl')
   const fieldControl = useFieldControl(fieldControlOptions)
-  const buildChoicesControl: ChoicesControlBuilder<TMode> =
+  const buildChoicesControl: ChoicesControlBuilder<ChoicesControlMode> =
     choicesControlBuilders[mode]
 
   return buildChoicesControl({ field, fieldControl })

@@ -40,9 +40,11 @@ type ChoicesControlModes = {
   }
 }
 
+// Only the native mode can be left out, so a custom mode is always named.
 export type UseChoicesControlOptions<
   TMode extends ChoicesControlMode = ChoicesControlMode,
-> = ChoicesControlModes[TMode]['options'] & { mode: TMode }
+> = ChoicesControlModes[TMode]['options'] &
+  (TMode extends 'checkboxes' ? { mode?: TMode } : { mode: TMode })
 
 export type UseChoicesControlResult<
   TMode extends ChoicesControlMode = ChoicesControlMode,
