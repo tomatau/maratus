@@ -7,7 +7,11 @@ export const getMultiListboxControl: ChoicesControlBuilder<'listbox'> = ({
   fieldControl,
 }) => ({
   choicesControlProps: {
-    ...suppressActivation(fieldControl.fieldControlProps, field.isLoading),
+    // Readonly blocks the consumer's activation, which owns the selection.
+    ...suppressActivation(
+      fieldControl.fieldControlProps,
+      field.isLoading || field.isReadOnly,
+    ),
     ...fieldControl.validityHandlerProps,
     ref: mergeRefs(
       fieldControl.fieldControlProps.ref,
@@ -18,7 +22,10 @@ export const getMultiListboxControl: ChoicesControlBuilder<'listbox'> = ({
     role: 'listbox',
   },
   getChoicesItemProps: ({ isDisabled, isSelected, ref, ...optionProps }) => ({
-    ...suppressActivation(optionProps, isItemDisabled(field, isDisabled)),
+    ...suppressActivation(
+      optionProps,
+      isItemDisabled(field, isDisabled) || field.isReadOnly,
+    ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
     ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
     'aria-selected': isSelected,

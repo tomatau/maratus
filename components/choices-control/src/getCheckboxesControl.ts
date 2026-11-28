@@ -1,5 +1,9 @@
 import type { ChoicesControlBuilder } from './ChoicesControl.types'
-import { mergeRefs, omitPropWithWarning } from '@maratus-lib/props'
+import {
+  mergeRefs,
+  omitPropWithWarning,
+  preventActivationBehavior,
+} from '@maratus-lib/props'
 import { getGroupControlProps } from './getGroupControlProps'
 import { isItemDisabled } from './isItemDisabled'
 
@@ -16,12 +20,18 @@ export const getCheckboxesControl: ChoicesControlBuilder<'checkboxes'> = ({
   ),
   getChoicesInputProps: ({ isDisabled, name, value, ...inputProps }) => {
     return {
-      ...omitPropWithWarning(
-        inputProps,
-        'readOnly',
-        UNSUPPORTED_READ_ONLY_WARNING,
+      // Readonly cancels the click, so each checkbox keeps its checked state.
+      ...preventActivationBehavior(
+        {
+          ...omitPropWithWarning(
+            inputProps,
+            'readOnly',
+            UNSUPPORTED_READ_ONLY_WARNING,
+          ),
+          ...fieldControl.validityHandlerProps,
+        },
+        field.isReadOnly,
       ),
-      ...fieldControl.validityHandlerProps,
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
       ...(field.isReadOnly ? { 'aria-readonly': true } : {}),
       ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),

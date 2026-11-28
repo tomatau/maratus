@@ -109,6 +109,31 @@ describe('ChoicesControl checkboxes mode', () => {
     })
   })
 
+  describe('readonly interaction', () => {
+    beforeEach(() => {
+      mountCheckboxes({
+        fieldState: { isReadOnly: true },
+        initialValues: [FIRST_CHOICE],
+      })
+    })
+
+    it('REQ-044 keeps each checkbox unchanged when clicked', () => {
+      cy.getByTestId(FIRST_CHOICE).realClick()
+      cy.getByTestId(SECOND_CHOICE).realClick()
+
+      cy.getByTestId(FIRST_CHOICE).should('be.checked')
+      cy.getByTestId(SECOND_CHOICE).should('not.be.checked')
+    })
+
+    it('REQ-045 keeps each checkbox unchanged when Space is pressed', () => {
+      cy.getByTestId(FIRST_CHOICE).focus().realPress('Space')
+      cy.getByTestId(SECOND_CHOICE).focus().realPress('Space')
+
+      cy.getByTestId(FIRST_CHOICE).should('be.checked')
+      cy.getByTestId(SECOND_CHOICE).should('not.be.checked')
+    })
+  })
+
   describe('loading', () => {
     beforeEach(() => {
       mountCheckboxes({ fieldState: { isLoading: true } })

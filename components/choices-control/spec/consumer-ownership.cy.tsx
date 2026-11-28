@@ -36,29 +36,6 @@ describe('ChoicesControl consumer ownership', () => {
     cy.getByTestId(FIRST_CHOICE).should('have.attr', 'aria-checked', 'false')
   })
 
-  it('PRD-007 lets a readonly consumer prevent a checkbox change', () => {
-    mountField(
-      <ChoicesControl
-        mode="checkboxes"
-        onChange={(event) => event.preventDefault()}
-      >
-        {({ choicesControlProps, getChoicesInputProps }) => (
-          <div {...choicesControlProps}>
-            <input
-              data-testid={FIRST_CHOICE}
-              {...getChoicesInputProps({ value: FIRST_CHOICE })}
-            />
-          </div>
-        )}
-      </ChoicesControl>,
-      { isReadOnly: true },
-    )
-
-    cy.getByTestId(FIRST_CHOICE).click()
-
-    cy.getByTestId(FIRST_CHOICE).should('not.be.checked')
-  })
-
   it('PRD-005 leaves form submission to the consumer when a group error is reported', () => {
     const onSubmit = cy
       .stub()
