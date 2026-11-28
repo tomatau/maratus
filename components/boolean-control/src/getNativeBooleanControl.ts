@@ -1,9 +1,12 @@
 import type {
-  BooleanControlRootProps,
   NativeBooleanControlInput,
   UseNativeBooleanControlResult,
 } from './BooleanControl.types'
-import { omitProps, suppressActivation } from '@maratus-lib/props'
+import {
+  omitProps,
+  preventActivationBehavior,
+  suppressActivation,
+} from '@maratus-lib/props'
 
 export function getNativeBooleanControl({
   checked,
@@ -13,11 +16,18 @@ export function getNativeBooleanControl({
   role,
 }: NativeBooleanControlInput): UseNativeBooleanControlResult {
   const isFocusableDisabled = disabledState === 'focusableDisabled'
-  // A disabled checkbox gets no click, so consumer activation is skipped too.
-  const rootProps = suppressActivation(
-    // Native attributes carry these states, so their ARIA forms must not.
-    omitProps(controlProps, ['aria-checked', 'aria-disabled', 'aria-required']),
-    isFocusableDisabled,
+  // Readonly keeps the consumer's onClick; a disabled checkbox gets no click.
+  const rootProps = preventActivationBehavior(
+    suppressActivation(
+      // Native attributes carry these states, so their ARIA forms must not.
+      omitProps(controlProps, [
+        'aria-checked',
+        'aria-disabled',
+        'aria-required',
+      ]),
+      isFocusableDisabled,
+    ),
+    field.isReadOnly || isFocusableDisabled,
   )
 
   return {
@@ -33,29 +43,9 @@ export function getNativeBooleanControl({
             name: field.name,
             ...(field.isRequired ? { required: true } : {}),
           }),
-      ...(field.isReadOnly || isFocusableDisabled
-        ? preventToggle(rootProps)
-        : {}),
       // A native checkbox already has the checkbox role.
       ...(role === 'switch' ? { role } : {}),
       type: 'checkbox',
-    },
-  }
-}
-
-// Cancelling the click restores the checkbox, and React's onChange fires
-// from that click, so it is dropped too.
-function preventToggle({
-  onClick,
-}: Pick<BooleanControlRootProps, 'onClick'>): Pick<
-  BooleanControlRootProps,
-  'onChange' | 'onClick'
-> {
-  return {
-    onChange: () => {},
-    onClick: (event) => {
-      onClick?.(event)
-      event.preventDefault()
     },
   }
 }
