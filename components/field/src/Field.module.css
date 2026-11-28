@@ -45,7 +45,7 @@
   color: var(--ara-field-label-fg--loading);
 }
 
-.fieldControl {
+:where(.fieldControl) {
   background-color: var(--ara-field-control-bg);
   border-color: var(--ara-field-control-detail);
   border-style: var(--ara-field-control-border-style);
@@ -55,18 +55,17 @@
   padding-inline: var(--ara-field-control-padding-inline);
 }
 
-.fieldControl[aria-invalid='true'] {
+:where(.fieldControl[aria-invalid='true']) {
   border-color: var(--ara-field-control-detail--invalid);
   color: var(--ara-field-control-fg--invalid);
 }
 
-.fieldControl[data-loading] {
+:where(.fieldControl[data-loading]) {
   border-color: var(--ara-field-control-detail--loading);
   color: var(--ara-field-control-fg--loading);
 }
 
-.fieldControl[readonly],
-.fieldControl[aria-readonly='true'] {
+:where(.fieldControl[readonly], .fieldControl[aria-readonly='true']) {
   color: var(--ara-field-control-fg--readonly);
 }
 

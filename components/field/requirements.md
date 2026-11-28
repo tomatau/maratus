@@ -91,6 +91,7 @@
 | PRD-025 | `ErrorMessage` renders `useErrorMessage`'s root props and items, so the hook carries the `ErrorMessage` contract.                                                                                                                       | useErrorMessage                      | Current       |
 | PRD-026 | When a custom root calls a validity handler without a validity, `FieldControl` must record the field history event and leave the active error keys unchanged.                                                                           | FieldControl                         | Current       |
 | PRD-027 | When a custom root passes a validity to a validity handler, `FieldControl` must replace any earlier reported validity with it, because it describes the whole control.                                                                  | FieldControl                         | Current       |
+| PRD-028 | `FieldControl`'s default styles, in every state, carry no specificity, so a control's or consumer's class rule wins over them whatever the stylesheet order.                                                                            | FieldControl                         | Current       |
 
 ## Global Requirements
 
