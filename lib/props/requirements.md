@@ -7,6 +7,7 @@
 - `mergeRefs`
 - `omitPropWithWarning`
 - `omitProps`
+- `preventActivationBehavior`
 - `suppressActivation`
 
 ### Current scope
@@ -14,6 +15,7 @@
 - Merging refs onto one element.
 - Omitting props, with an optional development warning.
 - Suppressing consumer activation handlers.
+- Preventing the browser's activation behaviour.
 
 ### Potential scope
 
@@ -23,9 +25,9 @@
 
 ### Entry point
 
-| ID      | Requirement                                                                                                    | Surfaces | Applicability |
-| ------- | -------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
-| PRD-001 | Export `mergeRefs`, `omitPropWithWarning`, `omitProps`, and `suppressActivation` from the package entry point. |          | Current       |
+| ID      | Requirement                                                                                                                                 | Surfaces | Applicability |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------- |
+| PRD-001 | Export `mergeRefs`, `omitPropWithWarning`, `omitProps`, `preventActivationBehavior`, and `suppressActivation` from the package entry point. |          | Current       |
 
 ### mergeRefs
 
@@ -56,6 +58,14 @@
 | PRD-009 | When suppressed, `suppressActivation` must drop the pointer activation handlers: `onClick`, `onMouseDown`, `onPointerDown`, and `onTouchStart`.            | suppressActivation | Current       |
 | PRD-010 | When suppressed, `suppressActivation` must keep `onKeyDown` and `onKeyUp` but skip Enter and Space, preventing their default, and pass every other key on. | suppressActivation | Current       |
 | PRD-011 | When not suppressed, `suppressActivation` must return the same props object.                                                                               | suppressActivation | Current       |
+
+### preventActivationBehavior
+
+| ID      | Requirement                                                                                                                                                                       | Surfaces                  | Applicability |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ------------- |
+| PRD-012 | When prevented, `preventActivationBehavior` must call the given `onClick`, if any, then cancel the click's activation behaviour.                                                  | preventActivationBehavior | Current       |
+| PRD-013 | When prevented, `preventActivationBehavior` must replace `onChange` with a handler that does nothing, since React fires `onChange` from a cancelled click on a checkbox or radio. | preventActivationBehavior | Current       |
+| PRD-014 | When not prevented, `preventActivationBehavior` must return the same props object.                                                                                                | preventActivationBehavior | Current       |
 
 ## Global Requirements
 

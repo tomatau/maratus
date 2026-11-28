@@ -21,9 +21,9 @@ const ERROR_MAP = new Map<ValidityErrorKey, string>([
 ])
 
 const ITEMS = [
-  { isDisabled: false, value: FIRST_ITEM },
-  { isDisabled: false, value: SECOND_ITEM },
-  { isDisabled: true, value: DISABLED_ITEM },
+  { disabled: false, value: FIRST_ITEM },
+  { disabled: false, value: SECOND_ITEM },
+  { disabled: true, value: DISABLED_ITEM },
 ]
 
 const ENABLED_ITEMS = [FIRST_ITEM, SECOND_ITEM]
@@ -43,7 +43,7 @@ const CUSTOM_ITEMS_MODES = [
     requirements: {
       a11y: 'REQ-016 REQ-017 REQ-018 REQ-019 REQ-044 REQ-049 PRD-003',
       containerRole: 'REQ-016',
-      disabledItem: 'REQ-020',
+      disabledItem: 'REQ-020 PRD-017',
       itemRole: 'REQ-018',
       label: 'REQ-017',
       readOnly: 'REQ-049',
@@ -57,13 +57,13 @@ const CUSTOM_ITEMS_MODES = [
     itemRole: 'radio',
     mode: 'radio-items',
     requirements: {
-      a11y: 'REQ-007 REQ-008 REQ-027 REQ-028 REQ-029 REQ-043 REQ-045',
+      a11y: 'REQ-007 REQ-008 REQ-027 REQ-028 REQ-029 REQ-043 PRD-016',
       containerRole: 'REQ-007',
-      disabledItem: 'REQ-030',
+      disabledItem: 'REQ-030 PRD-017',
       itemRole: 'REQ-028',
       label: 'REQ-008',
       readOnly: 'REQ-027',
-      required: 'REQ-043 REQ-045',
+      required: 'REQ-043 PRD-016',
       selection: 'REQ-029',
     },
     selectionAttribute: 'aria-checked',
@@ -130,6 +130,7 @@ for (const testCase of CUSTOM_ITEMS_MODES) {
           'aria-disabled',
           'true',
         )
+        cy.getByTestId(DISABLED_ITEM).should('not.have.attr', 'disabled')
       })
 
       it(`${requirements.required} marks the container required but not its items`, () => {
@@ -178,14 +179,14 @@ for (const testCase of CUSTOM_ITEMS_MODES) {
         cy.getByTestId(FIRST_ITEM).blur()
       })
 
-      it('REQ-048 REQ-050 REQ-051 exposes a consumer-reported error on the container', () => {
+      it('PRD-015 REQ-050 REQ-051 exposes a consumer-reported error on the container', () => {
         cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
         cy.getByTestId('control')
           .should('have.attr', 'aria-invalid', 'true')
           .assertReferences('aria-errormessage', ['error'])
       })
 
-      it('REQ-048 REQ-053 clears the error once an item is selected', () => {
+      it('PRD-015 REQ-053 clears the error once an item is selected', () => {
         cy.getByTestId(FIRST_ITEM).click()
 
         cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
@@ -240,7 +241,7 @@ function CustomItemsField(props: {
                 key={item.value}
                 tabIndex={0}
                 {...getChoiceItemProps({
-                  isDisabled: item.isDisabled,
+                  disabled: item.disabled,
                   isSelected: value === item.value,
                 })}
                 onClick={(event) => {

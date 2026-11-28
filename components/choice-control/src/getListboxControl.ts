@@ -7,7 +7,11 @@ export const getListboxControl: ChoiceControlBuilder<'listbox'> = ({
   fieldControl,
 }) => ({
   choiceControlProps: {
-    ...suppressActivation(fieldControl.fieldControlProps, field.isLoading),
+    // Readonly blocks the consumer's activation, which owns the selection.
+    ...suppressActivation(
+      fieldControl.fieldControlProps,
+      field.isLoading || field.isReadOnly,
+    ),
     ...fieldControl.validityHandlerProps,
     ref: mergeRefs(
       fieldControl.fieldControlProps.ref,
@@ -16,10 +20,13 @@ export const getListboxControl: ChoiceControlBuilder<'listbox'> = ({
     'aria-labelledby': field.labelId,
     role: 'listbox',
   },
-  getChoiceItemProps: ({ isDisabled, isSelected, ref, ...optionProps }) => ({
-    ...suppressActivation(optionProps, isItemDisabled(field, isDisabled)),
+  getChoiceItemProps: ({ disabled, isSelected, ref, ...optionProps }) => ({
+    ...suppressActivation(
+      optionProps,
+      isItemDisabled(field, disabled) || field.isReadOnly,
+    ),
     ...(ref ? { ref: mergeRefs(ref) } : {}),
-    ...(isItemDisabled(field, isDisabled) ? { 'aria-disabled': true } : {}),
+    ...(isItemDisabled(field, disabled) ? { 'aria-disabled': true } : {}),
     'aria-selected': isSelected,
     role: 'option',
   }),

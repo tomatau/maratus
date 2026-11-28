@@ -1,9 +1,17 @@
 import type { ChoiceControlBuilder } from './ChoiceControl.types'
-import { mergeRefs } from '@maratus-lib/props'
+import {
+  mergeRefs,
+  omitPropWithWarning,
+  preventActivationBehavior,
+  suppressActivation,
+} from '@maratus-lib/props'
 import { isItemDisabled } from './isItemDisabled'
-import { omitUnsupportedReadOnly } from './omitUnsupportedReadOnly'
+
+const UNSUPPORTED_READ_ONLY_WARNING =
+  'ChoiceControl radio option: HTML readonly does not apply to this control. Use FieldRoot isReadOnly instead.'
 
 export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
+  disabledBehavior,
   field,
   fieldControl,
 }) => ({
@@ -12,14 +20,34 @@ export const getRadiosControl: ChoiceControlBuilder<'radios'> = ({
     'aria-labelledby': field.labelId,
     role: 'radiogroup',
   },
-  getChoiceInputProps: ({ isDisabled, value, ...inputProps }) => {
+  getChoiceInputProps: ({ disabled, value, ...inputProps }) => {
+    const isDisabled = isItemDisabled(field, disabled)
+    const isFocusableDisabled = isDisabled && disabledBehavior === 'focusable'
+
     return {
-      ...omitUnsupportedReadOnly('ChoiceControl radio option', inputProps),
-      ...fieldControl.validityHandlerProps,
+      // Readonly cancels the click, so the radios keep their checked state.
+      ...preventActivationBehavior(
+        // A disabled radio gets no click, so consumer activation is skipped too.
+        suppressActivation(
+          {
+            ...omitPropWithWarning(
+              inputProps,
+              'readOnly',
+              UNSUPPORTED_READ_ONLY_WARNING,
+            ),
+            ...fieldControl.validityHandlerProps,
+          },
+          isFocusableDisabled,
+        ),
+        field.isReadOnly || isFocusableDisabled,
+      ),
       ref: mergeRefs(inputProps.ref, fieldControl.validityHandlerProps.ref),
-      ...(isItemDisabled(field, isDisabled) ? { disabled: true } : {}),
+      ...(isFocusableDisabled ? { 'aria-disabled': true } : {}),
+      ...(isDisabled && !isFocusableDisabled ? { disabled: true } : {}),
+      // A focusable disabled radio keeps its name to stay in its group.
       name: field.name,
-      ...(field.isRequired ? { required: true } : {}),
+      // A focusable disabled radio leaves validation, as a disabled one does.
+      ...(field.isRequired && !isFocusableDisabled ? { required: true } : {}),
       type: 'radio',
       value,
     }

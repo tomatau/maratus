@@ -8,6 +8,7 @@ test('PRD-001 exports the helpers from the entry point', () => {
     'mergeRefs',
     'omitPropWithWarning',
     'omitProps',
+    'preventActivationBehavior',
     'suppressActivation',
   ])
 })

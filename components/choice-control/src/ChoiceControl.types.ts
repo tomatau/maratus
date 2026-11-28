@@ -44,15 +44,21 @@ type ChoiceControlModes = {
   }
 }
 
+export type ChoiceControlDisabledBehavior = 'focusable' | 'native'
+
 export type UseChoiceControlOptions<
   TMode extends ChoiceControlMode = ChoiceControlMode,
-> = ChoiceControlModes[TMode]['options'] & { mode: TMode }
+> = ChoiceControlModes[TMode]['options'] & {
+  disabledBehavior?: ChoiceControlDisabledBehavior
+  mode: TMode
+}
 
 export type UseChoiceControlResult<
   TMode extends ChoiceControlMode = ChoiceControlMode,
 > = ChoiceControlModes[TMode]['result']
 
 export type ChoiceControlBuilder<TMode extends ChoiceControlMode> = (input: {
+  disabledBehavior: ChoiceControlDisabledBehavior
   field: FieldContextValue
   fieldControl: UseFieldControlResult
 }) => UseChoiceControlResult<TMode>
@@ -64,6 +70,7 @@ export type RadiosControlRenderProps = FieldControlRenderProps & {
 
 export type RadioInputOptions = Omit<
   ComponentPropsWithRef<'input'>,
+  | 'aria-disabled'
   | 'disabled'
   | 'name'
   | 'readOnly'
@@ -72,12 +79,13 @@ export type RadioInputOptions = Omit<
   | 'value'
   | keyof ValidityHandlerProps
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   value: string
 }
 
 export type RadioInputRenderProps = ComponentPropsWithRef<'input'> &
   ValidityHandlerProps & {
+    'aria-disabled'?: true
     disabled?: true
     name: string
     required?: true
@@ -100,7 +108,7 @@ export type RadioItemOptions = Omit<
   CustomItemProps,
   'aria-checked' | 'aria-disabled' | 'aria-required' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 
@@ -139,7 +147,7 @@ export type ListboxOptionOptions = Omit<
   CustomItemProps,
   'aria-disabled' | 'aria-selected' | 'role'
 > & {
-  isDisabled?: boolean
+  disabled?: boolean
   isSelected: boolean
 }
 

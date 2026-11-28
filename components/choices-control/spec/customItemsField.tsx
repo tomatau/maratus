@@ -23,9 +23,9 @@ const ERROR_MAP = new Map<ValidityErrorKey, string>([
 ])
 
 export const ITEMS = [
-  { isDisabled: false, value: FIRST_ITEM },
-  { isDisabled: false, value: SECOND_ITEM },
-  { isDisabled: true, value: DISABLED_ITEM },
+  { disabled: false, value: FIRST_ITEM },
+  { disabled: false, value: SECOND_ITEM },
+  { disabled: true, value: DISABLED_ITEM },
 ]
 
 export const ENABLED_ITEMS = [FIRST_ITEM, SECOND_ITEM]
@@ -71,7 +71,7 @@ function CustomItemsField(props: {
                 key={item.value}
                 tabIndex={0}
                 {...getChoicesItemProps({
-                  isDisabled: item.isDisabled,
+                  disabled: item.disabled,
                   isSelected: values.includes(item.value),
                 })}
                 onClick={(event) => {

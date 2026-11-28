@@ -1,3 +1,4 @@
+import type { CheckboxFixture, CheckboxesFieldState } from './checkboxesField'
 import {
   CHECKBOXES,
   CONSUMER_NAME,
@@ -54,12 +55,12 @@ describe('ChoicesControl checkboxes mode', () => {
       ])
     })
 
-    it('REQ-033 uses the field name unless a checkbox supplies its own', () => {
+    it('PRD-014 uses the field name unless a checkbox supplies its own', () => {
       mountCheckboxes({
         checkboxes: [
-          { isDisabled: false, isRequired: false, value: FIRST_CHOICE },
+          { disabled: false, isRequired: false, value: FIRST_CHOICE },
           {
-            isDisabled: false,
+            disabled: false,
             isRequired: false,
             name: CONSUMER_NAME,
             value: SECOND_CHOICE,
@@ -109,6 +110,118 @@ describe('ChoicesControl checkboxes mode', () => {
     })
   })
 
+  describe('readonly interaction', () => {
+    beforeEach(() => {
+      mountCheckboxes({
+        fieldState: { isReadOnly: true },
+        initialValues: [FIRST_CHOICE],
+      })
+    })
+
+    it('REQ-044 keeps each checkbox unchanged when clicked', () => {
+      cy.getByTestId(FIRST_CHOICE).realClick()
+      cy.getByTestId(SECOND_CHOICE).realClick()
+
+      cy.getByTestId(FIRST_CHOICE).should('be.checked')
+      cy.getByTestId(SECOND_CHOICE).should('not.be.checked')
+    })
+
+    it('REQ-045 keeps each checkbox unchanged when Space is pressed', () => {
+      cy.getByTestId(FIRST_CHOICE).focus().realPress('Space')
+      cy.getByTestId(SECOND_CHOICE).focus().realPress('Space')
+
+      cy.getByTestId(FIRST_CHOICE).should('be.checked')
+      cy.getByTestId(SECOND_CHOICE).should('not.be.checked')
+    })
+  })
+
+  describe('focusable disabled', () => {
+    const FOCUSABLE_CASES = [
+      {
+        checkbox: DISABLED_CHOICE,
+        checkboxes: [
+          { disabled: true, isRequired: true, value: DISABLED_CHOICE },
+        ],
+        fieldState: {},
+        state: 'disabled',
+      },
+      {
+        checkbox: FIRST_CHOICE,
+        checkboxes: [
+          { disabled: false, isRequired: true, value: FIRST_CHOICE },
+        ],
+        fieldState: { isLoading: true },
+        state: 'loading',
+      },
+    ] satisfies {
+      checkbox: string
+      checkboxes: readonly CheckboxFixture[]
+      fieldState: CheckboxesFieldState
+      state: string
+    }[]
+
+    for (const { checkbox, checkboxes, fieldState, state } of FOCUSABLE_CASES) {
+      const mountFocusable = (onClick?: () => void) =>
+        mountCheckboxes({
+          checkboxes,
+          disabledBehavior: 'focusable',
+          fieldState,
+          onClick,
+        })
+
+      it(`PRD-016 REQ-050 marks a focusable ${state} checkbox aria-disabled`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).should('have.attr', 'aria-disabled', 'true')
+      })
+
+      it(`PRD-017 keeps a focusable ${state} checkbox in the tab order`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).should('not.have.attr', 'disabled')
+        cy.getByTestId(checkbox).focus().should('have.focus')
+      })
+
+      it(`REQ-051 lets Tab leave a focusable ${state} checkbox`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).focus().realPress('Tab')
+
+        cy.getByTestId(checkbox).should('not.have.focus')
+      })
+
+      it(`REQ-011 PRD-018 does not toggle a focusable ${state} checkbox on click`, () => {
+        const onClick = cy.stub().as('click')
+        mountFocusable(onClick)
+
+        cy.getByTestId(checkbox).realClick()
+
+        cy.getByTestId(checkbox).should('not.be.checked')
+        cy.get('@click').should('not.have.been.called')
+      })
+
+      it(`REQ-012 does not toggle a focusable ${state} checkbox with the keyboard`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).focus().realPress('Space')
+
+        cy.getByTestId(checkbox).should('not.be.checked')
+      })
+
+      it(`PRD-019 leaves the name off a focusable ${state} checkbox`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).should('not.have.attr', 'name')
+      })
+
+      it(`PRD-020 leaves required off a focusable ${state} checkbox`, () => {
+        mountFocusable()
+
+        cy.getByTestId(checkbox).should('not.have.attr', 'required')
+      })
+    }
+  })
+
   describe('loading', () => {
     beforeEach(() => {
       mountCheckboxes({ fieldState: { isLoading: true } })
@@ -145,6 +258,12 @@ describe('ChoicesControl checkboxes mode', () => {
         cy.getByTestId(choice).should('not.be.checked')
       })
     }
+
+    it('PRD-015 disables a disabled checkbox', () => {
+      mountCheckboxes()
+
+      cy.getByTestId(DISABLED_CHOICE).should('be.disabled')
+    })
 
     it('REQ-011 does not toggle a disabled checkbox on click', () => {
       mountCheckboxes()

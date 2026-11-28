@@ -1,3 +1,4 @@
+import type { UseChoicesControlResult } from '.'
 import { useChoicesControl } from '.'
 
 // GPRD-004 useChoicesControl returns named prop bags in checkbox-items mode
@@ -26,3 +27,12 @@ export const LISTBOX_RESULT_KEYS: Record<
   choicesControlProps: true,
   getChoicesItemProps: true,
 }
+
+// GPRD-003 useChoicesControl without a mode returns the checkboxes result
+export const DEFAULT_MODE: () => UseChoicesControlResult<'checkboxes'> = () =>
+  useChoicesControl()
+
+// GPRD-003 requires a custom mode to be named
+export const CUSTOM_MODE_WITHOUT_MODE = () =>
+  // @ts-expect-error mode is required for a custom mode
+  useChoicesControl<'listbox'>({})

@@ -4,11 +4,8 @@ import type {
 } from './ChoicesControl.types'
 import { useChoicesControl } from './useChoicesControl'
 
-export function ChoicesControl<TMode extends ChoicesControlMode>(
+export function ChoicesControl<TMode extends ChoicesControlMode = 'checkboxes'>(
   props: ChoicesControlProps<TMode>,
 ) {
-  const { children, ...hookProps } = props
-  const control = useChoicesControl<TMode>(hookProps)
-
-  return children(control)
+  return props.children(useChoicesControl<TMode>(props))
 }

@@ -32,29 +32,6 @@ describe('ChoiceControl consumer ownership', () => {
     cy.getByTestId(FIRST_CHOICE).should('have.attr', 'aria-checked', 'false')
   })
 
-  it('PRD-006 lets a readonly consumer prevent a radio change', () => {
-    mountField(
-      <ChoiceControl
-        mode="radios"
-        onChange={(event) => event.preventDefault()}
-      >
-        {({ choiceControlProps, getChoiceInputProps }) => (
-          <div {...choiceControlProps}>
-            <input
-              data-testid={FIRST_CHOICE}
-              {...getChoiceInputProps({ value: FIRST_CHOICE })}
-            />
-          </div>
-        )}
-      </ChoiceControl>,
-      { isReadOnly: true },
-    )
-
-    cy.getByTestId(FIRST_CHOICE).click()
-
-    cy.getByTestId(FIRST_CHOICE).should('not.be.checked')
-  })
-
   it('PRD-007 lets a readonly controlled consumer keep its select value', () => {
     const onChange = cy.stub().as('change')
     mountField(<ControlledSelect onChange={onChange} />, { isReadOnly: true })

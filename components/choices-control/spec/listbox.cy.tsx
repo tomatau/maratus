@@ -31,14 +31,14 @@ describe('ChoicesControl listbox mode', () => {
       reportValueMissing('listbox')
     })
 
-    it('REQ-032 REQ-037 REQ-038 exposes a consumer-reported error on the listbox', () => {
+    it('PRD-013 REQ-037 REQ-038 exposes a consumer-reported error on the listbox', () => {
       cy.getByTestId('error').should('have.text', VALUE_MISSING_MESSAGE)
       cy.getByTestId('control')
         .should('have.attr', 'aria-invalid', 'true')
         .assertReferences('aria-errormessage', ['error'])
     })
 
-    it('REQ-032 REQ-041 clears the error once an option is selected', () => {
+    it('PRD-013 REQ-041 clears the error once an option is selected', () => {
       cy.getByTestId(FIRST_ITEM).click()
 
       cy.getByTestId('control').should('not.have.attr', 'aria-invalid')
