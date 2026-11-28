@@ -10,7 +10,7 @@
   --ara-field-control-fg: var(--ara-color-control-fg);
   --ara-field-control-fg--invalid: var(--ara-color-feedback-fg);
   --ara-field-control-fg--loading: var(--ara-color-control-fg--loading);
-  --ara-field-control-fg--readonly: var(--ara-color-control-fg--disabled);
+  --ara-field-control-fg--readonly: var(--ara-color-control-fg--readonly);
   --ara-field-control-padding-block: var(--ara-spacing-x1);
   --ara-field-control-padding-inline: var(--ara-spacing-x1);
   --ara-field-description-fg: var(--ara-color-content-detail);
