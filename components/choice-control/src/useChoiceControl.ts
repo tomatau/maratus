@@ -17,17 +17,17 @@ const UNSUPPORTED_READ_ONLY_WARNING =
 export function useChoiceControl<TMode extends ChoiceControlMode>(
   options: UseChoiceControlOptions<TMode>,
 ): UseChoiceControlResult<TMode> {
-  const { mode, ...fieldControlOptions } = omitPropWithWarning(
-    options,
-    'readOnly',
-    UNSUPPORTED_READ_ONLY_WARNING,
-  )
+  const {
+    disabledBehavior = 'native',
+    mode,
+    ...fieldControlOptions
+  } = omitPropWithWarning(options, 'readOnly', UNSUPPORTED_READ_ONLY_WARNING)
   const field = useFieldContext('ChoiceControl')
   const fieldControl = useFieldControl(fieldControlOptions)
   const buildChoiceControl: ChoiceControlBuilder<TMode> =
     choiceControlBuilders[mode]
 
-  return buildChoiceControl({ field, fieldControl })
+  return buildChoiceControl({ disabledBehavior, field, fieldControl })
 }
 
 const choiceControlBuilders: {

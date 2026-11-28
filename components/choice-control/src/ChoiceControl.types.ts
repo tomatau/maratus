@@ -44,15 +44,21 @@ type ChoiceControlModes = {
   }
 }
 
+export type ChoiceControlDisabledBehavior = 'focusable' | 'native'
+
 export type UseChoiceControlOptions<
   TMode extends ChoiceControlMode = ChoiceControlMode,
-> = ChoiceControlModes[TMode]['options'] & { mode: TMode }
+> = ChoiceControlModes[TMode]['options'] & {
+  disabledBehavior?: ChoiceControlDisabledBehavior
+  mode: TMode
+}
 
 export type UseChoiceControlResult<
   TMode extends ChoiceControlMode = ChoiceControlMode,
 > = ChoiceControlModes[TMode]['result']
 
 export type ChoiceControlBuilder<TMode extends ChoiceControlMode> = (input: {
+  disabledBehavior: ChoiceControlDisabledBehavior
   field: FieldContextValue
   fieldControl: UseFieldControlResult
 }) => UseChoiceControlResult<TMode>
@@ -64,6 +70,7 @@ export type RadiosControlRenderProps = FieldControlRenderProps & {
 
 export type RadioInputOptions = Omit<
   ComponentPropsWithRef<'input'>,
+  | 'aria-disabled'
   | 'disabled'
   | 'name'
   | 'readOnly'
@@ -78,6 +85,7 @@ export type RadioInputOptions = Omit<
 
 export type RadioInputRenderProps = ComponentPropsWithRef<'input'> &
   ValidityHandlerProps & {
+    'aria-disabled'?: true
     disabled?: true
     name: string
     required?: true

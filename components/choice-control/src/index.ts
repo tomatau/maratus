@@ -1,4 +1,5 @@
 export type {
+  ChoiceControlDisabledBehavior,
   ChoiceControlMode,
   ChoiceControlProps,
   ListboxControlRenderProps,

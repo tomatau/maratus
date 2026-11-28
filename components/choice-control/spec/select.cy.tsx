@@ -1,3 +1,4 @@
+import type { ChoiceControlDisabledBehavior } from '../src'
 import type { FieldRootProps, ValidityErrorKey } from '@maratus-component/field'
 import {
   Description,
@@ -87,6 +88,13 @@ describe('ChoiceControl select mode', () => {
     it('REQ-034 omits aria-disabled', () => {
       cy.getByTestId('control').should('not.have.attr', 'aria-disabled')
     })
+
+    it('PRD-023 stays disabled when disabledBehavior is focusable', () => {
+      mountSelect({ isLoading: true }, 'focusable')
+
+      cy.getByTestId('control').should('have.prop', 'disabled', true)
+      cy.getByTestId('control').should('not.have.attr', 'aria-disabled')
+    })
   })
 
   describe('errors', () => {
@@ -173,7 +181,10 @@ describe('ChoiceControl select mode', () => {
   })
 })
 
-function mountSelect(fieldState: SelectFieldState = {}) {
+function mountSelect(
+  fieldState: SelectFieldState = {},
+  disabledBehavior?: ChoiceControlDisabledBehavior,
+) {
   cy.mount(
     <form data-testid="form">
       <FieldRoot
@@ -184,7 +195,10 @@ function mountSelect(fieldState: SelectFieldState = {}) {
         {...fieldState}
       >
         <Label data-testid="label" />
-        <ChoiceControl mode="select">
+        <ChoiceControl
+          disabledBehavior={disabledBehavior}
+          mode="select"
+        >
           {({ choiceControlProps }) => (
             <select
               data-testid="control"

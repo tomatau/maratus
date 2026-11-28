@@ -1,3 +1,4 @@
+import type { ChoiceControlDisabledBehavior } from '../src'
 import type { FieldRootProps, ValidityErrorKey } from '@maratus-component/field'
 import {
   Description,
@@ -212,6 +213,81 @@ describe('ChoiceControl radios mode', () => {
     })
   })
 
+  describe('focusable disabled', () => {
+    const FOCUSABLE_CASES = [
+      { fieldState: {}, radio: DISABLED_RADIO, state: 'disabled' },
+      { fieldState: { isLoading: true }, radio: FIRST_RADIO, state: 'loading' },
+    ] satisfies { fieldState: RadiosFieldState; radio: string; state: string }[]
+
+    for (const { fieldState, radio, state } of FOCUSABLE_CASES) {
+      const mountFocusable = (extra: RadiosFieldState = {}) =>
+        mountRadios({
+          disabledBehavior: 'focusable',
+          fieldState: { ...fieldState, ...extra },
+        })
+
+      it(`PRD-018 REQ-060 marks a focusable ${state} radio aria-disabled`, () => {
+        mountFocusable()
+
+        cy.getByTestId(radio).should('have.attr', 'aria-disabled', 'true')
+      })
+
+      it(`PRD-019 keeps a focusable ${state} radio focusable`, () => {
+        mountFocusable()
+
+        cy.getByTestId(radio).should('not.have.attr', 'disabled')
+        cy.getByTestId(radio).focus().should('have.focus')
+      })
+
+      it(`REQ-061 lets Tab leave a focusable ${state} radio`, () => {
+        mountFocusable()
+
+        cy.getByTestId(radio).focus().realPress('Tab')
+
+        cy.getByTestId(radio).should('not.have.focus')
+      })
+
+      it(`REQ-023 PRD-020 does not select a focusable ${state} radio on click`, () => {
+        const onClick = cy.stub().as('click')
+        mountRadios({ disabledBehavior: 'focusable', fieldState, onClick })
+
+        cy.getByTestId(radio).realClick()
+
+        cy.getByTestId(radio).should('not.be.checked')
+        cy.get('@click').should('not.have.been.called')
+      })
+
+      it(`REQ-024 does not select a focusable ${state} radio with the keyboard`, () => {
+        mountFocusable()
+
+        cy.getByTestId(radio).focus().realPress('Space')
+
+        cy.getByTestId(radio).should('not.be.checked')
+      })
+
+      it(`PRD-021 leaves required off a focusable ${state} radio`, () => {
+        mountFocusable({ isRequired: true })
+
+        cy.getByTestId(radio).should('not.have.attr', 'required')
+      })
+
+      it(`PRD-022 keeps the name on a focusable ${state} radio`, () => {
+        mountFocusable()
+
+        cy.getByTestId(radio).should('have.attr', 'name', FIELD_NAME)
+      })
+    }
+
+    it('REQ-024 skips selecting a focusable disabled radio while arrow keys reach it', () => {
+      mountRadios({ disabledBehavior: 'focusable', initialValue: SECOND_RADIO })
+
+      cy.getByTestId(SECOND_RADIO).focus().realPress('ArrowRight')
+
+      cy.getByTestId(DISABLED_RADIO).should('have.focus').and('not.be.checked')
+      cy.getByTestId(SECOND_RADIO).should('be.checked')
+    })
+  })
+
   describe('accessibility', () => {
     it('REQ-007 REQ-008 REQ-009 REQ-010 REQ-027 REQ-043 PRD-002 has no violations', () => {
       mountRadios({
@@ -226,8 +302,10 @@ describe('ChoiceControl radios mode', () => {
 })
 
 function RadiosField(props: {
+  disabledBehavior?: ChoiceControlDisabledBehavior
   fieldState: RadiosFieldState
   initialValue: string | null
+  onClick?: () => void
 }) {
   const [value, setValue] = useState(props.initialValue)
 
@@ -242,6 +320,7 @@ function RadiosField(props: {
       >
         <Label data-testid="label" />
         <ChoiceControl
+          disabledBehavior={props.disabledBehavior}
           mode="radios"
           onChange={(event) => setValue(event.currentTarget.value)}
         >
@@ -257,6 +336,7 @@ function RadiosField(props: {
                     {...getChoiceInputProps({
                       checked: value === radio.value,
                       disabled: radio.disabled,
+                      onClick: props.onClick,
                       value: radio.value,
                     })}
                   />
@@ -274,12 +354,19 @@ function RadiosField(props: {
 }
 
 function mountRadios(
-  options: { fieldState?: RadiosFieldState; initialValue?: string } = {},
+  options: {
+    disabledBehavior?: ChoiceControlDisabledBehavior
+    fieldState?: RadiosFieldState
+    initialValue?: string
+    onClick?: () => void
+  } = {},
 ) {
   cy.mount(
     <RadiosField
+      disabledBehavior={options.disabledBehavior}
       fieldState={options.fieldState ?? {}}
       initialValue={options.initialValue ?? null}
+      onClick={options.onClick}
     />,
   )
 }
